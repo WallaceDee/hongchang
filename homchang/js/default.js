@@ -35,11 +35,11 @@ if (localStorage.userInfo != undefined) {
         location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx027d7825030faa03&redirect_uri=" + curr_url + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
     } else {
         func_ajax({
-
             url: "http://www.michellelee.top/index.php/Api/index/sendAuth",
             data: {
                 code: url_code
             },
+            async: false,
             successCallback: function(data) {
                 if (data.Common.code == 200) {
                     userInfo = data.Common.info;
@@ -80,9 +80,31 @@ console.log(userInfo);
 
 ;
 (function($) {
-    // $.extend($.fn, {
-    //     loadImageWithIndicator: function(imgUrl) {}
-    // })
+    $.extend($.fn, {
+        validate: function() {
+            var pass = true;
+            this.each(function(index, el) {
+                if ($(this).attr("required") != undefined) { //html的pattern要注意转义
+                    if ($(this).val() == "") {
+                        $.toast($(this).attr("emptyTips"));
+                        pass = false;
+                        return false;
+                    } else {
+                        if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
+                            var reg = new RegExp($(this).attr("pattern"));
+                            console.log(reg);
+                            if (!reg.test($(this).val())) {
+                                $.toast($(this).attr("notMatchTips"));
+                                pass = false;
+                                return false;
+                            }
+                        }
+                    }
+                }
+            });
+            return pass;
+        }
+    })
     // $.getScript = function(url, callback) {
     // }
 })(Zepto);
@@ -158,6 +180,8 @@ function func_ajax(option) {
         type: "post",
         url: "",
         data: null,
+        dataType: "json",
+        async: true,
         successCallback: function(data) {
             console.log(data)
         }
@@ -167,7 +191,8 @@ function func_ajax(option) {
         type: opt.type,
         url: opt.url,
         data: opt.data,
-        dataType: "json",
+        dataType: opt.dataType,
+        async: opt.async,
         beforeSend: function() {},
         success: function(data) {
             opt.successCallback(data);
@@ -179,18 +204,6 @@ function func_ajax(option) {
     });
 
 }
-$(document).on('click', '.test', function(event) {
-    event.preventDefault();
-    /* Act on the event */
-    var state = {
-        'page_id': 1,
-        'user_id': 5
-    };
-    var title = 'Hello World';
-    var url = 'hello-world.html';
-
-    history.pushState(state, title, url);
-});
 
 function wxApi(fun_callback) {
     var wx_config_data = new Object();
@@ -221,43 +234,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                            'checkJsApi',
-                            'onMenuShareTimeline',
-                            'onMenuShareAppMessage',
-                            'onMenuShareQQ',
-                            'onMenuShareWeibo',
-                            'onMenuShareQZone',
-                            'hideMenuItems',
-                            'showMenuItems',
-                            'hideAllNonBaseMenuItem',
-                            'showAllNonBaseMenuItem',
-                            'translateVoice',
-                            'startRecord',
-                            'stopRecord',
-                            'onVoiceRecordEnd',
-                            'playVoice',
-                            'onVoicePlayEnd',
-                            'pauseVoice',
-                            'stopVoice',
-                            'uploadVoice',
-                            'downloadVoice',
-                            'chooseImage',
-                            'previewImage',
-                            'uploadImage',
-                            'downloadImage',
-                            'getNetworkType',
-                            'openLocation',
-                            'getLocation',
-                            'hideOptionMenu',
-                            'showOptionMenu',
-                            'closeWindow',
-                            'scanQRCode',
-                            'chooseWXPay',
-                            'openProductSpecificView',
-                            'addCard',
-                            'chooseCard',
-                            'openCard'
-                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                        'checkJsApi',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ',
+                        'onMenuShareWeibo',
+                        'onMenuShareQZone',
+                        'hideMenuItems',
+                        'showMenuItems',
+                        'hideAllNonBaseMenuItem',
+                        'showAllNonBaseMenuItem',
+                        'translateVoice',
+                        'startRecord',
+                        'stopRecord',
+                        'onVoiceRecordEnd',
+                        'playVoice',
+                        'onVoicePlayEnd',
+                        'pauseVoice',
+                        'stopVoice',
+                        'uploadVoice',
+                        'downloadVoice',
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'downloadImage',
+                        'getNetworkType',
+                        'openLocation',
+                        'getLocation',
+                        'hideOptionMenu',
+                        'showOptionMenu',
+                        'closeWindow',
+                        'scanQRCode',
+                        'chooseWXPay',
+                        'openProductSpecificView',
+                        'addCard',
+                        'chooseCard',
+                        'openCard'
+                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     fun_callback();
@@ -1038,7 +1051,7 @@ $(function() {
             }
             var temp_html = template("page-cart-item", temp_data);
             $("#page-cart .list-block ul").html(temp_html);
-                        $("#page-cart .bar-nav-secondary").removeClass("hide");
+            $("#page-cart .bar-nav-secondary").removeClass("hide");
             $("#page-cart .cart-title").removeClass("hide");
         } else {
             $("#page-cart .list-block ul").html('<li class="no-goods">购物车空空如也<br>去挑几件好货吧</li>');
@@ -1199,10 +1212,18 @@ $(function() {
 
             cartSum();
         });
+    });
 
-
+    $(document).on("click", "#page-cart   .go-to-order", function(event) {
+        var select_to_pay = $("input[type='checkbox'][name='p_id']:checked").length;
+        if (select_to_pay != 0) {
+            $.router.load("order.html");
+        } else {
+            $.toast("您还没选择宝贝哦");
+        }
 
     });
+
 
     function cartSum() {
         var total_count = 0;
@@ -1332,21 +1353,98 @@ $(function() {
         });
     });
     /*****page-address*****/
+    $(document).on("pageInit", "#page-address", function(e, pageId, $page) {
+        func_ajax({
+            url: "http://www.michellelee.top/index.php/Api/index/getLocations",
+            data: {
+                open_id: userInfo.open_id
+            },
+            successCallback: function(data) {
+                var temp_data = {
+                    list: data.Common.info
+                };
+                var temp_html = template("page-address-item", temp_data);
+                $("#page-address .list-block.cards-list ul").html(temp_html);
+            }
+        });
+    });
+ $(document).on("click", "#page-address label", function(event) {
+        event.preventDefault();
+        /* Act on the event */
+
+        var update_id = $(this).parents("li").attr("data-id");
+
+            func_ajax({
+                url: "http://www.michellelee.top/index.php/Api/index/addLocation",
+                data: {
+                    open_id: userInfo.open_id,
+                    location_id: update_id,
+                    is_main:1
+                }
+            });
+
+    });
+
+
     $(document).on("click", "#page-address .delete-btn", function(event) {
         event.preventDefault();
         /* Act on the event */
+        var $delete_ele = $(this).parents("li");
+        var delete_id = $delete_ele.attr("data-id");
+
         $.confirm("确定要删除这个地址吗？", function() {
+            func_ajax({
+                url: "http://www.michellelee.top/index.php/Api/index/deleteLocation",
+                data: {
+                    open_id: userInfo.open_id,
+                    location_id: delete_id
+                },
+                successCallback: function(data) {
+                    console.log(data);
+                    if (data.Common.code == 200) {
+                        $delete_ele.remove();
+                    } else {
+                        $.toast("删除收货地址失败");
+                    }
 
-
+                }
+            });
         });
     });
+
     $(document).on("pageInit", "#page-edit-address", function(e, pageId, $page) {
         $("#page-edit-address .city-picker").cityPicker({});
     });
 
     $(document).on("pageInit", "#page-add-address", function(e, pageId, $page) {
         $("#page-add-address .city-picker").cityPicker({});
+
+
+
     });
+    $(document).on("click", "#page-add-address .add.button", function(event) {
+        var flag = $("#page-add-address [name='name'],#page-add-address [name='phone'],#page-add-address [name='first-address'],#page-add-address [name='last-address']").validate();
+        if (flag) {
+            func_ajax({
+                url: "http://www.michellelee.top/index.php/Api/index/addLocation",
+                data: {
+                    open_id: userInfo.open_id,
+                    address: $("#page-add-address [name='first-address']").val() + $("#page-add-address [name='last-address']").val(),
+                    contact: $("#page-add-address [name='name']").val(),
+                    tel: $("#page-add-address [name='phone']").val()
+                },
+                successCallback: function(data) {
+                    if (data.Common.code == 200) {
+                        $.router.back();
+                    } else {
+                        $.toast("添加收货地址失败");
+                    }
+                }
+            });
+        }
+    });
+
+
 
     /*****page-bespeak*****/
 

@@ -1729,7 +1729,6 @@ line-height: .9rem;
 
 #page-cart .bar-nav-secondary>div:nth-child(3) {
     width: 2%;
-
     color: #fff;
     background-color: #f30;
 }
@@ -2350,7 +2349,8 @@ font-size: .7rem;
 
 
 /*********page-address*********/
-
+#page-address .icon.icon-form-checkbox+span,
+#page-inset-address .icon.icon-form-checkbox+span{    padding-left: .5rem;}
 #page-address .card-footer a:visited,
 #page-inset-address .card-footer a:visited {
     color: #5f646e;
