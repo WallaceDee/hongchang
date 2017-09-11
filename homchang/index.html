@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="css/sm.min.css">
+    <link rel="stylesheet" href="css/sm-extend.min.css">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-index" class="page">
+            <header class="bar bar-nav"> <a href="search.html" class="button button-link button-nav pull-right"> <span class="icon icon-search"></span> </a>
+                <h1 class="title">鸿畅商城</h1>
+            </header>
+            <nav class="bar bar-tab"> <a class="tab-item active" href="index.html"> <span class="icon icon-home"></span> <span class="tab-label">首页</span> </a> <a class="tab-item cart-item" href="cart.html"> <span class="icon icon-cart"></span> <span class="tab-label">购物车</span>  </a> <a class="tab-item  " href="user_center.html"> <span class="icon icon-user"></span> <span class="tab-label">我</span> </a> </nav>
+            <div class="content native-scroll">
+                <div class="swiper-container" data-space-between='10'>
+                    <div class="swiper-wrapper"> </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+                <div class="product-nav-list">
+                    <div class="flex"> </div>
+                </div>
+                <div class="content-block-title">热销产品</div>
+                <div class="list-block cards-list product-list">
+                    <ul>
+                    </ul>
+                </div>
+                <div class="footer">
+                    <p class="footer-text">Copyright © 2017 鸿畅环保设备有限公司 <a class="external" href="http://www.miitbeian.gov.cn/">粤ICP备17111952号</a></p>
+                </div>
+            </div>
+        </div>
+        <div id="page-category" class="page">
+            <header class="bar bar-nav"> <a class="button button-link button-nav pull-left back"> <span class="icon icon-left"></span> 返回 </a>
+                <h1 class="title">商品分类</h1>
+            </header>
+            <nav class="bar bar-tab"> <a class="tab-item" href="#page-index"> <span class="icon icon-home"></span> <span class="tab-label">首页</span> </a> <a class="tab-item cart-item" href="cart.html"> <span class="icon icon-cart"></span> <span class="tab-label">购物车</span>  </a> <a class="tab-item  " href="user_center.html"> <span class="icon icon-user"></span> <span class="tab-label">我</span> </a> </nav>
+            <div class="content native-scroll">
+                <div class="flex">
+                    <div class="left-content">
+                        <ul class="category-list">
+                        </ul>
+                    </div>
+                    <div class="flex-item right-content">
+                        <div class="tabs"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script id="page-index-swiper" type="text/html">
+            {{each list as $list i }}
+            <div class="swiper-slide"><a href="{{$list.url}}"><span style="background-image: url({{$list.img}});"></span></a></div>{{/each}}
+        </script>
+        <script id="page-index-category" type="text/html">
+            {{if list.length%2==0}} {{each list as $list i}} {{if i==0}}
+            <div class="flex-item">
+                {{/if}}
+                <span>
+                       <a href="#page-category" data-href="#tab{{i}}">
+                             <span style="background-image: url({{if $list.preview==''}}images/category_default_img.jpg{{else}}{{$list.preview}}{{/if}});"></span>
+                <p>{{$list.name}}</p>
+                </a>
+                </span>
+                {{if (i+1)%2==0&&(i+1)!=list.length}}
+            </div>
+            <div class="flex-item">
+                {{else if (i+1)%2==0}}
+            </div>
+            {{/if}} {{/each}} {{else}} {{each list as $list i}} {{if i==0}}
+            <div class="flex-item">
+                {{/if}}
+                <span {{if i==0}}class="single" {{/if}}>
+                             <a href="#page-category" data-href="#tab{{i}}">
+                                     <span style="background-image: url({{if $list.preview==''}}images/category_default_img.jpg{{else}}{{$list.preview}}{{/if}});"></span>
+                <p>{{$list.name}}</p>
+                </a>
+                </span>
+                {{if i%2==0&&i!=list.length-1}}
+            </div>
+            <div class="flex-item">
+                {{else if i%2==0}}
+            </div>
+            {{/if}} {{/each}} {{/if}}
+        </script>
+        <script id="page-category-nav" type="text/html">
+            {{each list as $list i }}
+            <li>
+                <a href="#tab{{i}}" class="tab-link">
+                    <div><span style="background-image: url({{if $list.preview==''}}images/category_default_img.jpg{{else}}{{$list.preview}}{{/if}});"></span>
+                        <p>{{$list.name}}</p>
+                    </div>
+                </a>
+            </li>
+            {{/each}}
+        </script>
+        <script id="page-index-product" type="text/html">
+            {{each list as $list i }}
+            <li class="card">
+                <a href="details.html?p_id={{$list.id}}">
+                    <div class="card-content">
+                        <div class="card-content-inner"><span class="product-img" style="background-image: url({{$list.feng_mian_image}});"></span>
+                        </div>
+                        {{if $list.sale_type!=0}}
+                        <div class="card-mark-vip"><span class="card-mark-lt bg-red">{{discount_format($list.sale_type)}}</span></div>{{/if}}
+                    </div>
+                    <div class="card-footer">
+                        <div class="product-info-wrapper">
+                            <h4 class="product-title">{{$list.name}}</h4>
+                            <p class="product-desc">{{$list.summary}}</p>
+                            <ul class="product-sub-desc">
+                                <li class="product-sub-desc-item">
+                                    <i>￥</i><em>{{$list.current_price}}</em>
+                                    <del>￥{{$list.origin_price}}</del>
+                                </li>
+                                <li class="product-sub-desc-item"><i class="icon icon-eye"></i><em>{{$list.browse_num}}</em><i class="icon icon-comment"></i><em>{{$list.comment_num}}</em><i class="icon icon-star-empty"></i><em>{{$list.collection_num}}</em></li>
+                            </ul>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {{/each}}
+        </script>
+        <script id="page-category-sub-nav-item" type="text/html">
+            {{if children==""}}
+            <li class="no-data">
+                <div><span>暂无数据</span></div>
+            </li>{{else}} {{each children as $list i}}
+            <li>
+                <a href="search_result.html?c_id={{$list.id}}">
+                    <div><span style="background-image: url({{if $list.preview==''}}images/category_default_img.jpg{{else}}{{$list.preview}}{{/if}});"></span>
+                        <p>{{$list.name}}</p>
+                    </div>
+                </a>
+            </li>
+            {{/each}} {{/if}}
+        </script>
+        <script id="page-category-sub-nav" type="text/html">
+            {{each list as $list i }}
+            <div id="tab{{i}}" class="tab">
+                <div class="content-block-title">热销品类</div>
+                <div class="list-block">
+                    <ul class="sub-category-list">
+                        {{include 'page-category-sub-nav-item' $list}}
+                    </ul>
+                </div>
+                <!--                                     <div class="content-block-title">热销单品</div>
+                                    <div class="list-block media-list">
+                                        <ul class="product-list">
+                                            <li>
+                                                <a href="#" class="item-content item-link">
+                                                    <div class="item-media"><span class="product-img" style="background-image: url(http://gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i3/TB10LfcHFXXXXXKXpXXXXXXXXXX_!!0-item_pic.jpg_250x250q60.jpg);"></span></div>
+                                                    <div class="item-inner">
+                                                        <div class="item-title-row">
+                                                            <div class="item-title">标题标题标题标题标题标题标题标题</div>
+                                                        </div>
+                                                        <div class="item-title-row">
+                                                            <div class="item-title tag-row"><span>每月特惠</span></div>
+                                                        </div>
+                                                        <div class="item-title-row">
+                                                            <div class="item-title price-row">￥<span>999</span></div>
+                                                        </div>
+                                                        <div class="item-subtitle">
+                                                            <i class="icon icon-eye"></i><span>9999</span><i class="icon icon-comment"></i><span>9999</span><i class="icon icon-star-empty"></i><span>9999</span></div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div> -->
+            </div>
+            {{/each}}
+        </script>
+    </div>
+    <script src="http://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=2.5.2"></script>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="http://map.qq.com/api/js?v=2.exp" charset="utf-8"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>

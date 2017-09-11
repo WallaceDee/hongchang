@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="css/sm.min.css">
+    <link rel="stylesheet" href="css/sm-extend.min.css">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-cart" class="page">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+               <span class="icon icon-left"></span>
+                  返回
+            </a>
+                <h1 class="title">购物车</h1>
+            </header>
+                        <nav class="bar bar-tab">
+                <a class="tab-item" href="index.html">
+                  <span class="icon icon-home"></span>
+                   <span class="tab-label">首页</span>
+                </a>
+                <a class="tab-item cart-item active" href="cart.html">
+                  <span class="icon icon-cart"></span>
+                   <span class="tab-label">购物车</span>
+                    
+                </a>
+                <a class="tab-item  " href="user_center.html">
+                  <span class="icon icon-user"></span>
+                  <span class="tab-label">我</span>
+               </a>
+            </nav>
+            <div class="bar bar-tab bar-nav-secondary">
+                <div class="tab-item">
+                    <label class="label-checkbox select-all">
+                        <input type="checkbox" name="checkbox">
+                        <div class="item-media"><i class="icon icon-form-checkbox"></i>全选</div>
+                    </label>
+                </div>
+                <div class="tab-item">合计:<span class="total-price">0</span></div>
+                <div class="tab-item" onclick="$.router.load('order.html')">结算(<span class="total-count">0</span>)</div>
+            </div>
+            <div class="content native-scroll">
+                <div class="list-block media-list">
+                         <div class="item-content cart-title">
+                            <div class="item-media">
+                                <label class="label-checkbox select-all">
+                                    <input type="checkbox" name="checkbox">
+                                    <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                                </label>
+                            </div>
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title"></div>
+                                    <div class="item-after edit-btn"></div>
+                                </div>
+                            </div>
+                        </div>
+                    <ul>
+
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+                     <script id="page-cart-item" type="text/html">
+                      {{each list as $list i}}
+                        <li class="item-content item-link product-item">
+                            <div class="item-media">
+                                <label class="label-checkbox">
+                                    <input type="checkbox" name="p_id" data-value="{{$list.p_id}}">
+                                    <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                                </label>
+                            </div>
+                            <div class="item-media"><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title">{{$list.info.name}}</div>
+                                </div>
+                                <div class="item-subtitle">{{$list.info.summary}}</div>
+                                <div class="item-title-row price-row">
+                                    <div class="item-title"><span class="price">{{$list.info.current_price}}</span></div>
+                                    <div class="item-after"><span class="count">{{$list.count}}</span></div>
+                                </div>
+                            </div>
+                        </li>
+                        {{/each}}
+                    </script>
+    </div>
+   <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>
