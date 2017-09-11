@@ -8,6 +8,7 @@ var my_cart = [];
 if (localStorage.cart != undefined) {
     my_cart = JSON.parse(localStorage.cart);
 }
+var edit_address = null;
 //    sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
 var discount_list = [{
     name: "每月优惠",
@@ -81,32 +82,32 @@ console.log(userInfo);
 ;
 (function($) {
     $.extend($.fn, {
-        validate: function() {
-            var pass = true;
-            this.each(function(index, el) {
-                if ($(this).attr("required") != undefined) { //html的pattern要注意转义
-                    if ($(this).val() == "") {
-                        $.toast($(this).attr("emptyTips"));
-                        pass = false;
-                        return false;
-                    } else {
-                        if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
-                            var reg = new RegExp($(this).attr("pattern"));
-                            console.log(reg);
-                            if (!reg.test($(this).val())) {
-                                $.toast($(this).attr("notMatchTips"));
-                                pass = false;
-                                return false;
+            validate: function() {
+                var pass = true;
+                this.each(function(index, el) {
+                    if ($(this).attr("required") != undefined) { //html的pattern要注意转义
+                        if ($(this).val() == "") {
+                            $.toast($(this).attr("emptyTips"));
+                            pass = false;
+                            return false;
+                        } else {
+                            if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
+                                var reg = new RegExp($(this).attr("pattern"));
+                                console.log(reg);
+                                if (!reg.test($(this).val())) {
+                                    $.toast($(this).attr("notMatchTips"));
+                                    pass = false;
+                                    return false;
+                                }
                             }
                         }
                     }
-                }
-            });
-            return pass;
-        }
-    })
-    // $.getScript = function(url, callback) {
-    // }
+                });
+                return pass;
+            }
+        })
+        // $.getScript = function(url, callback) {
+        // }
 })(Zepto);
 
 function getDiscountWord(status) {
@@ -234,43 +235,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                        'checkJsApi',
-                        'onMenuShareTimeline',
-                        'onMenuShareAppMessage',
-                        'onMenuShareQQ',
-                        'onMenuShareWeibo',
-                        'onMenuShareQZone',
-                        'hideMenuItems',
-                        'showMenuItems',
-                        'hideAllNonBaseMenuItem',
-                        'showAllNonBaseMenuItem',
-                        'translateVoice',
-                        'startRecord',
-                        'stopRecord',
-                        'onVoiceRecordEnd',
-                        'playVoice',
-                        'onVoicePlayEnd',
-                        'pauseVoice',
-                        'stopVoice',
-                        'uploadVoice',
-                        'downloadVoice',
-                        'chooseImage',
-                        'previewImage',
-                        'uploadImage',
-                        'downloadImage',
-                        'getNetworkType',
-                        'openLocation',
-                        'getLocation',
-                        'hideOptionMenu',
-                        'showOptionMenu',
-                        'closeWindow',
-                        'scanQRCode',
-                        'chooseWXPay',
-                        'openProductSpecificView',
-                        'addCard',
-                        'chooseCard',
-                        'openCard'
-                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                            'translateVoice',
+                            'startRecord',
+                            'stopRecord',
+                            'onVoiceRecordEnd',
+                            'playVoice',
+                            'onVoicePlayEnd',
+                            'pauseVoice',
+                            'stopVoice',
+                            'uploadVoice',
+                            'downloadVoice',
+                            'chooseImage',
+                            'previewImage',
+                            'uploadImage',
+                            'downloadImage',
+                            'getNetworkType',
+                            'openLocation',
+                            'getLocation',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'closeWindow',
+                            'scanQRCode',
+                            'chooseWXPay',
+                            'openProductSpecificView',
+                            'addCard',
+                            'chooseCard',
+                            'openCard'
+                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     fun_callback();
@@ -649,7 +650,8 @@ $(function() {
             my_cart.push({
                 p_id: curr_p_id,
                 info: current_product,
-                count: count
+                count: count,
+                select: false
             });
             console.info(1);
 
@@ -1058,7 +1060,18 @@ $(function() {
             $("#page-cart .bar-nav-secondary").addClass("hide");
             $("#page-cart .cart-title").addClass("hide");
         }
-
+        var is_all = true;
+        for (var i = 0; i < my_cart.length; i++) {
+            if (!my_cart[i].select) {
+                is_all = false;
+                break;
+            }
+        }
+        console.log("isall" + is_all);
+        if (is_all) {
+            $("#page-cart .select-all input").prop("checked", true);
+        }
+        cartSum();
     });
 
     $(document).on("click", "#page-cart .select-all", function(event) {
@@ -1069,10 +1082,15 @@ $(function() {
         if (isAll) {
             $("#page-cart .product-item  input[type='checkbox']").prop("checked", false);
             $(".select-all").not(this).find("input").prop("checked", false);
+
         } else {
             $("#page-cart .product-item  input[type='checkbox']").prop("checked", true);
             $(".select-all").not(this).find("input").prop("checked", true);
         }
+        for (var i = 0; i < my_cart.length; i++) {
+            my_cart[i].select = !isAll;
+        }
+        localStorage.cart = JSON.stringify(my_cart);
         cartSum();
     });
 
@@ -1098,9 +1116,7 @@ $(function() {
         if (isNotAll) {
             $("#page-cart .select-all input").prop("checked", false);
         }
-        // cartSum()
-        var total_count = 0;
-        var total_price = 0;
+
         /****************************/
         var flag = !$(this).find("input[type='checkbox']").is(':checked');
         if (flag) {
@@ -1108,20 +1124,18 @@ $(function() {
             item_list.push($(this).find("input[type='checkbox']")[0]);
             item_list = item_list.parents(".product-item");
             console.log(item_list);
+            //更新缓存购物车物品的选择状态//选择
+            my_cart[$(this).parents("li").index()].select = true;
+            localStorage.cart = JSON.stringify(my_cart);
         } else {
             var item_list = $("#page-cart .product-item label").not(this).find("input[type='checkbox']:checked").parents(".product-item");
+            //更新缓存购物车物品的选择状态//反选
+            my_cart[$(this).parents("li").index()].select = false;
+            localStorage.cart = JSON.stringify(my_cart);
         }
         /****************************/
-        item_list.each(function() {
-            var this_count = parseInt($(this).find(".count").text() || $(this).find("input[type='number']").val());
-            total_count += this_count;
-            var this_price = parseFloat($(this).find(".price").text()) * this_count;
-            total_price += this_price;
-        });
-        console.log("count--" + total_count);
-        console.log("price--" + total_price);
-        $("#page-cart .total-price").html(total_price);
-        $("#page-cart .total-count").html(total_count);
+        cartSum();
+
     });
 
     $(document).on("click", "#page-cart .cart-title .edit-btn", function(event) {
@@ -1214,37 +1228,75 @@ $(function() {
         });
     });
 
-    $(document).on("click", "#page-cart   .go-to-order", function(event) {
-        var select_to_pay = $("input[type='checkbox'][name='p_id']:checked").length;
-        if (select_to_pay != 0) {
-            $.router.load("order.html");
-        } else {
-            $.toast("您还没选择宝贝哦");
+    $(document).on("click", "#page-cart .go-to-order", function(event) {
+        var is_empty = true;
+        for (var i = 0; i < my_cart.length; i++) {
+            if (my_cart[i].select) {
+                is_empty = false;
+                break;
+            }
         }
-
+        if (is_empty) {
+            $.toast("您还没选择宝贝哦");
+        } else {
+            $.router.load("order.html");
+        }
     });
 
 
     function cartSum() {
         var total_count = 0;
         var total_price = 0;
-        var item_list = $("#page-cart .product-item input[type='checkbox']:checked").parents(".product-item");
-        item_list.each(function() {
-            var this_count = parseInt($(this).find(".count").text() || $(this).find("input[type='number']").val());
-            total_count += this_count;
-            var this_price = parseFloat($(this).find(".price").text()) * this_count;
-            total_price += this_price;
-        });
+        for (var i = 0; i < my_cart.length; i++) {
+            if (my_cart[i].select) {
+                total_count += my_cart[i].count;
+                total_price += my_cart[i].info.current_price * my_cart[i].count;
+            }
+        }
 
         console.log("count--" + total_count);
         console.log("price--" + total_price);
-        $("#page-cart .total-price").html(total_price);
-        $("#page-cart .total-count").html(total_count);
+        $(".total-price").html(total_price);
+        $(".total-count").html(total_count);
     }
 
 
     /*****page-order*****/
     $(document).on("pageInit", "#page-order", function(e, pageId, $page) {
+
+        cartSum();
+
+        func_ajax({
+            url: "http://www.michellelee.top/index.php/Api/index/getLocations",
+            data: {
+                open_id: userInfo.open_id,
+                is_main: 1
+            },
+            successCallback: function(data) {
+                var default_data = data.Common.info[0];
+                console.log(default_data);
+                $("#page-order .address-block").attr("data-id", default_data.id);
+                $("#page-order .address-block .item-title").html(default_data.contact);
+                $("#page-order .address-block .item-after").html(default_data.tel);
+                $("#page-order .address-block .item-text").html(default_data.address);
+            }
+        });
+
+        func_ajax({
+            url: "http://www.michellelee.top/index.php/Api/index/getCardList",
+            data: {
+                open_id: userInfo.open_id,
+            }
+        });
+
+
+        var temp_data = {
+            list: my_cart
+        }
+        var temp_html = template("page-order-item", temp_data);
+        $("#page-order .order-block ul").html(temp_html);
+
+
 
         $("#page-order .express-type").picker({
             cssClass: "express-type-picker",
@@ -1368,20 +1420,23 @@ $(function() {
             }
         });
     });
- $(document).on("click", "#page-address label", function(event) {
+    $(document).on("click", "#page-address label", function(event) {
         event.preventDefault();
         /* Act on the event */
 
         var update_id = $(this).parents("li").attr("data-id");
-
-            func_ajax({
-                url: "http://www.michellelee.top/index.php/Api/index/addLocation",
-                data: {
-                    open_id: userInfo.open_id,
-                    location_id: update_id,
-                    is_main:1
-                }
-            });
+        var $radio = $(this).find("input");
+        func_ajax({
+            url: "http://www.michellelee.top/index.php/Api/index/addLocation",
+            data: {
+                open_id: userInfo.open_id,
+                location_id: update_id,
+                is_main: 1
+            },
+            successCallback: function(data) {
+                $radio.prop("checked", true);
+            }
+        });
 
     });
 
@@ -1403,6 +1458,7 @@ $(function() {
                     console.log(data);
                     if (data.Common.code == 200) {
                         $delete_ele.remove();
+                        $("#page-address .list-block.cards-list li").eq(0).find("input[type='radio']").prop("checked", true);
                     } else {
                         $.toast("删除收货地址失败");
                     }
@@ -1412,16 +1468,74 @@ $(function() {
         });
     });
 
+    $(document).on("click", "#page-address .edit-btn,#page-address .edit-btn", function(event) {
+        event.preventDefault();
+        /* Act on the event */
+
+        var $li = $(this).parents("li");
+        edit_address = {
+            id: $li.attr("data-id"),
+            name: $li.find(".name").text(),
+            phone: $li.find(".phone").text(),
+            address: $li.find(".address-info").text(),
+
+        }
+        sessionStorage.edit_address = JSON.stringify(edit_address);
+        $.router.load("edit_address.html");
+    });
+
     $(document).on("pageInit", "#page-edit-address", function(e, pageId, $page) {
-        $("#page-edit-address .city-picker").cityPicker({});
+        if (sessionStorage.edit_address != undefined) {
+            edit_address = JSON.parse(sessionStorage.edit_address);
+            $("#page-edit-address [name='name']").val(edit_address.name);
+            $("#page-edit-address [name='phone']").val(edit_address.phone);
+            var address_list = edit_address.address.split(" ");
+            var last_address = address_list.pop();
+            address_list.join(" ");
+            var first_address = address_list;
+            console.log(first_address);
+            $("#page-edit-address [name='last-address']").val(last_address);
+            $("#page-edit-address .city-picker").cityPicker({
+                value: first_address
+            });
+        } else {
+            $.router.load("address.html");
+        }
+    });
+
+
+    $(document).on("click", "#page-edit-address .edit.button", function(event) {
+        var flag = $("#page-edit-address [name='name'],#page-edit-address [name='phone'],#page-edit-address [name='first-address'],#page-edit-address [name='last-address']").validate();
+        if (flag) {
+            func_ajax({
+                url: "http://www.michellelee.top/index.php/Api/index/addLocation",
+                data: {
+                    location_id: edit_address.id,
+                    open_id: userInfo.open_id,
+                    address: $("#page-edit-address [name='first-address']").val() + " " + $("#page-edit-address [name='last-address']").val().trim(),
+                    contact: $("#page-edit-address [name='name']").val(),
+                    tel: $("#page-edit-address [name='phone']").val()
+                },
+                successCallback: function(data) {
+                    if (data.Common.code == 200) {
+                        $.router.back();
+                    } else {
+                        $.toast("修改收货地址失败");
+                    }
+                }
+            });
+        }
     });
 
     $(document).on("pageInit", "#page-add-address", function(e, pageId, $page) {
-        $("#page-add-address .city-picker").cityPicker({});
+        $("#page-add-address .city-picker").cityPicker({
+            value: ""
+        });
 
 
 
     });
+
     $(document).on("click", "#page-add-address .add.button", function(event) {
         var flag = $("#page-add-address [name='name'],#page-add-address [name='phone'],#page-add-address [name='first-address'],#page-add-address [name='last-address']").validate();
         if (flag) {

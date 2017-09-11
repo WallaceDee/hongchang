@@ -1897,7 +1897,7 @@ font-size: .7rem;
     line-height: 1.4rem;
 }
 
-#page-order .sum-row .price {
+#page-order .sum-row .total-price {
     font-size: 1rem;
 
     margin-left: .5rem;
@@ -1905,7 +1905,7 @@ font-size: .7rem;
     color: #f60;
 }
 
-#page-order .sum-row .price:before {
+#page-order .sum-row .total-price:before {
     font-size: .8rem;
 
     content: '￥';
@@ -1918,11 +1918,11 @@ font-size: .7rem;
     text-align: right;
 }
 
-#page-order .bar-tab .tab-item.price-wrapper .price {
+#page-order .bar-tab .tab-item.price-wrapper .total-price {
     color: #f60;
 }
 
-#page-order .bar-tab .tab-item.price-wrapper .price:before {
+#page-order .bar-tab .tab-item.price-wrapper .total-price:before {
     font-size: .7rem;
 
     content: '￥';

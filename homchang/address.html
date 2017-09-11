@@ -41,7 +41,7 @@
               <li class="card" data-id="{{$list.id}}">
                   <div class="card-content">
                       <div class="card-content-inner">
-                          <div class="user-info"><span>{{$list.contact}}</span><span>{{$list.tel}}</span></div>
+                          <div class="user-info"><span class="name">{{$list.contact}}</span><span class="phone">{{$list.tel}}</span></div>
                           <p class="address-info">{{$list.address}}</p>
                       </div>
                   </div>
@@ -50,7 +50,7 @@
                             <input type="radio" name="address" {{if $list.is_main==1}}checked="true"{{/if}}">
                             <div class="item-media"><i class="icon icon-form-checkbox"></i><span></span></div>
                   </label>
-                  </span> <span class="pull-right opeartion-btn"><a href="edit_address.html"><i class="icon icon-edit"></i>编辑</a> <a class="delete-btn"><i class="icon icon-remove"></i>删除</a></span> </div>
+                  </span> <span class="pull-right opeartion-btn"><a class="edit-btn"><i class="icon icon-edit"></i>编辑</a> <a class="delete-btn"><i class="icon icon-remove"></i>删除</a></span> </div>
               </li>
     {{/each}}
     </script>
