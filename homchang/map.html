@@ -15,10 +15,7 @@
     <div class="page-group">
         <div id="page-map" class="page">
             <header class="bar bar-nav">
-                <a class="button button-link button-nav pull-left back">
-               <span class="icon icon-left"></span>
-                  返回
-            </a>
+       
                 <h1 class="title">附近门店</h1>
             </header>
             <div class="bar bar-header-secondary">
@@ -43,7 +40,7 @@
         </div>
         <script id="page-map-link" type="text/html">
             <div class="list-block media-list">
-                <a data-id="{{list.id}}" class="item-content item-link">
+                <a data-id="{{list.id}}" data-location="{{list.ypoint}},{{list.xpoint}}" class="item-content item-link">
                     <div class="item-media">
                         <span class="product-img" style="background-image: url({{list.logo}});"></span>
                     </div>
@@ -51,7 +48,8 @@
                         <div class="item-title-row">
                             <div class="item-title">{{list.name}}</div>
                         </div>
-                        <div class="item-text">地址：{{list.address}}</div>
+                        <div class="item-text">地址：<span>{{list.address}}</span></div>
+                         <div class="item-subtitle">距离{{list.distance.toFixed(2)}}km</div>
                         <div class="item-subtitle">电话：{{list.tel}}</div>
                     </div>
                 </a>
@@ -60,7 +58,7 @@
         <script id="page-map-list-link" type="text/html">
             {{each list as $list i}}
             <li>
-                <a data-id="{{$list.id}}" class="item-content item-link">
+                <a data-id="{{$list.id}}" data-location="{{$list.ypoint}},{{$list.xpoint}}" class="item-content item-link">
                     <div class="item-media">
                         <span class="product-img" style="background-image: url({{$list.logo}});"></span>
                     </div>
@@ -68,8 +66,8 @@
                         <div class="item-title-row">
                             <div class="item-title">{{$list.name}}</div>
                         </div>
-                        <div class="item-text">地址：{{$list.address}}</div>
-                         <div class="item-subtitle">距离{{$list.distance}}km</div>
+                        <div class="item-text">地址：<span>{{$list.address}}</span></div>
+                         <div class="item-subtitle">距离{{$list.distance.toFixed(2)}}km</div>
                         <div class="item-subtitle">电话：{{$list.tel}}</div>
                     </div>
                 </a>
@@ -77,7 +75,6 @@
             {{/each}}
         </script>
     </div>
-    <script src="http://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=2.5.2"></script>
     <script src="js/zepto.min.js"></script>
     <script src="js/sm.js"></script>
     <script src="js/sm-extend.js"></script>

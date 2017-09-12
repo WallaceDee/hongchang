@@ -30,10 +30,26 @@ var discount_list = [{
     name: "周末Party",
     value: 3
 }];
-
-function c() {
-    localStorage.clear();
-}
+//订单状态(可选)"0">未付款"1">已付款"2">已发货"3">已收货"4">已取消"5">已评价
+var order_status_list = [{
+    name: "待付款",
+    value: 0
+}, {
+    name: "已付款",
+    value: 1
+}, {
+    name: "已发货",
+    value: 2
+}, {
+    name: "待评价",
+    value: 3
+}, {
+    name: "已取消",
+    value: 4
+}, {
+    name: "已完成",
+    value: 5
+}];
 
 if (localStorage.userInfo != undefined) {
     userInfo = JSON.parse(localStorage.userInfo);
@@ -90,32 +106,32 @@ console.log(userInfo);
 ;
 (function($) {
     $.extend($.fn, {
-        validate: function() {
-            var pass = true;
-            this.each(function(index, el) {
-                if ($(this).attr("required") != undefined) { //html的pattern要注意转义
-                    if ($(this).val() == "") {
-                        $.toast($(this).attr("emptyTips"));
-                        pass = false;
-                        return false;
-                    } else {
-                        if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
-                            var reg = new RegExp($(this).attr("pattern"));
-                            console.log(reg);
-                            if (!reg.test($(this).val())) {
-                                $.toast($(this).attr("notMatchTips"));
-                                pass = false;
-                                return false;
+            validate: function() {
+                var pass = true;
+                this.each(function(index, el) {
+                    if ($(this).attr("required") != undefined) { //html的pattern要注意转义
+                        if ($(this).val() == "") {
+                            $.toast($(this).attr("emptyTips"));
+                            pass = false;
+                            return false;
+                        } else {
+                            if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
+                                var reg = new RegExp($(this).attr("pattern"));
+                                console.log(reg);
+                                if (!reg.test($(this).val())) {
+                                    $.toast($(this).attr("notMatchTips"));
+                                    pass = false;
+                                    return false;
+                                }
                             }
                         }
                     }
-                }
-            });
-            return pass;
-        }
-    })
-    // $.getScript = function(url, callback) {
-    // }
+                });
+                return pass;
+            }
+        })
+        // $.getScript = function(url, callback) {
+        // }
 })(Zepto);
 /** 
  * 乘法 
@@ -194,22 +210,49 @@ function accSub(arg1, arg2) {
     n = (r1 >= r2) ? r1 : r2;
     return ((arg1 * m - arg2 * m) / m).toFixed(n);
 }
-
-function getDiscountWord(status) {
-    var s = Number(status);
+//getDiscountWord
+function getNameByValue(val, arr) {
+    var v = Number(val);
     var result = "";
-    for (var i = 0; i < discount_list.length; i++) {
-        if (discount_list[i].value == s) {
-            result = discount_list[i].name;
+    for (var i = 0; i < arr.length; i++) {
+        if (arr[i].value == v) {
+            result = arr[i].name;
             break;
         }
     }
     return result;
 }
-template.helper("discount_format", function(status) {
-    return getDiscountWord(status);
-});
+//时间戳格式化
+function func_format_data(timestamp) {
 
+    var temp = timestamp;
+    if (timestamp.toString().length == 10) {
+        temp = timestamp * 1000;
+    }
+
+    var date = new Date(temp * 1);
+    var year = date.getFullYear(),
+        month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1),
+        day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate(),
+        hour = (date.getHours() + 1) > 9 ? (date.getHours() + 1) : '0' + (date.getHours() + 1),
+        minute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes();
+
+    return {
+        date: year + '-' + month + '-' + day,
+        time: hour + ':' + minute,
+        datetime: year + '-' + month + '-' + day + ' ' + hour + ':' + minute
+    };
+}
+template.helper('date_format', function(date) {
+
+    return func_format_data(date);
+})
+template.helper("discount_format", function(status) {
+    return getNameByValue(status, discount_list);
+});
+template.helper("order_status_format", function(status) {
+    return getNameByValue(status, order_status_list);
+});
 
 var time = 10; // time in seconds
 var $progressBar,
@@ -321,46 +364,48 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                        'checkJsApi',
-                        'onMenuShareTimeline',
-                        'onMenuShareAppMessage',
-                        'onMenuShareQQ',
-                        'onMenuShareWeibo',
-                        'onMenuShareQZone',
-                        'hideMenuItems',
-                        'showMenuItems',
-                        'hideAllNonBaseMenuItem',
-                        'showAllNonBaseMenuItem',
-                        'translateVoice',
-                        'startRecord',
-                        'stopRecord',
-                        'onVoiceRecordEnd',
-                        'playVoice',
-                        'onVoicePlayEnd',
-                        'pauseVoice',
-                        'stopVoice',
-                        'uploadVoice',
-                        'downloadVoice',
-                        'chooseImage',
-                        'previewImage',
-                        'uploadImage',
-                        'downloadImage',
-                        'getNetworkType',
-                        'openLocation',
-                        'getLocation',
-                        'hideOptionMenu',
-                        'showOptionMenu',
-                        'closeWindow',
-                        'scanQRCode',
-                        'chooseWXPay',
-                        'openProductSpecificView',
-                        'addCard',
-                        'chooseCard',
-                        'openCard'
-                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                            'translateVoice',
+                            'startRecord',
+                            'stopRecord',
+                            'onVoiceRecordEnd',
+                            'playVoice',
+                            'onVoicePlayEnd',
+                            'pauseVoice',
+                            'stopVoice',
+                            'uploadVoice',
+                            'downloadVoice',
+                            'chooseImage',
+                            'previewImage',
+                            'uploadImage',
+                            'downloadImage',
+                            'getNetworkType',
+                            'openLocation',
+                            'getLocation',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'closeWindow',
+                            'scanQRCode',
+                            'chooseWXPay',
+                            'openProductSpecificView',
+                            'addCard',
+                            'chooseCard',
+                            'openCard'
+                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
-                    fun_callback();
+                    if (typeof(fun_callback) == "function") {
+                        fun_callback();
+                    }
                 });
             }
         });
@@ -638,8 +683,8 @@ $(function() {
                 $(".popup-select .avatar").css("background-image", "url(" + data.feng_mian_image + ")");
                 $(".popup-select h3").html(data.current_price);
                 var d = "暂无优惠";
-                if (getDiscountWord(data.sale_type) != "") {
-                    d = '<span>' + getDiscountWord(data.sale_type) + '</span>';
+                if (getNameByValue(data.sale_type, discount_list) != "") {
+                    d = '<span>' + getNameByValue(data.sale_type, discount_list) + '</span>';
                 }
                 $("#page-details .discount .tag-list").html(d);
 
@@ -887,7 +932,7 @@ $(function() {
 
                     for (var i = 0; i < list.length; i++) {
                         var tag = "";
-                        var tag_word = getDiscountWord(list[i].sale_type);
+                        var tag_word = getNameByValue(data.sale_type, discount_list);
                         if (tag_word != "") {
                             tag = "<span>" + tag_word + "</span>"
                         }
@@ -1481,15 +1526,77 @@ $(function() {
         //提交订单
         func_ajax({
             url: "http://www.michellelee.top/index.php/Api/index/orderCommit",
-            data:temp_data,
-            successCallback:function(data){
-                
+            data: temp_data,
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    var order_num = data.Common.info;
+                    window.location.href = "pay.html?order_num=" + order_num;
+                } else {
+                    $.toast("提交订单失败，请刷新页面重试！")
+                }
             }
         });
 
 
     });
 
+    /*****page-pay*****/
+    $(document).on("pageInit", "#page-pay", function(e, pageId, $page) {
+        wxApi();
+        func_ajax({
+            url: "http://www.michellelee.top/index.php/Api/index/getOrderInfo",
+            data: {
+                open_id: userInfo.open_id,
+                order_no: getParameter("order_num")
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    var temp_data = {
+                        list: data.Common.info
+                    };
+                    var temp_html = template("page-pay-info", temp_data);
+                    $("#page-pay .content").html(temp_html);
+                } else {
+                    $.toast("未知错误");
+                }
+            }
+        });
+    });
+
+    $(document).on("click", "#page-pay .pay", function(event) {
+        event.preventDefault();
+        /* Act on the event */
+        var name = "鸿畅环保设备有限公司";
+        var order_num = $("#page-pay .order-num").text();
+        $.ajax({
+            type: 'POST',
+            url: "http://www.michellelee.top/index.php/Api/index/wxPay",
+            data: {
+                open_id:userInfo.open_id,
+                name: name,
+                order_no: order_num
+            },
+            dataType: 'json',
+            cache: false,
+            success: function(data) {
+                if (data.Common.code == 200) {
+                   var c = data.Common.info;
+                    wx.chooseWXPay({
+                        timestamp: c.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                        nonceStr: c.nonceStr, // 支付签名随机串，不长于 32 位
+                        package: c.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+                        signType: c.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+                        paySign: c.paySign, // 支付签名
+                        success: function(res) {
+                            // 支付成功后的回调函数
+                            //                        location.href = '';
+                        },
+                    });
+                }
+
+            }
+        })
+    });
 
     /*****page-my-order*****/
     $(document).on("pageInit", "#page-my-order", function(e, pageId, $page) {
@@ -1750,6 +1857,9 @@ $(function() {
     /*****page-map*****/
 
     $(document).on("pageInit", "#page-map,#page-inset-map", function(e, pageId, $page) {
+        if (pageId == "page-map") {
+            wxApi();
+        }
         var $this = $(this);
         var map = new qq.maps.Map(document.getElementById("map-container"), {
             zoom: 13,
@@ -1867,6 +1977,21 @@ $(function() {
         orderInfo.store = temp_data;
         sessionStorage.orderInfo = JSON.stringify(orderInfo);
         $.router.load("#page-order");
+    });
+    $(document).on("click", "#page-map #tab1 a.item-link,#page-map #tab2 a.item-link", function(event) {
+        var $this = $(this);
+        var location = $this.attr("data-location").split(",");
+        console.log(location);
+        var name = $this.find(".item-title").text();
+        var address = $this.find(".item-text").text();
+        wx.openLocation({
+            latitude: parseFloat(location[0]), // 纬度，浮点数，范围为90 ~ -90
+            longitude: parseFloat(location[1]), // 经度，浮点数，范围为180 ~ -180。
+            name: name, // 位置名
+            address: address, // 地址详情说明
+            scale: 28, // 地图缩放级别,整形值,范围从1~28。默认为最大
+            infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
+        });
     });
     /*****init*****/
     $.init();
