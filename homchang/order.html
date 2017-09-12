@@ -55,7 +55,7 @@
                                 <div class="item-inner">
                                     <div class="item-title">优惠劵</div>
                                     <div class="item-after">
-                                   无可用
+                                        无可用
                                     </div>
                                 </div>
                             </a>
@@ -65,17 +65,17 @@
                                 <div class="item-inner">
                                     <div class="item-title">配送方式</div>
                                     <div class="item-after">
-                                        <input type="text" class="express-type" readonly value="送货上门" style="height: initial; text-align: right;">
+                                        <input type="text" class="express-type" readonly style="height: initial; text-align: right;">
                                     </div>
                                 </div>
                             </a>
                         </li>
                         <li class="inset-map-wrapper hide">
-                            <a href="map.html" class="item-link item-content">
+                            <a href="#page-inset-map" class="item-link item-content">
                                 <div class="item-inner">
                                     <div class="item-title">自提门店</div>
                                     <div class="item-after">
-  
+                                        点击选择自提门店
                                     </div>
                                 </div>
                             </a>
@@ -85,7 +85,7 @@
                                 <div class="item-inner">
                                     <div class="item-title label">买家留言</div>
                                     <div class="item-input">
-                                        <textarea></textarea>
+                                        <textarea placeholder="选题：对本次交易的说明"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -100,55 +100,115 @@
                 </div>
             </div>
         </div>
-
-    <!-- About Popup -->
-    <div class="popup popup-coupon">
-        <h2 class="title">优惠劵</h2>
-        <div class="content-block">
-            <div class="list-block media-list">
-                <ul>
-                <li class="item-content "> <div class="item-title">您暂无可以使用的优惠卷</div></li>
-                    <li>
-                        <label class="label-checkbox item-content">
-                            <input type="radio" name="my-radio">
-                            <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
-                            <div class="item-media"><i class="icon icon-coupon"></i></div>
-                            <div class="item-inner">
-                                <div class="item-title-row">
-                                    <div class="item-title">石头</div>
-                                </div>
-                                <div class="item-subtitle">New messages from John Doe</div>
-                            </div>
-                        </label>
-                    </li>
-                </ul>
+        <div id="page-inset-map" class="page">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+               <span class="icon icon-left"></span>
+                  返回
+            </a>
+                <h1 class="title">附近门店</h1>
+            </header>
+            <div class="bar bar-header-secondary">
+                <div class="buttons-tab">
+                    <a href="#tab1" class="tab-link button active">地图</a>
+                    <a href="#tab2" class="tab-link button">列表</a>
+                </div>
+            </div>
+            <div class="content native-scroll">
+                <div class="tabs" style="height: 100%;">
+                    <div id="tab1" class="tab active" style="height: 100%;">
+                        <div id="map-container" style="width: 100%;height: 100%;"></div>
+                    </div>
+                    <div id="tab2" class="tab">
+                        <div class="list-block media-list">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <a class="close-popup">关闭</a>
-    </div>
-     <script id="page-order-item" type="text/html">
-        {{each list as $list i }}
-        {{if $list.select==true}}
-                            <li>
-                            <a href="#" class="item-link item-content">
-                                <div class="item-media"><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
+        <!-- About Popup -->
+        <div class="popup popup-coupon">
+            <h2 class="title">优惠劵</h2>
+            <div class="content-block">
+                <div class="list-block media-list">
+                    <ul>
+                        <li class="item-content ">
+                            <div class="item-title">您暂无可以使用的优惠卷</div>
+                        </li>
+<!--                         <li>
+                            <label class="label-checkbox item-content">
+                                <input type="radio" name="my-radio">
+                                <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                                <div class="item-media"><i class="icon icon-coupon"></i></div>
                                 <div class="item-inner">
                                     <div class="item-title-row">
-                                        <div class="item-title">{{$list.info.name}}</div>
+                                        <div class="item-title">石头</div>
                                     </div>
-                                    <div class="item-subtitle">{{$list.info.summary}}</div>
-                                    <div class="item-title-row price-row">
-                                        <div class="item-title"><span class="price">{{$list.info.current_price}}</span></div>
-                                        <div class="item-after"><span class="count">{{$list.count}}</span></div>
-                                    </div>
+                                    <div class="item-subtitle">New messages from John Doe</div>
                                 </div>
-                            </a>
-                        </li>
-
-{{/if}}
-
-                            {{/each}}
-                    </script>
+                            </label>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+            <a class="close-popup">关闭</a>
+        </div>
+        <script id="page-order-item" type="text/html">
+            {{each list as $list i }} {{if $list.select==true}}
+            <li>
+                <a  class="item-link item-content">
+                    <div class="item-media"><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title">{{$list.info.name}}</div>
+                        </div>
+                        <div class="item-subtitle">{{$list.info.summary}}</div>
+                        <div class="item-title-row price-row">
+                            <div class="item-title"><span class="price">{{$list.info.current_price}}</span></div>
+                            <div class="item-after"><span class="count">{{$list.count}}</span></div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {{/if}} {{/each}}
+        </script>
+        <script id="page-map-link" type="text/html">
+            <div class="list-block media-list">
+                <a data-id="{{list.id}}" class="item-content item-link">
+                    <div class="item-media">
+                        <span class="product-img" style="background-image: url({{list.logo}});"></span>
+                    </div>
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title">{{list.name}}</div>
+                        </div>
+                        <div class="item-text">地址：{{list.address}}</div>
+                        <div class="item-subtitle">电话：{{list.tel}}</div>
+                    </div>
+                </a>
+            </div>
+        </script>
+        <script id="page-map-list-link" type="text/html">
+            {{each list as $list i}}
+            <li>
+                <a data-id="{{$list.id}}" class="item-content item-link">
+                    <div class="item-media">
+                        <span class="product-img" style="background-image: url({{$list.logo}});"></span>
+                    </div>
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title">{{$list.name}}</div>
+                        </div>
+                        <div class="item-text">地址：{{$list.address}}</div>
+                        <div class="item-subtitle">距离{{$list.distance}}km</div>
+                        <div class="item-subtitle">电话：{{$list.tel}}</div>
+                    </div>
+                </a>
+            </li>
+            {{/each}}
+        </script>
     </div>
     <script src="js/zepto.min.js"></script>
     <script src="js/sm.js"></script>

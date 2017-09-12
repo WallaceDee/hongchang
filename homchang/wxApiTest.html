@@ -24,7 +24,6 @@
                 <li class="label_item wxapi_index_item"><a class="label_inner" href="#menu-shopping">微信小店接口</a></li>
                 <li class="label_item wxapi_index_item"><a class="label_inner" href="#menu-card">微信卡券接口</a></li>
                 <li class="label_item wxapi_index_item"><a class="label_inner" href="#menu-pay">微信支付接口</a></li>
-                <li class="label_item wxapi_index_item"><a class="label_inner" href="#menu-refund">微信申请退款接口</a></li>
             </ul>
         </div>
         <div class="lbox_close wxapi_form">
@@ -108,14 +107,11 @@
             <button class="btn btn_primary" id="openCard">openCard</button>
             <h3 id="menu-pay">微信支付接口</h3>
             <span class="desc">发起一个微信支付请求</span>
-            <button class="btn btn_primary" id=""  onclick="_onPay()">chooseWXPay</button>
-            <h3 id="menu-refund">微信申请退款接口</h3>
-            <span class="desc">发起一个微信申请退款请求</span>
-            <button class="btn btn_primary" id="chooseWXRefund" onclick="_onRefund()">chooseWXRefund</button>
+            <button class="btn btn_primary" id="chooseWXPay">chooseWXPay</button>
         </div>
     </div>
 </body>
-        <script src="http://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=2.5.2"></script>
+<script src="http://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=2.5.2"></script>
 <script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
 <script src="js/zepto.min.js"></script>
 <script>
@@ -190,88 +186,6 @@ $.ajax({
         });
     }
 });
-
-function _onPay()
-{
-    var name = '蔡光平';
-    var total_price = 0.01;
-    var order_no = 'caigan2016';
-    $.ajax({
-        type:'POST',
-        url:"http://www.michellelee.top/index.php/Api/index/wxPay",
-        data:{name:name,total_price:total_price,order_no:order_no},
-        dataType:'json',
-        cache: false,
-        success:function(data){
-//            alert(JSON.stringify(data));
-            if(data==null)
-            {
-                alert('null');
-                return false;
-            }else if(data.Common.code==200){
-                c = data.Common.info;
-                wx.chooseWXPay({
-                    timestamp: c.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-                    nonceStr: c.nonceStr, // 支付签名随机串，不长于 32 位
-                    package: c.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
-                    signType: c.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-                    paySign: c.paySign, // 支付签名
-                    success: function (res) {
-                        // 支付成功后的回调函数
-//                        location.href = '';
-                    },
-                });
-            }
-
-        },
-        error: function(xhr, status, error) {
-            console.log(xhr);
-            console.log(status);
-            console.log(error);
-            var ua = navigator.userAgent.toLowerCase();//获取判断用的对象
-            if (ua.match(/MicroMessenger/i) != "micromessenger") {
-                alert('请在微信浏览器中打开');
-            }
-        }
-
-    })
-}
-
-
-function _onRefund()
-{
-//    var name = '蔡光平';
-//    var total_price = 0.01;
-    var order_no = 'caigan2016';
-    $.ajax({
-        type:'POST',
-        url:"http://www.michellelee.top/index.php/Api/index/wxRefund",
-        data:{order_no:order_no},
-        dataType:'json',
-        cache: false,
-        success:function(data){
-            alert(JSON.stringify(data));
-            if(data==null)
-            {
-                alert('null');
-                return;
-            }else if(data.Common.code==200){
-                c = data.Common.info;
-            }
-
-        },
-        error: function(xhr, status, error) {
-            console.log(xhr);
-            console.log(status);
-            console.log(error);
-            var ua = navigator.userAgent.toLowerCase();//获取判断用的对象
-            if (ua.match(/MicroMessenger/i) != "micromessenger") {
-                alert('请在微信浏览器中打开');
-            }
-        }
-
-    })
-}
 </script>
 <script src="http://203.195.235.76/jssdk/js/demo.js">
 </script>

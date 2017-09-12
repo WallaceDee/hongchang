@@ -3,12 +3,22 @@ var domain = document.domain;
 var entrance_url = window.location.href; //记录入口url地址，解决ios pushState 地址栏不变的bug
 var is_ios_and_initWx = false;
 
+var userInfo = null;
 var current_product = null;
 var my_cart = [];
 if (localStorage.cart != undefined) {
     my_cart = JSON.parse(localStorage.cart);
 }
-var edit_address = null;
+var orderInfo = {
+    address_id: "",
+    express_type: "",
+    products: [],
+    store: "",
+    memo: ""
+};
+if (sessionStorage.orderInfo != undefined) {
+    orderInfo = JSON.parse(sessionStorage.orderInfo);
+}
 //    sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
 var discount_list = [{
     name: "每月优惠",
@@ -25,7 +35,6 @@ function c() {
     localStorage.clear();
 }
 
-var userInfo = null;
 if (localStorage.userInfo != undefined) {
     userInfo = JSON.parse(localStorage.userInfo);
 } else {
@@ -45,7 +54,6 @@ if (localStorage.userInfo != undefined) {
                 if (data.Common.code == 200) {
                     userInfo = data.Common.info;
                     localStorage.userInfo = JSON.stringify(data.Common.info);
-                    console.log(data.Common.info);
                     console.log("用户信息已缓存！");
                 }
             }
@@ -82,33 +90,110 @@ console.log(userInfo);
 ;
 (function($) {
     $.extend($.fn, {
-            validate: function() {
-                var pass = true;
-                this.each(function(index, el) {
-                    if ($(this).attr("required") != undefined) { //html的pattern要注意转义
-                        if ($(this).val() == "") {
-                            $.toast($(this).attr("emptyTips"));
-                            pass = false;
-                            return false;
-                        } else {
-                            if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
-                                var reg = new RegExp($(this).attr("pattern"));
-                                console.log(reg);
-                                if (!reg.test($(this).val())) {
-                                    $.toast($(this).attr("notMatchTips"));
-                                    pass = false;
-                                    return false;
-                                }
+        validate: function() {
+            var pass = true;
+            this.each(function(index, el) {
+                if ($(this).attr("required") != undefined) { //html的pattern要注意转义
+                    if ($(this).val() == "") {
+                        $.toast($(this).attr("emptyTips"));
+                        pass = false;
+                        return false;
+                    } else {
+                        if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
+                            var reg = new RegExp($(this).attr("pattern"));
+                            console.log(reg);
+                            if (!reg.test($(this).val())) {
+                                $.toast($(this).attr("notMatchTips"));
+                                pass = false;
+                                return false;
                             }
                         }
                     }
-                });
-                return pass;
-            }
-        })
-        // $.getScript = function(url, callback) {
-        // }
+                }
+            });
+            return pass;
+        }
+    })
+    // $.getScript = function(url, callback) {
+    // }
 })(Zepto);
+/** 
+ * 乘法 
+ * @param arg1 
+ * @param arg2 
+ * @returns {Number} 
+ */
+function accMul(arg1, arg2) {
+    var m = 0,
+        s1 = arg1.toString(),
+        s2 = arg2.toString();
+    try {
+        m += s1.split(".")[1].length
+    } catch (e) {}
+    try {
+        m += s2.split(".")[1].length
+    } catch (e) {}
+    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m)
+}
+/** 
+ * 加法 
+ * @param arg1 
+ * @param arg2 
+ * @returns {Number} 
+ */
+function accAdd(arg1, arg2) {
+    var r1, r2, m, c;
+    try {
+        r1 = arg1.toString().split(".")[1].length
+    } catch (e) {
+        r1 = 0
+    }
+    try {
+        r2 = arg2.toString().split(".")[1].length
+    } catch (e) {
+        r2 = 0
+    }
+    c = Math.abs(r1 - r2);
+    m = Math.pow(10, Math.max(r1, r2))
+    if (c > 0) {
+        var cm = Math.pow(10, c);
+        if (r1 > r2) {
+            arg1 = Number(arg1.toString().replace(".", ""));
+            arg2 = Number(arg2.toString().replace(".", "")) * cm;
+        } else {
+            arg1 = Number(arg1.toString().replace(".", "")) * cm;
+            arg2 = Number(arg2.toString().replace(".", ""));
+        }
+    } else {
+        arg1 = Number(arg1.toString().replace(".", ""));
+        arg2 = Number(arg2.toString().replace(".", ""));
+    }
+    return (arg1 + arg2) / m
+}
+/** 
+ * 减法 
+ * @param arg1 
+ * @param arg2 
+ * @returns 
+ */
+function accSub(arg1, arg2) {
+    var r1, r2, m, n;
+    try {
+        r1 = arg1.toString().split(".")[1].length
+    } catch (e) {
+        r1 = 0
+    }
+    try {
+        r2 = arg2.toString().split(".")[1].length
+    } catch (e) {
+        r2 = 0
+    }
+    m = Math.pow(10, Math.max(r1, r2));
+    //last modify by deeka  
+    //动态控制精度长度  
+    n = (r1 >= r2) ? r1 : r2;
+    return ((arg1 * m - arg2 * m) / m).toFixed(n);
+}
 
 function getDiscountWord(status) {
     var s = Number(status);
@@ -194,16 +279,17 @@ function func_ajax(option) {
         data: opt.data,
         dataType: opt.dataType,
         async: opt.async,
-        beforeSend: function() {},
+        beforeSend: function() {
+            $.showIndicator();
+        },
         success: function(data) {
             opt.successCallback(data);
+            $.hideIndicator();
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
             console.error(XMLHttpRequest.status + "-" + XMLHttpRequest.readyState + "-" + textStatus);
         }
-
     });
-
 }
 
 function wxApi(fun_callback) {
@@ -235,43 +321,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                            'checkJsApi',
-                            'onMenuShareTimeline',
-                            'onMenuShareAppMessage',
-                            'onMenuShareQQ',
-                            'onMenuShareWeibo',
-                            'onMenuShareQZone',
-                            'hideMenuItems',
-                            'showMenuItems',
-                            'hideAllNonBaseMenuItem',
-                            'showAllNonBaseMenuItem',
-                            'translateVoice',
-                            'startRecord',
-                            'stopRecord',
-                            'onVoiceRecordEnd',
-                            'playVoice',
-                            'onVoicePlayEnd',
-                            'pauseVoice',
-                            'stopVoice',
-                            'uploadVoice',
-                            'downloadVoice',
-                            'chooseImage',
-                            'previewImage',
-                            'uploadImage',
-                            'downloadImage',
-                            'getNetworkType',
-                            'openLocation',
-                            'getLocation',
-                            'hideOptionMenu',
-                            'showOptionMenu',
-                            'closeWindow',
-                            'scanQRCode',
-                            'chooseWXPay',
-                            'openProductSpecificView',
-                            'addCard',
-                            'chooseCard',
-                            'openCard'
-                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                        'checkJsApi',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ',
+                        'onMenuShareWeibo',
+                        'onMenuShareQZone',
+                        'hideMenuItems',
+                        'showMenuItems',
+                        'hideAllNonBaseMenuItem',
+                        'showAllNonBaseMenuItem',
+                        'translateVoice',
+                        'startRecord',
+                        'stopRecord',
+                        'onVoiceRecordEnd',
+                        'playVoice',
+                        'onVoicePlayEnd',
+                        'pauseVoice',
+                        'stopVoice',
+                        'uploadVoice',
+                        'downloadVoice',
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'downloadImage',
+                        'getNetworkType',
+                        'openLocation',
+                        'getLocation',
+                        'hideOptionMenu',
+                        'showOptionMenu',
+                        'closeWindow',
+                        'scanQRCode',
+                        'chooseWXPay',
+                        'openProductSpecificView',
+                        'addCard',
+                        'chooseCard',
+                        'openCard'
+                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     fun_callback();
@@ -280,9 +366,6 @@ function wxApi(fun_callback) {
         });
         is_ios_and_initWx = true;
     }
-
-
-
 }
 
 
@@ -575,8 +658,6 @@ $(function() {
                         });
                     });
                 });
-
-
             }
         });
 
@@ -634,17 +715,13 @@ $(function() {
         var count = Number($("#page-details .chose-count").text());
         //检测购物车里是否有该物品
         var curr_p_id = getParameter("p_id");
-
         var t = -1;
-
         for (var i = 0; i < my_cart.length; i++) {
             if (my_cart[i].p_id == curr_p_id) {
                 t = i;
                 break;
             }
         }
-        console.log(curr_p_id);
-        console.log(t);
         //购物车已有，不添加只更新数量
         if (t == -1) {
             my_cart.push({
@@ -653,13 +730,9 @@ $(function() {
                 count: count,
                 select: false
             });
-            console.info(1);
-
         } else {
-            console.info(2);
             my_cart[t].count = Number(my_cart[t].count) + count;
         }
-
         localStorage.cart = JSON.stringify(my_cart);
         console.log(my_cart);
         setCartSupIcon();
@@ -1185,14 +1258,16 @@ $(function() {
                 }
                 my_cart = edited_cart;
             }
-            console.log(my_cart);
-            localStorage.cart = JSON.stringify(my_cart);
             //删除最后一个商品
             if ($("#page-cart .product-item").length == 0) {
                 $("#page-cart .list-block ul").html('<li class="no-goods">购物车空空如也<br>去挑几件好货吧</li>');
                 $("#page-cart .bar-nav-secondary").addClass("hide");
                 $("#page-cart .cart-title").addClass("hide");
             }
+            cartSum();
+            setCartSupIcon();
+            localStorage.cart = JSON.stringify(my_cart);
+
         } else {
             //开启编辑
             $("#page-cart .product-item").append('<div class="item-media delete-btn">删除</div>');
@@ -1250,7 +1325,7 @@ $(function() {
         for (var i = 0; i < my_cart.length; i++) {
             if (my_cart[i].select) {
                 total_count += my_cart[i].count;
-                total_price += my_cart[i].info.current_price * my_cart[i].count;
+                total_price = accAdd(total_price, accMul(parseFloat(my_cart[i].info.current_price), parseFloat(my_cart[i].count))).toFixed(2);
             }
         }
 
@@ -1264,8 +1339,32 @@ $(function() {
     /*****page-order*****/
     $(document).on("pageInit", "#page-order", function(e, pageId, $page) {
 
+        console.log(orderInfo);
+        var temp_data = {
+            list: []
+        };
+        var temp_data1 = [];
+        for (var i = 0; i < my_cart.length; i++) {
+            if (my_cart[i].select) {
+                temp_data.list.push(my_cart[i]);
+                temp_data1.push({
+                    product_id: my_cart[i].p_id,
+                    count: my_cart[i].count
+                });
+            }
+        }
+        if (temp_data1 == "") {
+            $.router.load("cart.html");
+            return false;
+        }
+        orderInfo.products = temp_data1;
+        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+        var temp_html = template("page-order-item", temp_data);
+        $("#page-order .order-block ul").html(temp_html);
+
         cartSum();
 
+        //订单默认地址
         func_ajax({
             url: "http://www.michellelee.top/index.php/Api/index/getLocations",
             data: {
@@ -1273,15 +1372,19 @@ $(function() {
                 is_main: 1
             },
             successCallback: function(data) {
-                var default_data = data.Common.info[0];
-                console.log(default_data);
-                $("#page-order .address-block").attr("data-id", default_data.id);
-                $("#page-order .address-block .item-title").html(default_data.contact);
-                $("#page-order .address-block .item-after").html(default_data.tel);
-                $("#page-order .address-block .item-text").html(default_data.address);
+                if (data.Common.code == 200) {
+                    var default_data = data.Common.info[0];
+
+                    orderInfo.address_id = default_data.id;
+                    sessionStorage.orderInfo = JSON.stringify(orderInfo);
+
+                    $("#page-order .address-block .item-title").html(default_data.contact);
+                    $("#page-order .address-block .item-after").html(default_data.tel);
+                    $("#page-order .address-block .item-text").html(default_data.address);
+                }
             }
         });
-
+        //卡券
         func_ajax({
             url: "http://www.michellelee.top/index.php/Api/index/getCardList",
             data: {
@@ -1290,14 +1393,22 @@ $(function() {
         });
 
 
-        var temp_data = {
-            list: my_cart
+
+        //快递
+        var default_express = "送货上门";
+
+        if (!(orderInfo.express_type == "" || orderInfo.express_type == undefined)) {
+            if (orderInfo.express_type == "1") {
+                $("#page-order .inset-map-wrapper").removeClass("hide");
+                default_express = "到店自提";
+            } else {
+                $("#page-order .inset-map-wrapper").addClass("hide");
+            }
+        } else {
+            orderInfo.express_type = 2;
+            sessionStorage.orderInfo = JSON.stringify(orderInfo);
         }
-        var temp_html = template("page-order-item", temp_data);
-        $("#page-order .order-block ul").html(temp_html);
-
-
-
+        $("#page-order .express-type").val(default_express);
         $("#page-order .express-type").picker({
             cssClass: "express-type-picker",
             cols: [{
@@ -1305,6 +1416,12 @@ $(function() {
                 values: ["送货上门", "到店自提"]
             }]
         });
+        //附近门店
+        if (!(orderInfo.store == "" || orderInfo.store == undefined)) {
+            $("#page-order .inset-map-wrapper .item-after").html(orderInfo.store.name);
+        }
+        //留言
+        $("#page-order textarea").val(orderInfo.memo);
 
     });
     $(document).on("click", ".express-type-picker .close-picker", function(event) {
@@ -1314,17 +1431,63 @@ $(function() {
         console.log(value);
         if (value == "到店自提") {
             $("#page-order .inset-map-wrapper").removeClass("hide");
+            orderInfo.express_type = 1;
+            sessionStorage.orderInfo = JSON.stringify(orderInfo);
         } else {
             $("#page-order .inset-map-wrapper").addClass("hide");
+            orderInfo.express_type = 2;
+            sessionStorage.orderInfo = JSON.stringify(orderInfo);
         }
     });
-
-
     $(document).on("click", "#page-order .express-type-wrapper", function(event) {
         event.preventDefault();
         /* Act on the event */
-
         $(".express-type").picker("open");
+    });
+    $(document).on("change", "#page-order textarea", function(event) {
+        event.preventDefault();
+        /* Act on the event */
+        orderInfo.memo = $(this).val();
+        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+    });
+
+
+    $(document).on("click", "#page-order .submit-order-btn", function(event) {
+        event.preventDefault();
+        /* Act on the event */
+        //todo
+        console.log(orderInfo);
+        var temp_data = {
+            open_id: userInfo.open_id,
+            cart: JSON.stringify(orderInfo.products),
+            total_price: $("nav .total-price").text(),
+            location_id: orderInfo.address_id,
+            pick_type: orderInfo.express_type,
+            buyer_message: orderInfo.memo
+        }
+        if (orderInfo.express_type == 2 && (orderInfo.address_id == "" || orderInfo.address_id == undefined)) {
+            $.toast("请添加收货地址");
+            return false;
+        }
+        if (orderInfo.express_type == 1 && (orderInfo.store == "" || orderInfo.store == undefined)) {
+            $.toast("请选择自提门店");
+            return false;
+        }
+        if (orderInfo.express_type == 1) {
+            temp_data.branch_id = orderInfo.store.id;
+        }
+
+
+        //提交订单
+        func_ajax({
+            url: "http://www.michellelee.top/index.php/Api/index/orderCommit",
+            data:temp_data,
+            successCallback:function(data){
+                
+            }
+        });
+
+
     });
 
 
@@ -1412,11 +1575,13 @@ $(function() {
                 open_id: userInfo.open_id
             },
             successCallback: function(data) {
-                var temp_data = {
-                    list: data.Common.info
-                };
-                var temp_html = template("page-address-item", temp_data);
-                $("#page-address .list-block.cards-list ul").html(temp_html);
+                if (data.Common.code == 200) {
+                    var temp_data = {
+                        list: data.Common.info
+                    };
+                    var temp_html = template("page-address-item", temp_data);
+                    $("#page-address .list-block.cards-list ul").html(temp_html);
+                }
             }
         });
     });
@@ -1458,11 +1623,14 @@ $(function() {
                     console.log(data);
                     if (data.Common.code == 200) {
                         $delete_ele.remove();
-                        $("#page-address .list-block.cards-list li").eq(0).find("input[type='radio']").prop("checked", true);
+                        if ($("#page-address .list-block.cards-list li").length == 0) {
+                            $("#page-address .list-block.cards-list ul").html('<li class="no-data"><div><span>暂无地址</span></div></li>');
+                        } else {
+                            $("#page-address .list-block.cards-list li").eq(0).find("input[type='radio']").prop("checked", true);
+                        }
                     } else {
                         $.toast("删除收货地址失败");
                     }
-
                 }
             });
         });
@@ -1473,7 +1641,7 @@ $(function() {
         /* Act on the event */
 
         var $li = $(this).parents("li");
-        edit_address = {
+        var edit_address = {
             id: $li.attr("data-id"),
             name: $li.find(".name").text(),
             phone: $li.find(".phone").text(),
@@ -1486,7 +1654,7 @@ $(function() {
 
     $(document).on("pageInit", "#page-edit-address", function(e, pageId, $page) {
         if (sessionStorage.edit_address != undefined) {
-            edit_address = JSON.parse(sessionStorage.edit_address);
+            var edit_address = JSON.parse(sessionStorage.edit_address);
             $("#page-edit-address [name='name']").val(edit_address.name);
             $("#page-edit-address [name='phone']").val(edit_address.phone);
             var address_list = edit_address.address.split(" ");
@@ -1581,8 +1749,8 @@ $(function() {
 
     /*****page-map*****/
 
-    $(document).on("pageInit", "#page-map", function(e, pageId, $page) {
-
+    $(document).on("pageInit", "#page-map,#page-inset-map", function(e, pageId, $page) {
+        var $this = $(this);
         var map = new qq.maps.Map(document.getElementById("map-container"), {
             zoom: 13,
             mapTypeControl: false
@@ -1646,14 +1814,12 @@ $(function() {
                         var temp_html = template("page-map-list-link", {
                             list: point_data
                         });
-                        $("#page-map ul").html(temp_html);
-
+                        $this.find("ul").html(temp_html);
                         var point_list = [];
                         for (var i = 0; i < point_data.length; i++) {
                             point_list.push(new qq.maps.LatLng(point_data[i].ypoint, point_data[i].xpoint));
 
                         }
-
                         var anchor = new qq.maps.Point(12, 34),
                             size = new qq.maps.Size(24, 34),
                             origin = new qq.maps.Point(0, 0),
@@ -1692,9 +1858,15 @@ $(function() {
                 });
             });
         }
-
-
-
+    });
+    $(document).on("click", "#page-inset-map #tab1 a.item-link,#page-inset-map #tab2 a.item-link", function(event) {
+        var temp_data = {
+            id: $(this).attr("data-id"),
+            name: $(this).find(".item-title").text()
+        }
+        orderInfo.store = temp_data;
+        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+        $.router.load("#page-order");
     });
     /*****init*****/
     $.init();

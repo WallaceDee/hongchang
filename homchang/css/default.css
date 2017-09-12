@@ -258,6 +258,7 @@ body {
     overflow: auto;
     width: 100%!important;
     float: none!important;
+    background-color: #fff;
 }
 
 .no-data>div {
@@ -2350,7 +2351,7 @@ font-size: .7rem;
 
 /*********page-address*********/
 #page-address .icon.icon-form-checkbox+span,
-#page-inset-address .icon.icon-form-checkbox+span{    padding-left: .5rem;}
+#page-inset-address .icon.icon-form-checkbox+span{    padding-left: .2rem;}
 #page-address .card-footer a:visited,
 #page-inset-address .card-footer a:visited {
     color: #5f646e;
@@ -2809,26 +2810,26 @@ font-size: .7rem;
 
 /*************page-map*************/
 
-#page-map #map-container .list-block {
+#page-map #map-container .list-block ,#page-inset-map #map-container .list-block {
     margin: 0;
     padding: 0;
 }
 
-#page-map .buttons-tab .button {
+#page-map .buttons-tab .button,#page-inset-map .buttons-tab .button {
     top: 0;
     height: 2.2rem;
 }
 
-#page-map .buttons-tab:after {
+#page-map .buttons-tab:after,#page-inset-map .buttons-tab:after {
     display: none;
 }
 
-#page-map .bar-header-secondary {
+#page-map .bar-header-secondary,#page-inset-map .bar-header-secondary {
     padding-left: 0;
     padding-right: 0;
 }
 
-#page-map .list-block span.product-img {
+#page-map .list-block span.product-img,#page-inset-map .list-block span.product-img {
     display: block;
 
     width: 4rem;
@@ -2840,20 +2841,23 @@ font-size: .7rem;
 }
 
 #page-map #tab1 .item-text,
-#page-map #tab1 .item-subtitle {
+#page-map #tab1 .item-subtitle ,#page-inset-map #tab1 .item-text,
+#page-inset-map #tab1 .item-subtitle {
     font-size: .6rem;
 }
 
-#page-map #tab1 .list-block .item-content {
+#page-map #tab1 .list-block .item-content,#page-inset-map #tab1 .list-block .item-content {
     padding-left: .5rem;
 }
 
-#page-map #tab1 .list-block.media-list .item-inner {
+#page-map #tab1 .list-block.media-list .item-inner,#page-inset-map #tab1 .list-block.media-list .item-inner {
     margin-left: .5rem;
     padding-right: 1rem;
 }
-
-#page-map #tab2 .list-block {
+#page-map #tab1 .list-block.media-list,#page-inset-map #tab1 .list-block.media-list {
+    margin-right: .5rem;
+}
+#page-map #tab2 .list-block,#page-inset-map #tab2 .list-block {
     margin: 0;
 }
 
