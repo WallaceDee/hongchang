@@ -29,7 +29,7 @@
                    <span class="icon icon-service"></span>
                    <span class="tab-label">联系客服</span>
                 </a>
-                <a class="tab-item collect-btn" >
+                <a class="tab-item collect-btn">
                   <span class="icon icon-star"></span>
                   <span class="tab-label">收藏</span>
                   </a>
@@ -165,6 +165,16 @@
         <script id="page-details-swiper" type="text/html">
             {{each list as $list i }}
             <div class="swiper-slide"><span style="background-image: url({{$list}});"></span></div>{{/each}}
+        </script>
+        <script id="page-details-comment" type="text/html">
+            {{each list as $list i }}
+            <li class="weui-comment-item">
+                <div class="weui-comment-li"><i class="icon-' + list[i].score + '-stars"></i></div>
+                <div class="userinfo"><strong class="nickname"></strong><span class="avatar" style="background-image: url(' + list[i].user.head_img + ');"> </span>
+                    <div class="weui-comment-msg">{{$lis.content}}</div>
+                    <p class="time">' + list[i].create_time + '</p>
+                </div>
+            </li>{{/each}}
         </script>
     </div>
     <script src="js/zepto.min.js"></script>
