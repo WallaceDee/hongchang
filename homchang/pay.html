@@ -21,9 +21,39 @@
                 <p>订单号：<span class="order-num">{{list.order_no}}</span></p>
                 <p>下单时间：{{date_format(list.create_time).datetime}}</p>
             </div>
+            <div class="list-block media-list address-block">
+                    <ul>
+                        <li href="address.html" class="item-content">
+                                <div class="item-media"><i class="icon icon-my-location"></i></div>
+                                <div class="item-inner">
+                                    <div class="item-title-row">
+                                        <div class="item-title">陈国华</div>
+                                        <div class="item-after">13202627449</div>
+                                    </div>
+                                    <div class="item-text">北京 东城区 啊实打实</div>
+                                </div>
+                            </li>
+                    </ul>
+                    <div class="color-line"></div>
+                </div>
             <div class="list-block">
                 <ul>
-                    <li class="item-content">
+                   
+                    <li class="align-top">
+                        <div class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title label">商品</div>
+                                <div class="item-title">
+                                    {{each list.products as $product p}}
+                                    <div class="item-inner">
+                                        <div class="item-title">{{$product.name}}</div>
+                                        <div class="item-after">x{{$product.count}}</div>
+                                    </div>
+                                    {{/each}}
+                                </div>
+                            </div>
+                        </div>
+                    </li> <li class="item-content">
                         <div class="item-inner">
                             <div class="item-title">付款金额</div>
                             <div class="item-after">￥{{list.total_price}}</div>
@@ -41,21 +71,6 @@
                             <div class="item-after">{{order_status_format(list.pay_status)}}</div>
                         </div>
                     </li>
-                    <li class="align-top">
-                        <div class="item-content">
-                            <div class="item-inner">
-                                <div class="item-title label">商品</div>
-                                <div class="item-title">
-                                    {{each list.products as $product p}}
-                                    <div class="item-inner">
-                                        <div class="item-title">{{$product.name}}</div>
-                                        <div class="item-after">x{{$product.count}}</div>
-                                    </div>
-                                    {{/each}}
-                                </div>
-                            </div>
-                        </div>
-                    </li>
                     <li class="item-content">
                         <div class="item-inner">
                             <div class="item-title"></div>
@@ -68,18 +83,13 @@
                             <div class="item-after">{{express_type_format(list.pick_type)}}</div>
                         </div>
                     </li>
-                    <li>
-                            <a href="address.html" class="item-content item-link">
-                                <div class="item-media"><i class="icon icon-my-location"></i></div>
-                                <div class="item-inner">
-                                    <div class="item-title-row">
-                                        <div class="item-title">陈国华</div>
-                                        <div class="item-after">13202627449</div>
-                                    </div>
-                                    <div class="item-text">北京 东城区 啊实打实</div>
-                                </div>
-                            </a>
-                        </li>
+                         <li class="item-content">
+                        <div class="item-inner">
+                            <div class="item-title">自提门店</div>
+                            <div class="item-after">{{express_type_format(list.pick_type)}}</div>
+                        </div>
+                    </li>
+         
                 </ul>
             </div>
             <div class="content-block">

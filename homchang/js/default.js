@@ -400,7 +400,7 @@ function wxApi(fun_callback) {
                 console.log(data);
                 wx_config_data = data.Common.info;
                 wx.config({
-                    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                     appId: wx_config_data.appId, // 必填，公众号的唯一标识
                     timestamp: wx_config_data.timestamp, // 必填，生成签名的时间戳
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
@@ -654,12 +654,12 @@ $(function() {
                     surface_comment_html = html;
                 }
 
-                var temp_data = { list: data.Common.info };
-                var temp_html = template("page-details-comment", temp_data);
-                console.log(temp_html);
+                // var temp_data = { list: data.Common.info };
+                // var temp_html = template("page-details-comment", temp_data);
+                // console.log(temp_html);
 
                 // 添加新条目
-                $('#page-details #tab3 .infinite-scroll-bottom .list-container').append(temp_html);
+                $('#page-details #tab3 .infinite-scroll-bottom .list-container').append(html);
                 $('#page-details .surface-comment ul').html(surface_comment_html);
 
                 //页数+1
@@ -1636,7 +1636,9 @@ $(function() {
                         paySign: c.paySign, // 支付签名
                         success: function(res) {
                             // 支付成功后的回调函数
-                            //                        location.href = '';
+                            //todo 删除loacalStorage的购物车
+                            window.location.href="pay_result.html?status="+"1"
+
                         },
                     });
                 }
