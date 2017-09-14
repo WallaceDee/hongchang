@@ -172,7 +172,7 @@
         </div>
         <script id="page-my-order-item" type="text/html">
             {{each list as $list i}}
-            <li class="card">
+            <li class="card" data-order-num="{{$list.order_no}}">
                 <div class="card-header">
                     <span>{{date_format($list.create_time).datetime}}</span>
                     <span>{{order_status_format($list.pay_status)}}</span>
@@ -202,7 +202,14 @@
                 </div>
                 <div class="card-footer">
                     <span class="total pull-left">共2件商品<span>合计：￥{{$list.total_price}}</span></span>
-                    <span class="pull-right">{{if $list.pay_status==0 }}<a data-order-num={{$list.order_no}} class="button go-to-pay">去支付</a>{{else if $list.pay_status==2}}<a data-order-num={{$list.order_no}} class="button" href="">确认收货</a>{{else if $list.pay_status==3}}<a data-order-num={{$list.order_no}} class="button" href="">去评价</a> {{/if}}</span>
+                    <span class="pull-right">
+                        {{if $list.pay_status==0 }}<a >取消订单</a><a class="go-to-pay">去支付</a>
+                         {{else if $list.pay_status==1}}<a class="" href="">取消订单</a>
+                        {{else if $list.pay_status==2}}<a class="" href="">取消订单</a> <a class="" href="">确认收货</a>
+                        {{else if $list.pay_status==3}}<a class="" href="">申请退货</a> <a class="" href="">去评价</a> 
+                          {{else if $list.pay_status==5}}<a class="" href="">申请退货</a>
+                    {{/if}}
+                </span>
                 </div>
             </li>
             {{/each}}

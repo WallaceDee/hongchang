@@ -15,8 +15,14 @@
         <div id="page-order-detail" class="page">
         </div>
         <script id="page-order-detail-info" type="text/html">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+               <span class="icon icon-left"></span>
+                  返回
+            </a>
+            </header>
             <nav class="bar bar-tab">
-                <a class="tab-item big-tab-item pay">付款</a>
+                {{if list.pay_status==0}} <a class="tab-item big-tab-item pay">付款</a>{{/if}}
             </nav>
             <div class="content native-scroll">
                 <div class="list-block media-list address-block">

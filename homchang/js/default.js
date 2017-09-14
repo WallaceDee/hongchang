@@ -30,7 +30,7 @@ var discount_type_list = [{
     name: "周末Party",
     value: 3
 }];
-//订单状态(可选)"0">未付款"1">已付款"2">已发货"3">已收货"4">已取消"5">已评价
+//订单状态(可选)""0">未付款1">已付款"2">已发货"3">已收货"4">已取消"5">已评价
 var order_status_list = [{
     name: "待付款",
     value: 0
@@ -50,7 +50,7 @@ var order_status_list = [{
     name: "已完成",
     value: 5
 }];
-//
+//提货方式 "1">网点自提          "2">送货上门
 var express_type_list = [{
     name: "网店自提",
     value: 1
@@ -66,7 +66,7 @@ template.helper('sum_count', function(products) {
     return sum;
 });
 template.helper('date_format', function(date) {
-    return func_format_data(date);
+    return func_format_date(date);
 });
 template.helper("discount_format", function(status) {
     return getNameByValue(status, discount_type_list);
@@ -77,30 +77,37 @@ template.helper("order_status_format", function(status) {
 template.helper("express_type_format", function(type) {
     return getNameByValue(type, express_type_list);
 });
+
+var up = {};
 if (localStorage.userInfo != undefined) {
     userInfo = JSON.parse(localStorage.userInfo);
+    up = { type: 2, value: userInfo.open_id };
 } else {
-    var url_code = getParameter("code");
-    console.log("已取得code-" + url_code);
-    if (url_code == null) {
+    var code = getParameter("code");
+    console.log("已取得code-" + code);
+    if (code == null) {
         var curr_url = location.href.split('#')[0];
         location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx027d7825030faa03&redirect_uri=" + curr_url + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
     } else {
-        func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/sendAuth",
-            data: {
-                code: url_code
-            },
-            async: false,
-            successCallback: function(data) {
-                if (data.Common.code == 200) {
-                    userInfo = data.Common.info;
-                    localStorage.userInfo = JSON.stringify(data.Common.info);
-                    console.log("用户信息已缓存！");
-                }
-            }
-        });
+        up = { type: 1, value: code };
     }
+}
+func_ajax({
+    url: "http://www.michellelee.top/index.php/Api/index/sendAuth",
+    data: up,
+    async: false,
+    successCallback: function(data) {
+        if (data.Common.code == 200) {
+            userInfo = data.Common.info;
+            localStorage.userInfo = JSON.stringify(data.Common.info);
+            console.log("用户信息已缓存！");
+        }
+    }
+});
+if (up.type == 1) {
+    console.log("code登陆");
+} else {
+    console.log("openid登陆");
 }
 
 console.log(userInfo);
@@ -274,7 +281,7 @@ function getNameByValue(val, arr) {
     return result;
 }
 //时间戳格式化
-function func_format_data(timestamp) {
+function func_format_date(timestamp) {
 
     var temp = timestamp;
     if (timestamp.toString().length == 10) {
@@ -285,7 +292,7 @@ function func_format_data(timestamp) {
     var year = date.getFullYear(),
         month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1),
         day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate(),
-        hour = (date.getHours() + 1) > 9 ? (date.getHours() + 1) : '0' + (date.getHours() + 1),
+        hour = date.getHours() > 9 ? date.getHours() : '0' + date.getHours(),
         minute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes();
 
     return {
@@ -1577,7 +1584,16 @@ $(function() {
             successCallback: function(data) {
                 if (data.Common.code == 200) {
                     var order_num = data.Common.info;
-                    window.location.href = "pay.html?order_num=" + order_num;
+                    //todo 删除loacalStorage的购物车//保留在购物车，但未购买的物品
+                    var temp_cart = [];
+                    for (var i = 0; i < my_cart.length; i++) {
+                        if (!my_cart[i].select) {
+                            temp_cart.push(my_cart[i]);
+                        }
+                    }
+                    my_cart = temp_cart;
+                    localStorage.cart = JSON.stringify(my_cart);
+                    window.location.href = "order_detail.html?order_num=" + order_num;
                 } else {
                     $.toast("提交订单失败，请刷新页面重试！")
                 }
@@ -1587,8 +1603,8 @@ $(function() {
 
     });
 
-    /*****page-pay*****/
-    $(document).on("pageInit", "#page-pay", function(e, pageId, $page) {
+    /*****page-order-detail*****/
+    $(document).on("pageInit", "#page-order-detail", function(e, pageId, $page) {
         wxApi();
         func_ajax({
             url: "http://www.michellelee.top/index.php/Api/index/getOrderInfo",
@@ -1601,8 +1617,8 @@ $(function() {
                     var temp_data = {
                         list: data.Common.info
                     };
-                    var temp_html = template("page-pay-info", temp_data);
-                    $("#page-pay .content").html(temp_html);
+                    var temp_html = template("page-order-detail-info", temp_data);
+                    $("#page-order-detail").html(temp_html);
                 } else {
                     $.toast("未知错误");
                 }
@@ -1610,22 +1626,17 @@ $(function() {
         });
     });
 
-    $(document).on("click", "#page-pay .pay", function(event) {
+    $(document).on("click", "#page-order-detail .pay", function(event) {
         event.preventDefault();
         /* Act on the event */
-        var name = "鸿畅环保设备有限公司";
-        var order_num = $("#page-pay .order-num").text();
-        $.ajax({
-            type: 'POST',
+        var order_num = $("#page-order-detail .order-num").text();
+        func_ajax({
             url: "http://www.michellelee.top/index.php/Api/index/wxPay",
             data: {
                 open_id: userInfo.open_id,
-                name: name,
                 order_no: order_num
             },
-            dataType: 'json',
-            cache: false,
-            success: function(data) {
+            successCallback: function(data) {
                 if (data.Common.code == 200) {
                     var c = data.Common.info;
                     wx.chooseWXPay({
@@ -1636,16 +1647,17 @@ $(function() {
                         paySign: c.paySign, // 支付签名
                         success: function(res) {
                             // 支付成功后的回调函数
-                            //todo 删除loacalStorage的购物车
-                            window.location.href="pay_result.html?status="+"1"
-
-                        },
+                            window.location.href = "pay_result.html?status=" + "1"
+                        }
                     });
+                } else {
+                    $.toast("未知错误，请刷新页面重试！")
                 }
+            },
+        });
 
-            }
-        })
     });
+
 
     /*****page-my-order*****/
     $(document).on("pageInit", "#page-my-order", function(e, pageId, $page) {
@@ -1694,10 +1706,15 @@ $(function() {
         event.preventDefault();
         sessionStorage.order_tab_id = $(this).attr("href");
     });
+    $(document).on("click", "#page-my-order .card-header,#page-my-order .card-content", function(event) {
+        event.preventDefault();
+        var order_num = $(this).parent("li.card").attr("data-order-num");
+        window.location.href = "order_detail.html?order_num=" + order_num;
+    });
     $(document).on("click", "#page-my-order .go-to-pay", function(event) {
         event.preventDefault();
-        var order_num = $(this).attr("data-order-num");
-        window.location.href = "pay.html?order_num=" + order_num;
+        var order_num = $(this).parents("li.card").attr("data-order-num");
+        window.location.href = "order_detail.html?order_num=" + order_num;
     });
     /*****page-user-center*****/
     $(document).on("pageInit", "#page-user-center", function(e, pageId, $page) {
@@ -1734,29 +1751,78 @@ $(function() {
 
     /*****page-user-info*****/
     $(document).on("pageInit", "#page-user-info", function(e, pageId, $page) {
-        $(".gander").picker({
+        $("#page-user-info .avatar-wrapper span").css("background-image", "url(" + userInfo.head_img + ")");
+        $("#page-user-info .username").val(userInfo.user_name);
+        var gander_list = ["男", "女", "保密"];
+        var curr_gander = gander_list[Number(userInfo.sex) - 1];
+
+        $("#page-user-info .gander").val(curr_gander);
+        $("#page-user-info .gander").picker({
             cssClass: "gander-picker",
             cols: [{
                 textAlign: "center",
-                values: ["男", "女", "保密"]
-            }]
+                values: gander_list
+            }],
+
         });
+        var maxDate = func_format_date(new Date()).date
         $(".birthday-picker").calendar({
+            maxDate: [maxDate],
             onChange: function(p, values, displayValues) {
                 console.log(displayValues)
             }
         });
     });
-    $(document).on("click", ".gander-picker .close-picker", function(event) {
-        event.preventDefault();
-        /* Act on the event */
-        console.log($("#page-user-info .gander").val());
-    });
+
     $(document).on("click", "#page-user-info .username", function(event) {
         event.preventDefault();
         /* Act on the event */
         $.prompt("修改昵称", function(value) {
             console.log('Your name is "' + value + '".');
+            func_ajax({
+                url: "http://www.michellelee.top/index.php/Api/index/updateUserInfo",
+                data: {
+                    open_id: userInfo.open_id,
+                    user_name: value
+                },
+                successCallback: function(data) {
+                    userInfo.user_name = value;
+                    $("#page-user-info .username").val(value);
+                }
+            });
+        });
+    });
+
+    $(document).on("click", ".gander-picker .close-picker", function(event) {
+        event.preventDefault();
+        /* Act on the event */
+        var select_gander = $("#page-user-info .gander").val();
+        console.log(select_gander);
+        func_ajax({
+            url: "http://www.michellelee.top/index.php/Api/index/updateUserInfo",
+            data: {
+                open_id: userInfo.open_id,
+                sex: select_gander
+            },
+            successCallback: function(data) {
+                userInfo.sex = select_gander;
+            }
+        });
+    });
+    $(document).on("change", "#page-user-info .birthday-picker", function(event) {
+        event.preventDefault();
+        /* Act on the event */
+        var select_date = $(this).val();
+        console.log(select_date);
+        func_ajax({
+            url: "http://www.michellelee.top/index.php/Api/index/updateUserInfo",
+            data: {
+                open_id: userInfo.open_id,
+                birthday: select_date
+            },
+            successCallback: function(data) {
+                userInfo.birthday = select_date;
+            }
         });
     });
     /*****page-address*****/
