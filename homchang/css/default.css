@@ -2683,7 +2683,10 @@ body {
 
 
 
-
+.img-container img {
+    width: 100%;
+    height: 15rem;
+}
 
 
 

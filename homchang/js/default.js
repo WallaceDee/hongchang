@@ -81,7 +81,10 @@ template.helper("express_type_format", function(type) {
 var up = {};
 if (localStorage.userInfo != undefined) {
     userInfo = JSON.parse(localStorage.userInfo);
-    up = { type: 2, value: userInfo.open_id };
+    up = {
+        type: 2,
+        value: userInfo.open_id
+    };
 } else {
     var code = getParameter("code");
     console.log("已取得code-" + code);
@@ -89,7 +92,10 @@ if (localStorage.userInfo != undefined) {
         var curr_url = location.href.split('#')[0];
         location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx027d7825030faa03&redirect_uri=" + curr_url + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
     } else {
-        up = { type: 1, value: code };
+        up = {
+            type: 1,
+            value: code
+        };
     }
 }
 func_ajax({
@@ -139,32 +145,32 @@ console.log(userInfo);
 ;
 (function($) {
     $.extend($.fn, {
-        validate: function() {
-            var pass = true;
-            this.each(function(index, el) {
-                if ($(this).attr("required") != undefined) { //html的pattern要注意转义
-                    if ($(this).val() == "") {
-                        $.toast($(this).attr("emptyTips"));
-                        pass = false;
-                        return false;
-                    } else {
-                        if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
-                            var reg = new RegExp($(this).attr("pattern"));
-                            console.log(reg);
-                            if (!reg.test($(this).val())) {
-                                $.toast($(this).attr("notMatchTips"));
-                                pass = false;
-                                return false;
+            validate: function() {
+                var pass = true;
+                this.each(function(index, el) {
+                    if ($(this).attr("required") != undefined) { //html的pattern要注意转义
+                        if ($(this).val() == "") {
+                            $.toast($(this).attr("emptyTips"));
+                            pass = false;
+                            return false;
+                        } else {
+                            if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
+                                var reg = new RegExp($(this).attr("pattern"));
+                                console.log(reg);
+                                if (!reg.test($(this).val())) {
+                                    $.toast($(this).attr("notMatchTips"));
+                                    pass = false;
+                                    return false;
+                                }
                             }
                         }
                     }
-                }
-            });
-            return pass;
-        }
-    })
-    // $.getScript = function(url, callback) {
-    // }
+                });
+                return pass;
+            }
+        })
+        // $.getScript = function(url, callback) {
+        // }
 })(Zepto);
 
 
@@ -407,49 +413,49 @@ function wxApi(fun_callback) {
                 console.log(data);
                 wx_config_data = data.Common.info;
                 wx.config({
-                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                     appId: wx_config_data.appId, // 必填，公众号的唯一标识
                     timestamp: wx_config_data.timestamp, // 必填，生成签名的时间戳
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                        'checkJsApi',
-                        'onMenuShareTimeline',
-                        'onMenuShareAppMessage',
-                        'onMenuShareQQ',
-                        'onMenuShareWeibo',
-                        'onMenuShareQZone',
-                        'hideMenuItems',
-                        'showMenuItems',
-                        'hideAllNonBaseMenuItem',
-                        'showAllNonBaseMenuItem',
-                        'translateVoice',
-                        'startRecord',
-                        'stopRecord',
-                        'onVoiceRecordEnd',
-                        'playVoice',
-                        'onVoicePlayEnd',
-                        'pauseVoice',
-                        'stopVoice',
-                        'uploadVoice',
-                        'downloadVoice',
-                        'chooseImage',
-                        'previewImage',
-                        'uploadImage',
-                        'downloadImage',
-                        'getNetworkType',
-                        'openLocation',
-                        'getLocation',
-                        'hideOptionMenu',
-                        'showOptionMenu',
-                        'closeWindow',
-                        'scanQRCode',
-                        'chooseWXPay',
-                        'openProductSpecificView',
-                        'addCard',
-                        'chooseCard',
-                        'openCard'
-                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                            'translateVoice',
+                            'startRecord',
+                            'stopRecord',
+                            'onVoiceRecordEnd',
+                            'playVoice',
+                            'onVoicePlayEnd',
+                            'pauseVoice',
+                            'stopVoice',
+                            'uploadVoice',
+                            'downloadVoice',
+                            'chooseImage',
+                            'previewImage',
+                            'uploadImage',
+                            'downloadImage',
+                            'getNetworkType',
+                            'openLocation',
+                            'getLocation',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'closeWindow',
+                            'scanQRCode',
+                            'chooseWXPay',
+                            'openProductSpecificView',
+                            'addCard',
+                            'chooseCard',
+                            'openCard'
+                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -1677,7 +1683,9 @@ $(function() {
             },
             successCallback: function(data) {
                 if (data.Common.code == 200) {
-                    $("#page-my-order .tab[data-type='all'] ul").html(template("page-my-order-item", { list: data.Common.info }));
+                    $("#page-my-order .tab[data-type='all'] ul").html(template("page-my-order-item", {
+                        list: data.Common.info
+                    }));
                     var temp_list = classifyArrayByField("pay_status", data.Common.info);
                     console.log(temp_list);
                     var container_list = [];
@@ -1685,7 +1693,9 @@ $(function() {
                     for (var i = 0; i < temp_list.length; i++) {
                         var $container = $("#page-my-order [data-type='" + temp_list[i].pay_status + "']");
                         container_list.push($container[0]);
-                        var temp_data = { list: temp_list[i].data };
+                        var temp_data = {
+                            list: temp_list[i].data
+                        };
                         var temp_html = template("page-my-order-item", temp_data);
 
                         if (temp_list[i].pay_status == "1" || temp_list[i].pay_status == "2") {
@@ -1750,11 +1760,13 @@ $(function() {
 
 
     /*****page-user-info*****/
+    var gander_list = ["保密", "男", "女"];
     $(document).on("pageInit", "#page-user-info", function(e, pageId, $page) {
+        wxApi();
         $("#page-user-info .avatar-wrapper span").css("background-image", "url(" + userInfo.head_img + ")");
         $("#page-user-info .username").val(userInfo.user_name);
-        var gander_list = ["男", "女", "保密"];
-        var curr_gander = gander_list[Number(userInfo.sex) - 1];
+
+        var curr_gander = gander_list[Number(userInfo.sex)];
 
         $("#page-user-info .gander").val(curr_gander);
         $("#page-user-info .gander").picker({
@@ -1765,7 +1777,9 @@ $(function() {
             }],
 
         });
-        var maxDate = func_format_date(new Date()).date
+        var maxDate = func_format_date(new Date()).date;
+$(".birthday-picker").val(func_format_date(userInfo.birthday).date)
+
         $(".birthday-picker").calendar({
             maxDate: [maxDate],
             onChange: function(p, values, displayValues) {
@@ -1797,6 +1811,12 @@ $(function() {
         event.preventDefault();
         /* Act on the event */
         var select_gander = $("#page-user-info .gander").val();
+        for (var i = 0; i < gander_list.length; i++) {
+            if (select_gander == gander_list[i]) {
+                select_gander = i;
+                break;
+            }
+        }
         console.log(select_gander);
         func_ajax({
             url: "http://www.michellelee.top/index.php/Api/index/updateUserInfo",
@@ -1825,6 +1845,90 @@ $(function() {
             }
         });
     });
+
+    $(document).on("click","#page-user-info .avatar",function() {
+        var allow_select_num=1;
+        var buttons1 = [{
+            text: '请选择',
+            label: true
+        }, {
+            text: '照相',
+            bold: true,
+            color: 'danger',
+            onClick: function(){fun_uploadType("camera",allow_select_num);}
+        }, {
+            text: '从手机相册选择',
+            onClick:  function(){fun_uploadType("album",allow_select_num);}
+        }];
+        var buttons2 = [{
+            text: '取消',
+            bg: 'danger'
+        }];
+        var groups = [buttons1, buttons2];
+        $.actions(groups);
+    });
+
+
+    /*
+    *选择上传类型
+    * @param {String} type 上传类型
+    * @param {Number} num 允许选择数量
+    */
+    function fun_uploadType(type,num) {
+        wx.chooseImage({
+            count: num, // 默认9
+            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+            sourceType: [type], // 可以指定来源是相册还是相机，默认二者都有
+            success: function(res) {    
+                // $.showIndicator();
+                upload(res.localIds);
+            }
+        }); 
+    }
+
+    /*
+    *上传图片接口
+    *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)
+    */
+    function upload(url_list) {
+            wx.uploadImage({
+                localId: url_list[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+                isShowProgressTips:0, // 默认为1，显示进度提示
+                success: function(res) {
+                    //下载图片接口
+                    download(res.serverId);// 返回图片的服务器端
+                    console.log(res.serverId);
+                },
+                fail: function(res) {
+                    $.alert(JSON.stringify(res));
+                }
+            });
+    }
+    /*
+    *微信图片下载
+    *@param {Object} server_id 要下载的server_id数组(微信返回的server_id)
+    */
+    function download(server_id) {
+//          alert(server_id);
+            $.ajax({
+                type: 'post',
+                url: "/Share/User/uploadImage",
+                data: { serverId: server_id},
+                success: function (json){           
+                    if(json.scucode == "0000")
+                    {
+//                      alert(json.file_path);
+                        $('.hd_img').val(json.file_path);
+                        cropper_url=json.file_path;
+                        $.popup(".popup-cutting");
+                    }
+                },
+                 error: function(XMLHttpRequest, textStatus, errorThrown) {
+                     $.alert(XMLHttpRequest.status+XMLHttpRequest.readyState+textStatus);
+                }
+            });
+    }
+
     /*****page-address*****/
     $(document).on("pageInit", "#page-address", function(e, pageId, $page) {
         func_ajax({
