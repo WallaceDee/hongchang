@@ -35,7 +35,7 @@ var order_status_list = [{
     name: "待付款",
     value: 0
 }, {
-    name: "已付款",
+    name: "待发货",
     value: 1
 }, {
     name: "已发货",
@@ -49,6 +49,12 @@ var order_status_list = [{
 }, {
     name: "已完成",
     value: 5
+}, {
+    name: "已退款",
+    value: 6
+}, {
+    name: "退款/退货中",
+    value: 7
 }];
 //提货方式 "1">网点自提          "2">送货上门
 var express_type_list = [{
@@ -64,6 +70,13 @@ template.helper('sum_count', function(products) {
         sum += Number(products[i].count);
     }
     return sum;
+});
+template.helper('combind_pid', function(products) {
+    var str = [];
+    for (var i = 0; i < products.length; i++) {
+        str.push(products[i].id);
+    }
+    return str.join(",");
 });
 template.helper('date_format', function(date) {
     return func_format_date(date);
@@ -90,7 +103,7 @@ if (localStorage.userInfo != undefined) {
     console.log("已取得code-" + code);
     if (code == null) {
         var curr_url = location.href.split('#')[0];
-        location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx027d7825030faa03&redirect_uri=" + curr_url + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
+        window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx027d7825030faa03&redirect_uri=" + curr_url + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
     } else {
         up = {
             type: 1,
@@ -99,7 +112,7 @@ if (localStorage.userInfo != undefined) {
     }
 }
 func_ajax({
-    url: "http://www.michellelee.top/index.php/Api/index/sendAuth",
+    url: "http://www.homchang.site/index.php/Api/index/sendAuth",
     data: up,
     async: false,
     successCallback: function(data) {
@@ -145,32 +158,53 @@ console.log(userInfo);
 ;
 (function($) {
     $.extend($.fn, {
-            validate: function() {
-                var pass = true;
-                this.each(function(index, el) {
-                    if ($(this).attr("required") != undefined) { //html的pattern要注意转义
-                        if ($(this).val() == "") {
-                            $.toast($(this).attr("emptyTips"));
-                            pass = false;
-                            return false;
-                        } else {
-                            if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
-                                var reg = new RegExp($(this).attr("pattern"));
-                                console.log(reg);
-                                if (!reg.test($(this).val())) {
-                                    $.toast($(this).attr("notMatchTips"));
-                                    pass = false;
-                                    return false;
-                                }
+        validate: function() {
+            var pass = true;
+            this.each(function(index, el) {
+                if ($(this).attr("required") != undefined) { //html的pattern要注意转义
+                    if ($(this).val() == "") {
+                        $.toast($(this).attr("emptyTips"));
+                        pass = false;
+                        return false;
+                    } else {
+                        if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
+                            var reg = new RegExp($(this).attr("pattern"));
+                            console.log(reg);
+                            if (!reg.test($(this).val())) {
+                                $.toast($(this).attr("notMatchTips"));
+                                pass = false;
+                                return false;
                             }
                         }
                     }
-                });
-                return pass;
+                }
+            });
+            return pass;
+        }
+    })
+    $.getScript = function(url, callback) {
+        var head = document.getElementsByTagName('head')[0];
+        var js = document.createElement('script');
+        js.setAttribute('type', 'text/javascript');
+        js.setAttribute('src', url);
+        head.appendChild(js);
+        var callbackFn = function() {
+            if (typeof callback === 'function') {
+                callback();
             }
-        })
-        // $.getScript = function(url, callback) {
-        // }
+        };
+        if (document.all) { //IE
+            js.onreadystatechange = function() {
+                if (js.readyState == 'loaded' || js.readyState == 'complete') {
+                    callbackFn();
+                }
+            }
+        } else {
+            js.onload = function() {
+                callbackFn();
+            }
+        }
+    }
 })(Zepto);
 
 
@@ -404,7 +438,7 @@ function wxApi(fun_callback) {
     //ios只需配置一次config
     if ((!is_ios_and_initWx && is_ios_wx) || !is_ios_wx) {
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getWxConfig",
+            url: "http://www.homchang.site/index.php/Api/index/getWxConfig",
             data: {
                 curr_url: curr_url,
                 open_id: userInfo.open_id
@@ -419,43 +453,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                            'checkJsApi',
-                            'onMenuShareTimeline',
-                            'onMenuShareAppMessage',
-                            'onMenuShareQQ',
-                            'onMenuShareWeibo',
-                            'onMenuShareQZone',
-                            'hideMenuItems',
-                            'showMenuItems',
-                            'hideAllNonBaseMenuItem',
-                            'showAllNonBaseMenuItem',
-                            'translateVoice',
-                            'startRecord',
-                            'stopRecord',
-                            'onVoiceRecordEnd',
-                            'playVoice',
-                            'onVoicePlayEnd',
-                            'pauseVoice',
-                            'stopVoice',
-                            'uploadVoice',
-                            'downloadVoice',
-                            'chooseImage',
-                            'previewImage',
-                            'uploadImage',
-                            'downloadImage',
-                            'getNetworkType',
-                            'openLocation',
-                            'getLocation',
-                            'hideOptionMenu',
-                            'showOptionMenu',
-                            'closeWindow',
-                            'scanQRCode',
-                            'chooseWXPay',
-                            'openProductSpecificView',
-                            'addCard',
-                            'chooseCard',
-                            'openCard'
-                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                        'checkJsApi',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ',
+                        'onMenuShareWeibo',
+                        'onMenuShareQZone',
+                        'hideMenuItems',
+                        'showMenuItems',
+                        'hideAllNonBaseMenuItem',
+                        'showAllNonBaseMenuItem',
+                        'translateVoice',
+                        'startRecord',
+                        'stopRecord',
+                        'onVoiceRecordEnd',
+                        'playVoice',
+                        'onVoicePlayEnd',
+                        'pauseVoice',
+                        'stopVoice',
+                        'uploadVoice',
+                        'downloadVoice',
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'downloadImage',
+                        'getNetworkType',
+                        'openLocation',
+                        'getLocation',
+                        'hideOptionMenu',
+                        'showOptionMenu',
+                        'closeWindow',
+                        'scanQRCode',
+                        'chooseWXPay',
+                        'openProductSpecificView',
+                        'addCard',
+                        'chooseCard',
+                        'openCard'
+                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -472,11 +506,7 @@ function wxApi(fun_callback) {
 
 $(function() {
     'use strict';
-
-
     /*****page-index*****/
-
-
     $(document).on("click", ".counter .minus", function() {
         var $counter = $(this).next("input");
         if ($counter.val() != 1) {
@@ -503,7 +533,7 @@ $(function() {
         setCartSupIcon();
 
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getCarousels",
+            url: "http://www.homchang.site/index.php/Api/index/getCarousels",
             data: {
                 type: 0
             },
@@ -529,7 +559,7 @@ $(function() {
 
 
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getCategoriesByParentId",
+            url: "http://www.homchang.site/index.php/Api/index/getCategoriesByParentId",
             data: {
                 parent_id: 0
             },
@@ -549,7 +579,7 @@ $(function() {
         });
 
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getProducts?p=1",
+            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
             data: {
                 size: 10
             },
@@ -581,7 +611,7 @@ $(function() {
 
         if ($("#page-category #tab0").length == 0) {
             func_ajax({
-                url: "http://www.michellelee.top/index.php/Api/index/getCategoriesByParentId",
+                url: "http://www.homchang.site/index.php/Api/index/getCategoriesByParentId",
                 data: {
                     parent_id: 0
                 },
@@ -635,7 +665,7 @@ $(function() {
     function comment_addItems(number) {
 
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getProductComment?p=" + comment_page,
+            url: "http://www.homchang.site/index.php/Api/index/getProductComment?p=" + comment_page,
             data: {
                 size: number,
                 product_id: getParameter("p_id")
@@ -719,7 +749,7 @@ $(function() {
 
 
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getProductInfo",
+            url: "http://www.homchang.site/index.php/Api/index/getProductInfo",
             data: {
                 product_id: getParameter("p_id")
             },
@@ -790,7 +820,7 @@ $(function() {
     $(document).on("click", "#page-details .collect-btn", function(event) {
         event.preventDefault();
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/addCollection",
+            url: "http://www.homchang.site/index.php/Api/index/addCollection",
             data: {
                 open_id: userInfo.open_id,
                 product_id: getParameter("p_id")
@@ -848,7 +878,7 @@ $(function() {
     $(document).on("pageInit", "#page-search", function(e, pageId, $page) {
 
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getProducts?p=1",
+            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
             data: {
                 size: 10,
                 hot: 1
@@ -894,7 +924,7 @@ $(function() {
         }
         $("#panel-filter .discount-list").html(temp_discount_type_list);
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getCategoriesByParentId",
+            url: "http://www.homchang.site/index.php/Api/index/getCategoriesByParentId",
             data: {
                 parent_id: 0
             },
@@ -982,7 +1012,7 @@ $(function() {
         var opt = $.extend(default_opt, option);
         console.log(opt.search_content);
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getProducts?p=" + search_page,
+            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + search_page,
             data: opt,
             successCallback: function(data) {
                 var html = '';
@@ -1471,7 +1501,7 @@ $(function() {
 
         //订单默认地址
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getLocations",
+            url: "http://www.homchang.site/index.php/Api/index/getLocations",
             data: {
                 open_id: userInfo.open_id,
                 is_main: 1
@@ -1491,7 +1521,7 @@ $(function() {
         });
         //卡券
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getCardList",
+            url: "http://www.homchang.site/index.php/Api/index/getCardList",
             data: {
                 open_id: userInfo.open_id,
             }
@@ -1585,7 +1615,7 @@ $(function() {
 
         //提交订单
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/orderCommit",
+            url: "http://www.homchang.site/index.php/Api/index/orderCommit",
             data: temp_data,
             successCallback: function(data) {
                 if (data.Common.code == 200) {
@@ -1599,7 +1629,7 @@ $(function() {
                     }
                     my_cart = temp_cart;
                     localStorage.cart = JSON.stringify(my_cart);
-                    window.location.href = "order_detail.html?order_num=" + order_num;
+                    $.router.load("order_detail.html?order_num=" + order_num);
                 } else {
                     $.toast("提交订单失败，请刷新页面重试！")
                 }
@@ -1613,7 +1643,7 @@ $(function() {
     $(document).on("pageInit", "#page-order-detail", function(e, pageId, $page) {
         wxApi();
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getOrderInfo",
+            url: "http://www.homchang.site/index.php/Api/index/getOrderInfo",
             data: {
                 open_id: userInfo.open_id,
                 order_no: getParameter("order_num")
@@ -1637,7 +1667,7 @@ $(function() {
         /* Act on the event */
         var order_num = $("#page-order-detail .order-num").text();
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/wxPay",
+            url: "http://www.homchang.site/index.php/Api/index/wxPay",
             data: {
                 open_id: userInfo.open_id,
                 order_no: order_num
@@ -1653,7 +1683,7 @@ $(function() {
                         paySign: c.paySign, // 支付签名
                         success: function(res) {
                             // 支付成功后的回调函数
-                            window.location.href = "pay_result.html?status=" + "1"
+                            window.location.href = "user_center.html#page-my-order";
                         }
                     });
                 } else {
@@ -1676,8 +1706,12 @@ $(function() {
         }
         current_tab.addClass("active");
         current_tab_link.addClass("active");
+        getOrderList();
+    });
+
+    function getOrderList() {
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getOrderList",
+            url: "http://www.homchang.site/index.php/Api/index/getOrderList",
             data: {
                 open_id: userInfo.open_id
             },
@@ -1690,6 +1724,7 @@ $(function() {
                     console.log(temp_list);
                     var container_list = [];
                     var combind_html = ""; //pay_status 1和2合并
+                    var combind_html1 = ""; //pay_status 6和7合并
                     for (var i = 0; i < temp_list.length; i++) {
                         var $container = $("#page-my-order [data-type='" + temp_list[i].pay_status + "']");
                         container_list.push($container[0]);
@@ -1701,17 +1736,19 @@ $(function() {
                         if (temp_list[i].pay_status == "1" || temp_list[i].pay_status == "2") {
                             console.info($container);
                             combind_html += temp_html;
+                        } else if (temp_list[i].pay_status == "6" || temp_list[i].pay_status == "7") {
+                            combind_html1 += temp_html;
                         } else {
                             $container.find("ul").html(temp_html);
                         }
                     }
                     $("#page-my-order [data-type='1']").find("ul").html(combind_html);
+                    $("#page-my-order [data-type='4']").find("ul").html(combind_html1);
                     $("#page-my-order .tab").not("[data-type='all']").not(container_list).find("ul").html('<li class="no-order"><p><i class="icon icon-order"></i></p><p class="tips">您还没有相关的订单</p><p class="sub-tips">可以去看看有哪些想买的</p></li>');
                 }
             }
-
         });
-    });
+    }
     $(document).on("click", "#page-my-order .tab-link", function(event) {
         event.preventDefault();
         sessionStorage.order_tab_id = $(this).attr("href");
@@ -1721,10 +1758,123 @@ $(function() {
         var order_num = $(this).parent("li.card").attr("data-order-num");
         window.location.href = "order_detail.html?order_num=" + order_num;
     });
-    $(document).on("click", "#page-my-order .go-to-pay", function(event) {
+    // $(document).on("click", "#page-my-order .go-to-pay", function(event) {
+    //     event.preventDefault();
+    //     var order_num = $(this).parents("li.card").attr("data-order-num");
+    //     window.location.href = "order_detail.html?order_num=" + order_num;
+    // });
+
+    $(document).on("click", "#page-my-order .refund-btn", function(event) {
         event.preventDefault();
+        var text = $(this).text();
         var order_num = $(this).parents("li.card").attr("data-order-num");
-        window.location.href = "order_detail.html?order_num=" + order_num;
+
+        $.confirm("确定要" + text + "吗？", function() {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/applyRefund",
+                data: {
+                    open_id: userInfo.open_id,
+                    order_no: order_num
+                },
+                successCallback: function(data) {
+                    if (data.Common.code == 200) {
+                        text = text[2] + text[3] + text[0] + text[1];
+                        $.alert("您的" + text + "已经收悉，我们的客服人员会在24小时内与您取得联系，请您耐心等待。如有修改订单或其他需求，请及时联系客户服务热线电话：400-110-8004或020-81401016 ，给您造成的不便，敬请谅解。")
+                        getOrderList();
+                    }
+                }
+            });
+        });
+    });
+    $(document).on("click", "#page-my-order .cancel-btn", function(event) {
+        event.preventDefault();
+        var $this_order_ele = $(this).parents("li.card");
+        var order_num = $this_order_ele.attr("data-order-num");
+
+        $.confirm("确定要取消订单吗？", function() {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/orderCancel",
+                data: {
+                    open_id: userInfo.open_id,
+                    order_no: order_num
+                },
+                successCallback: function(data) {
+                    if (data.Common.code == 200) {
+                        $.toast("订单已取消");
+                        getOrderList();
+
+                    }
+                }
+            });
+        });
+    });
+    $(document).on("click", "#page-my-order .receipt-btn", function(event) {
+        event.preventDefault();
+        var $this_order_ele = $(this).parents("li.card");
+        var order_num = $this_order_ele.attr("data-order-num");
+
+        $.confirm("确认收货吗？", function() {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/orderConfirmReceipt",
+                data: {
+                    open_id: userInfo.open_id,
+                    order_no: order_num
+                },
+                successCallback: function(data) {
+                    if (data.Common.code == 200) {
+                        $.toast("已确认收货");
+                        getOrderList();
+                    }
+                }
+            });
+        });
+    });
+    /*****page-comment*****/
+    $(document).on("pageInit", "#page-comment", function(e, pageId, $page) {
+
+
+
+
+    });
+    $(document).on("click", "#page-comment .rater a", function(event) {
+        var num = -1;
+        var index = $(this).index();
+        $(this).siblings(".checked").removeClass("checked");
+        for (var i = 0; i <= index; i++) {
+            $(this).parents(".rater").find("a").eq(i).addClass('checked');
+        }
+        num = index + 1;
+        $(this).parents(".rater").next().val(num);
+    });
+
+    $(document).on("click", "#page-comment .button-success", function(event) {
+        var score_list = [];
+        var content = $("#page-comment textarea").val();
+        $("#page-comment input[type='hidden']").each(function(index, el) {
+            score_list.push($(this).val());
+        });
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/addOrderComment",
+            data: {
+                open_id: userInfo.open_id,
+                order_id: getParameter("order_num"),
+                product_id: ["s", "sad"],
+                describe_score: score_list[0],
+                server_score: score_list[1],
+                logistics_score: score_list[2],
+                content: content
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    $.toast("评论成功");
+                    setTimeout(function() {
+                        $.router.load("user_center.html#page-my-order");
+                    }, 1000);
+                } else {
+                    $.toast("未知错误，评论失败！");
+                }
+            }
+        });
     });
     /*****page-user-center*****/
     $(document).on("pageInit", "#page-user-center", function(e, pageId, $page) {
@@ -1739,7 +1889,7 @@ $(function() {
         } else {
             gender_icon = "icon-unknow";
         }
-        $("#page-user-center .user-header-wrapper .icon-gender").addClass(gender_icon);
+        $("#page-user-center .user-header-wrapper .icon-gender").removeClass("icon-male icon-female icon-unknow").addClass(gender_icon);
         setCartSupIcon();
     });
 
@@ -1778,7 +1928,8 @@ $(function() {
 
         });
         var maxDate = func_format_date(new Date()).date;
-$(".birthday-picker").val(func_format_date(userInfo.birthday).date)
+        console.log(func_format_date(userInfo.birthday).date);
+        $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
 
         $(".birthday-picker").calendar({
             maxDate: [maxDate],
@@ -1794,7 +1945,7 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
         $.prompt("修改昵称", function(value) {
             console.log('Your name is "' + value + '".');
             func_ajax({
-                url: "http://www.michellelee.top/index.php/Api/index/updateUserInfo",
+                url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
                 data: {
                     open_id: userInfo.open_id,
                     user_name: value
@@ -1819,7 +1970,7 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
         }
         console.log(select_gander);
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/updateUserInfo",
+            url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
             data: {
                 open_id: userInfo.open_id,
                 sex: select_gander
@@ -1835,19 +1986,22 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
         var select_date = $(this).val();
         console.log(select_date);
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/updateUserInfo",
+            url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
             data: {
                 open_id: userInfo.open_id,
                 birthday: select_date
             },
             successCallback: function(data) {
-                userInfo.birthday = select_date;
+                var d = select_date.split("-");
+                userInfo.birthday = new Date(d[0] * 1, d[1] * 1 - 1, d[2] * 1).getTime();
+
+                console.log(new Date(d[0] * 1, d[1] * 1 - 1, d[2] * 1));
             }
         });
     });
 
-    $(document).on("click","#page-user-info .avatar",function() {
-        var allow_select_num=1;
+    $(document).on("click", "#page-user-info .avatar", function() {
+        var allow_select_num = 1;
         var buttons1 = [{
             text: '请选择',
             label: true
@@ -1855,10 +2009,14 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
             text: '照相',
             bold: true,
             color: 'danger',
-            onClick: function(){fun_uploadType("camera",allow_select_num);}
+            onClick: function() {
+                fun_uploadType("camera", allow_select_num);
+            }
         }, {
             text: '从手机相册选择',
-            onClick:  function(){fun_uploadType("album",allow_select_num);}
+            onClick: function() {
+                fun_uploadType("album", allow_select_num);
+            }
         }];
         var buttons2 = [{
             text: '取消',
@@ -1868,71 +2026,105 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
         $.actions(groups);
     });
 
+    var cropper = null;
+    var cropper_url = "";
+    $(document).on('open', '.popup-cutter', function() {
+        if (cropper == null) {
+            var image = document.getElementById('crop-image');
+            cropper = new Cropper(image, {
+                aspectRatio: 1,
+                viewMode: 1
+            });
+        }
+        cropper.reset().replace(cropper_url);
+    });
+    $(document).on('opened', '.popup-cutter', function() {
+        $.hideIndicator();
+    });
+    $(document).on("click", ".popup-cutter .cut-btn", function() {
+        var src_data = cropper.getCroppedCanvas({
+            with: 200,
+            height: 200
+        }).toDataURL('image/jpeg');
+        $("#page-user-info .avatar-wrapper span").css("background-image", "url(" + src_data + ")");
+
+        src_data = src_data.replace("data:image/jpeg;base64,", "");
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
+            data: {
+                open_id: userInfo.open_id,
+                head_img: src_data
+            },
+            successCallback: function(data) {
+                $.closeModal('.popup-cutter');
+            }
+        });
+    });
 
     /*
-    *选择上传类型
-    * @param {String} type 上传类型
-    * @param {Number} num 允许选择数量
-    */
-    function fun_uploadType(type,num) {
+     *选择上传类型
+     * @param {String} type 上传类型
+     * @param {Number} num 允许选择数量
+     */
+    function fun_uploadType(type, num) {
+        $.showIndicator();
         wx.chooseImage({
             count: num, // 默认9
             sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
             sourceType: [type], // 可以指定来源是相册还是相机，默认二者都有
-            success: function(res) {    
+            success: function(res) {
                 // $.showIndicator();
                 upload(res.localIds);
             }
-        }); 
+        });
     }
 
     /*
-    *上传图片接口
-    *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)
-    */
+     *上传图片接口
+     *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)
+     */
     function upload(url_list) {
-            wx.uploadImage({
-                localId: url_list[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-                isShowProgressTips:0, // 默认为1，显示进度提示
-                success: function(res) {
-                    //下载图片接口
-                    download(res.serverId);// 返回图片的服务器端
-                    console.log(res.serverId);
-                },
-                fail: function(res) {
-                    $.alert(JSON.stringify(res));
-                }
-            });
+        wx.uploadImage({
+            localId: url_list[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+            isShowProgressTips: 0, // 默认为1，显示进度提示
+            success: function(res) {
+                //下载图片接口
+                download(res.serverId); // 返回图片的服务器端
+                console.log(res.serverId);
+            },
+            fail: function(res) {
+                $.alert(JSON.stringify(res));
+            }
+        });
     }
     /*
-    *微信图片下载
-    *@param {Object} server_id 要下载的server_id数组(微信返回的server_id)
-    */
+     *微信图片下载
+     *@param {Object} server_id 要下载的server_id数组(微信返回的server_id)
+     */
     function download(server_id) {
-//          alert(server_id);
-            $.ajax({
-                type: 'post',
-                url: "/Share/User/uploadImage",
-                data: { serverId: server_id},
-                success: function (json){           
-                    if(json.scucode == "0000")
-                    {
-//                      alert(json.file_path);
-                        $('.hd_img').val(json.file_path);
-                        cropper_url=json.file_path;
-                        $.popup(".popup-cutting");
-                    }
-                },
-                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-                     $.alert(XMLHttpRequest.status+XMLHttpRequest.readyState+textStatus);
+        //          alert(server_id);
+
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/uploadImages",
+            data: {
+                serverId: server_id,
+                open_id: userInfo.open_id
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    cropper_url = data.Common.info;
+
+                    $.popup(".popup-cutter");
+
                 }
-            });
+            }
+        });
     }
 
     /*****page-address*****/
     $(document).on("pageInit", "#page-address", function(e, pageId, $page) {
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/getLocations",
+            url: "http://www.homchang.site/index.php/Api/index/getLocations",
             data: {
                 open_id: userInfo.open_id
             },
@@ -1954,7 +2146,7 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
         var update_id = $(this).parents("li").attr("data-id");
         var $radio = $(this).find("input");
         func_ajax({
-            url: "http://www.michellelee.top/index.php/Api/index/addLocation",
+            url: "http://www.homchang.site/index.php/Api/index/addLocation",
             data: {
                 open_id: userInfo.open_id,
                 location_id: update_id,
@@ -1976,7 +2168,7 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
 
         $.confirm("确定要删除这个地址吗？", function() {
             func_ajax({
-                url: "http://www.michellelee.top/index.php/Api/index/deleteLocation",
+                url: "http://www.homchang.site/index.php/Api/index/deleteLocation",
                 data: {
                     open_id: userInfo.open_id,
                     location_id: delete_id
@@ -2038,7 +2230,7 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
         var flag = $("#page-edit-address [name='name'],#page-edit-address [name='phone'],#page-edit-address [name='first-address'],#page-edit-address [name='last-address']").validate();
         if (flag) {
             func_ajax({
-                url: "http://www.michellelee.top/index.php/Api/index/addLocation",
+                url: "http://www.homchang.site/index.php/Api/index/addLocation",
                 data: {
                     location_id: edit_address.id,
                     open_id: userInfo.open_id,
@@ -2070,7 +2262,7 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
         var flag = $("#page-add-address [name='name'],#page-add-address [name='phone'],#page-add-address [name='first-address'],#page-add-address [name='last-address']").validate();
         if (flag) {
             func_ajax({
-                url: "http://www.michellelee.top/index.php/Api/index/addLocation",
+                url: "http://www.homchang.site/index.php/Api/index/addLocation",
                 data: {
                     open_id: userInfo.open_id,
                     address: $("#page-add-address [name='first-address']").val() + $("#page-add-address [name='last-address']").val(),
@@ -2172,7 +2364,7 @@ $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
                 });
                 console.log(user_location);
                 func_ajax({
-                    url: "http://www.michellelee.top/index.php/Api/index/getBranches",
+                    url: "http://www.homchang.site/index.php/Api/index/getBranches",
                     data: user_location,
                     successCallback(data) {
                         var point_data = data.Common.info;
