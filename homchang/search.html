@@ -29,15 +29,19 @@
                     </form>
                 </div>
             </div>
-            <div class="content native-scroll">
+            <div class="content infinite-scroll infinite-scroll-bottom" data-distance="100">
                 <div class="content-block-title">热卖商品</div>
                 <div class="list-block media-list">
                     <ul class="product-list">
                     </ul>
                 </div>
+                  <!-- 加载提示符 -->
+          <div class="infinite-scroll-preloader">
+              <div class="preloader"></div>
+          </div>
             </div>
         </div>
-        <script id="page-search-item" type="text/html">
+        <script id="page-search-hot" type="text/html">
             {{each list as $list i}}
             <li>
                 <a href="details.html?p_id={{$list.id}}" class="item-content item-link">

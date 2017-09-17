@@ -119,7 +119,7 @@
                                     <i>￥</i><em>{{$list.current_price}}</em>
                                     <del>￥{{$list.origin_price}}</del>
                                 </li>
-                                <li class="product-sub-desc-item"><i class="icon icon-eye"></i><em>{{$list.browse_num}}</em><i class="icon icon-comment"></i><em>{{$list.comment_num}}</em><i class="icon icon-star-empty"></i><em>{{$list.collection_num}}</em></li>
+                           <li class="product-sub-desc-item"><i class="icon icon-eye"></i><em>{{$list.browse_num}}</em><i class="icon icon-comment"></i><em>{{$list.comment_num}}</em><i class="icon icon-star-empty"></i><em>{{$list.collection_num}}</em></li>
                             </ul>
                         </div>
                     </div>
@@ -127,52 +127,26 @@
             </li>
             {{/each}}
         </script>
-        <script id="page-category-sub-nav-item" type="text/html">
-            {{if children==""}}
-            <li class="no-data">
-                <div><span>暂无数据</span></div>
-            </li>{{else}} {{each children as $list i}}
-            <li>
-                <a href="search_result.html?c_id={{$list.id}}">
-                    <div><span style="background-image: url({{if $list.preview==''}}images/category_default_img.jpg{{else}}{{$list.preview}}{{/if}});"></span>
-                        <p>{{$list.name}}</p>
-                    </div>
-                </a>
-            </li>
-            {{/each}} {{/if}}
-        </script>
         <script id="page-category-sub-nav" type="text/html">
             {{each list as $list i }}
             <div id="tab{{i}}" class="tab">
                 <div class="content-block-title">热销品类</div>
                 <div class="list-block">
                     <ul class="sub-category-list">
-                        {{include 'page-category-sub-nav-item' $list}}
+                                {{if  $list.children==""}}
+            <li class="no-data">
+                <div><span>暂无数据</span></div>
+            </li>{{else}} {{each $list.children as $children c}}
+            <li>
+                <a href="search_result.html?c_id={{$children.id}}">
+                    <div><span style="background-image: url({{if $children.preview==''}}images/category_default_img.jpg{{else}}{{$children.preview}}{{/if}});"></span>
+                        <p>{{$children.name}}</p>
+                    </div>
+                </a>
+            </li>
+            {{/each}} {{/if}}
                     </ul>
                 </div>
-                <!--                                     <div class="content-block-title">热销单品</div>
-                                    <div class="list-block media-list">
-                                        <ul class="product-list">
-                                            <li>
-                                                <a href="#" class="item-content item-link">
-                                                    <div class="item-media"><span class="product-img" style="background-image: url(http://gqianniu.alicdn.com/bao/uploaded/i4//tfscom/i3/TB10LfcHFXXXXXKXpXXXXXXXXXX_!!0-item_pic.jpg_250x250q60.jpg);"></span></div>
-                                                    <div class="item-inner">
-                                                        <div class="item-title-row">
-                                                            <div class="item-title">标题标题标题标题标题标题标题标题</div>
-                                                        </div>
-                                                        <div class="item-title-row">
-                                                            <div class="item-title tag-row"><span>每月特惠</span></div>
-                                                        </div>
-                                                        <div class="item-title-row">
-                                                            <div class="item-title price-row">￥<span>999</span></div>
-                                                        </div>
-                                                        <div class="item-subtitle">
-                                                            <i class="icon icon-eye"></i><span>9999</span><i class="icon icon-comment"></i><span>9999</span><i class="icon icon-star-empty"></i><span>9999</span></div>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div> -->
             </div>
             {{/each}}
         </script>

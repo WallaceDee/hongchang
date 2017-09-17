@@ -377,13 +377,18 @@ var $progressBar,
 
 function progressBar(elem) {
     $elem = elem;
-    $progressBar = $("<div>", {
-        class: "swiper-pagination-progress"
-    });
-    $bar = $("<span>", {
-        class: "swiper-pagination-progressbar"
-    });
-    $elem.paginationContainer.after($progressBar.append($bar));
+    if ($(".swiper-pagination-progressbar").length == 0) {
+        $progressBar = $("<div>", {
+            class: "swiper-pagination-progress"
+        });
+        $bar = $("<span>", {
+            class: "swiper-pagination-progressbar"
+        });
+        $elem.paginationContainer.after($progressBar.append($bar));
+    } else {
+        $bar = $("#page-index .swiper-pagination-progressbar");
+    }
+
     start();
 }
 
@@ -477,43 +482,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                        'checkJsApi',
-                        'onMenuShareTimeline',
-                        'onMenuShareAppMessage',
-                        'onMenuShareQQ',
-                        'onMenuShareWeibo',
-                        'onMenuShareQZone',
-                        'hideMenuItems',
-                        'showMenuItems',
-                        'hideAllNonBaseMenuItem',
-                        'showAllNonBaseMenuItem',
-                        'translateVoice',
-                        'startRecord',
-                        'stopRecord',
-                        'onVoiceRecordEnd',
-                        'playVoice',
-                        'onVoicePlayEnd',
-                        'pauseVoice',
-                        'stopVoice',
-                        'uploadVoice',
-                        'downloadVoice',
-                        'chooseImage',
-                        'previewImage',
-                        'uploadImage',
-                        'downloadImage',
-                        'getNetworkType',
-                        'openLocation',
-                        'getLocation',
-                        'hideOptionMenu',
-                        'showOptionMenu',
-                        'closeWindow',
-                        'scanQRCode',
-                        'chooseWXPay',
-                        'openProductSpecificView',
-                        'addCard',
-                        'chooseCard',
-                        'openCard'
-                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                            'translateVoice',
+                            'startRecord',
+                            'stopRecord',
+                            'onVoiceRecordEnd',
+                            'playVoice',
+                            'onVoicePlayEnd',
+                            'pauseVoice',
+                            'stopVoice',
+                            'uploadVoice',
+                            'downloadVoice',
+                            'chooseImage',
+                            'previewImage',
+                            'uploadImage',
+                            'downloadImage',
+                            'getNetworkType',
+                            'openLocation',
+                            'getLocation',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'closeWindow',
+                            'scanQRCode',
+                            'chooseWXPay',
+                            'openProductSpecificView',
+                            'addCard',
+                            'chooseCard',
+                            'openCard'
+                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -550,50 +555,7 @@ $(function() {
         $.closeModal();
     });
     /*****page-index*****/
-    //无限加载
-    var hot_page = 1;
-    // 加载flag
-    var hot_loading = false;
-    // 最多可加载的条目
-    var hot_maxItems = 0;
-    // 每次加载添加多少条目
-    var hot_itemsPerLoad = 10;
-    var hot_lastIndex = 0;
-
-
-    function hot_addItems(number, option) {
-        func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + hot_page,
-            data: {
-                hot:1
-            },
-            successCallback: function(data) {
-                var temp_html = '';
-                if (data.Common.code == 200) {
-                   hot_maxItems = data.Common.info.total;
-                    var temp_data = data.Common.info;
-                    temp_html = template('page-hot-item', temp_data);
-                } else {
-                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
-                }
-                $('#page-hot-result .infinite-scroll-bottom .list-block ul').append(temp_html);
-                hot_page++;
-                hot_lastIndex = $('#page-hot-result .list-block ul li').length;
-                hot_loading = false;
-                if (hot_lastIndex >= hot_maxItems) {
-                    $.detachInfiniteScroll($('#page-index .infinite-scroll'));
-                    $('#page-index .infinite-scroll-preloader').remove();
-                    return;
-                }
-                $.refreshScroller();
-            }
-        });
-    }
-    $(document).on('infinite', '#page-index .infinite-scroll-bottom', function() {
-        if (hot_loading) return;
-        hot_loading = true;
-        hot_addItems(hot_itemsPerLoad, hot_option);
-    });
+   
 
     $(document).on("pageInit", "#page-index", function(e, pageId, $page) {
 
@@ -648,7 +610,9 @@ $(function() {
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
             data: {
-                size: 10
+                size: 30,
+                hot:1,
+                sales_order:1
             },
             successCallback: function(data) {
                 var temp_data = {
@@ -918,21 +882,88 @@ $(function() {
 
 
     /*****page-search*****/
-    $(document).on("pageInit", "#page-search", function(e, pageId, $page) {
+     //无限加载
+    var hot_page = 1;
+    // 加载flag
+    var hot_loading = false;
+    // 最多可加载的条目
+    var hot_maxItems = 0;
+    // 每次加载添加多少条目
+    var hot_itemsPerLoad = 5;
+    var hot_lastIndex = 0;
+
+
+    function hot_addItems(number) {
         func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
+            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + hot_page,
             data: {
-                size: 10,
-                hot: 1
+                size:hot_itemsPerLoad,
+                hot:1
             },
             successCallback: function(data) {
-                var temp_data = {
-                    list: data.Common.info.list
+                var temp_html = '';
+                if (data.Common.code == 200) {
+                   hot_maxItems = data.Common.info.total;
+                    var temp_data = data.Common.info;
+                    temp_html = template('page-search-hot', temp_data);
+                } else {
+                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
                 }
-                var temp_html = template("page-search-item", temp_data);
-                $("#page-search .product-list").html(temp_html);
+
+                $('#page-search .infinite-scroll-bottom .list-block ul').append(temp_html);
+                hot_page++;
+                hot_lastIndex = $('#page-search .list-block ul li').length;
+                hot_loading = false;
+                if (hot_lastIndex >= hot_maxItems) {
+                    $.detachInfiniteScroll($('#page-search .infinite-scroll'));
+                    $('#page-search .infinite-scroll-preloader').remove();
+                    return;
+                }
+                $.refreshScroller();
             }
         });
+    }
+    $(document).on('infinite', '#page-search .infinite-scroll-bottom', function() {
+        if (hot_loading) return;
+        hot_loading = true;
+        hot_addItems(hot_itemsPerLoad);
+    });
+
+
+
+    $(document).on("pageInit", "#page-search", function(e, pageId, $page) {
+
+      //清除html
+        $('#page-search .infinite-scroll-bottom .list-block ul').html("");
+        //重置参数
+      hot_page = 1;
+    // 加载flag
+     hot_loading = false;
+    // 最多可加载的条目
+     hot_maxItems = 0;
+    // 每次加载添加多少条目
+     hot_itemsPerLoad = 5;
+     hot_lastIndex = 0;
+        //预先加载
+        hot_addItems(hot_itemsPerLoad);
+
+
+
+
+        // func_ajax({
+        //     url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
+        //     data: {
+        //         size: 10,
+        //         hot: 1
+        //     },
+        //     successCallback: function(data) {
+        //         var temp_data = {
+        //             list: data.Common.info.list
+        //         }
+        //         var temp_html = template("page-search-item", temp_data);
+        //         $("#page-search .product-list").html(temp_html);
+        //     }
+        // });
     });
 
 
@@ -1807,7 +1838,6 @@ $(function() {
     });
     /*****page-comment*****/
     $(document).on("pageInit", "#page-comment", function(e, pageId, $page) {
-
 
 
 
