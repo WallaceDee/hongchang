@@ -131,6 +131,30 @@ if (up.type == 1) {
 
 console.log(userInfo);
 
+function getMsg() {
+    $.ajax({
+        url: "http://www.homchang.site/index.php/Api/index/getMessages?p=1",
+        type: "post",
+        dataType: "json",
+        data: {
+            open_id: userInfo.open_id,
+            size: 1
+        },
+        success: function(data) {
+            console.log(data);
+            if (data.Common.code == 200) {
+                var data = data.Common.info;
+                console.log(data.new_count);
+                sessionStorage.new_msg_count = data.new_count;
+            }
+        }
+    });
+}
+getMsg();
+setInterval(function() {
+    getMsg();
+}, 30000);
+
 
 
 //root font-size
@@ -506,7 +530,7 @@ function wxApi(fun_callback) {
 
 $(function() {
     'use strict';
-    /*****page-index*****/
+
     $(document).on("click", ".counter .minus", function() {
         var $counter = $(this).next("input");
         if ($counter.val() != 1) {
@@ -525,12 +549,55 @@ $(function() {
     $(document).on("click", ".popup-overlay", function() {
         $.closeModal();
     });
+    /*****page-index*****/
+    //无限加载
+    var hot_page = 1;
+    // 加载flag
+    var hot_loading = false;
+    // 最多可加载的条目
+    var hot_maxItems = 0;
+    // 每次加载添加多少条目
+    var hot_itemsPerLoad = 10;
+    var hot_lastIndex = 0;
 
 
+    function hot_addItems(number, option) {
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + hot_page,
+            data: {
+                hot:1
+            },
+            successCallback: function(data) {
+                var temp_html = '';
+                if (data.Common.code == 200) {
+                   hot_maxItems = data.Common.info.total;
+                    var temp_data = data.Common.info;
+                    temp_html = template('page-hot-item', temp_data);
+                } else {
+                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+                }
+                $('#page-hot-result .infinite-scroll-bottom .list-block ul').append(temp_html);
+                hot_page++;
+                hot_lastIndex = $('#page-hot-result .list-block ul li').length;
+                hot_loading = false;
+                if (hot_lastIndex >= hot_maxItems) {
+                    $.detachInfiniteScroll($('#page-index .infinite-scroll'));
+                    $('#page-index .infinite-scroll-preloader').remove();
+                    return;
+                }
+                $.refreshScroller();
+            }
+        });
+    }
+    $(document).on('infinite', '#page-index .infinite-scroll-bottom', function() {
+        if (hot_loading) return;
+        hot_loading = true;
+        hot_addItems(hot_itemsPerLoad, hot_option);
+    });
 
     $(document).on("pageInit", "#page-index", function(e, pageId, $page) {
 
-        setCartSupIcon();
+        setIconSup();
 
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCarousels",
@@ -649,21 +716,13 @@ $(function() {
 
 
     /*****page-details*****/
-
-
     var comment_page = 1;
-    // 加载flag
     var comment_loading = false;
-    // 最多可加载的条目
     var comment_maxItems = 0;
-
-    // 每次加载添加多少条目
     var comment_itemsPerLoad = 5;
-
     var comment_lastIndex = 0;
 
     function comment_addItems(number) {
-
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getProductComment?p=" + comment_page,
             data: {
@@ -671,83 +730,56 @@ $(function() {
                 product_id: getParameter("p_id")
             },
             successCallback: function(data) {
-                var html = '';
-                var surface_comment_html = '';
+                var temp_html = "";
                 if (data.Common.code == 200) {
                     comment_maxItems = data.Common.info.total;
-                    var list = data.Common.info.list;
-                    for (var i = 0; i < list.length; i++) {
-                        html += '<li class="weui-comment-item">\
-                                <div class="weui-comment-li"><i class="icon-' + list[i].score + '-stars"></i></div>\
-                                <div class="userinfo"><strong class="nickname">' + list[i].user.user_name + '</strong><span class="avatar" style="background-image: url(' + list[i].user.head_img + ');"> </span>\
-                                    <div class="weui-comment-msg">' + list[i].content + '</div>\
-                                    <p class="time">' + list[i].create_time + '</p>\
-                                </div>\
-                             </li>'
-                        if (i < 3) {
-                            surface_comment_html = html
+                    var temp_data = { list: data.Common.info.list };
+                    temp_html = template("page-details-comment", temp_data);
+                    if (comment_page == 1) {
+                        var temp_data1 = [];
+                        if (temp_data.list.length > 3) {
+                            temp_data1 = { list: temp_data.list.slice(0, 3) };
+                            $("#page-details .show-all-comment").removeClass("hide");
                         } else {
-                            if ($("#page-details .show-all-comment").hasClass("hide")) {
-                                $("#page-details .show-all-comment").removeClass("hide");
-                            }
+                            temp_data1 = temp_data;
                         }
+                        var temp_html1 = template("page-details-comment", temp_data1);
+                        $('#page-details .surface-comment ul').html(temp_html1);
                     }
                 } else {
-                    html = '<li class="no-data"><div><span>暂无评论</span></div></li>';
-                    surface_comment_html = html;
+                    temp_html = '<li class="no-data"><div><span>暂无评论</span></div></li>';
                 }
-
-                // var temp_data = { list: data.Common.info };
-                // var temp_html = template("page-details-comment", temp_data);
-                // console.log(temp_html);
-
-                // 添加新条目
-                $('#page-details #tab3 .infinite-scroll-bottom .list-container').append(html);
-                $('#page-details .surface-comment ul').html(surface_comment_html);
-
-                //页数+1
+                $('#page-details #tab3 .infinite-scroll-bottom .list-container').append(temp_html);
                 comment_page++;
-                // 更新最后加载的序号
                 comment_lastIndex = $('#page-details .list-container li').length;
-
-                // 重置加载flag
                 comment_loading = false;
-
                 if (comment_lastIndex >= comment_maxItems) {
-                    // 加载完毕，则注销无限加载事件，以防不必要的加载
                     $.detachInfiniteScroll($('#page-details #tab3 .infinite-scroll'));
-                    // 删除加载提示符
                     $('#page-details #tab3 .infinite-scroll-preloader').remove();
                     return;
                 }
-                //容器发生改变,如果是js滚动，需要刷新滚动
                 $.refreshScroller();
             }
         });
     }
-
-    // 注册'infinite'事件处理函数
     $(document).on('infinite', '#page-details #tab3 .infinite-scroll-bottom', function() {
-
-        // 如果正在加载，则退出
         if (comment_loading) return;
-
-        // 设置flag
         comment_loading = true;
-
-        // 添加新条目
         comment_addItems(comment_itemsPerLoad);
     });
-
-
-
     $(document).on("pageInit", "#page-details", function(e, pageId, $page) {
-        setCartSupIcon();
+        setIconSup();
+
+        //清除html
+        $('#page-details .infinite-scroll-bottom .list-container').html("");
+        //重置无限加载参数
+        comment_page = 1;
+        comment_loading = false;
+        comment_maxItems = 0;
+        comment_itemsPerLoad = 5;
+        comment_lastIndex = 0;
         //预先加载
         comment_addItems(comment_itemsPerLoad);
-
-
-
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getProductInfo",
             data: {
@@ -795,7 +827,6 @@ $(function() {
                 });
             }
         });
-
         $("#page-details .address input").cityPicker({});
     });
 
@@ -828,8 +859,8 @@ $(function() {
         });
     });
 
-    function setCartSupIcon() {
-        console.log("更新购物车数量")
+    function setIconSup() {
+        //console.log("更新购物车数量");
         if (my_cart != "") {
             var sum = 0;
             for (var i = 0; i < my_cart.length; i++) {
@@ -842,7 +873,19 @@ $(function() {
             } else {
                 $(".cart-count.badge").html(sum);
             }
-
+        }
+        //更新我的消息红点
+        if (sessionStorage.new_msg_count != "0") {
+            if ($(".msg-point").length == 0) {
+                var h = '<span class="badge msg-point"></span>';
+                $(".user-item").append(h);
+            }
+            if ($("#page-user-center header .msg-count").length == 0) {
+                var h = '<span class="badge msg-count">' + sessionStorage.new_msg_count + '</span>';
+                $("#page-user-center header .pull-right").append(h);
+            } else {
+                $(".msg-count.badge").html(sessionStorage.new_msg_count);
+            }
         }
     }
     $(document).on("click", "#page-details .add-to-cart,.popup-select .add-to-cart", function(event) {
@@ -870,13 +913,12 @@ $(function() {
         }
         localStorage.cart = JSON.stringify(my_cart);
         console.log(my_cart);
-        setCartSupIcon();
+        setIconSup();
     });
 
 
     /*****page-search*****/
     $(document).on("pageInit", "#page-search", function(e, pageId, $page) {
-
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
             data: {
@@ -891,9 +933,6 @@ $(function() {
                 $("#page-search .product-list").html(temp_html);
             }
         });
-
-
-
     });
 
 
@@ -903,20 +942,71 @@ $(function() {
     var search_loading = false;
     // 最多可加载的条目
     var search_maxItems = 0;
-
     // 每次加载添加多少条目
     var search_itemsPerLoad = 10;
-
     var search_lastIndex = 0;
-
     //搜索条件
     var search_option = new Object();
 
+    function search_addItems(number, option) {
+        var default_opt = {
+            size: number,
+            category_id: "",
+            search_content: "",
+            sale_type: "",
+            price_order: "",
+            sales_order: ""
+        };
+        var opt = $.extend(default_opt, option);
+        console.log(opt.search_content);
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + search_page,
+            data: opt,
+            successCallback: function(data) {
+                var temp_html = '';
+                if (data.Common.code == 200) {
+                    search_maxItems = data.Common.info.total;
+                    var temp_data = data.Common.info;
+                    temp_html = template('page-search-item', temp_data);
+                } else {
+                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+                }
+                $('#page-search-result .infinite-scroll-bottom .list-block ul').append(temp_html);
+                search_page++;
+                search_lastIndex = $('#page-search-result .list-block ul li').length;
+                search_loading = false;
+                if (search_lastIndex >= search_maxItems) {
+                    $.detachInfiniteScroll($('#page-search-result .infinite-scroll'));
+                    $('#page-search-result .infinite-scroll-preloader').remove();
+                    return;
+                }
+                $.refreshScroller();
+            }
+        });
+    }
+    $(document).on('infinite', '#page-search-result .infinite-scroll-bottom', function() {
+        if (search_loading) return;
+        search_loading = true;
+        search_addItems(search_itemsPerLoad, search_option);
+    });
 
     $(document).on("pageInit", "#page-search-result", function(e, pageId, $page) {
         search_option.search_content = getParameter("kw");
         search_option.category_id = getParameter("c_id");
         $("#page-search-result #search").val(search_option.search_content);
+
+
+        //清除html
+        $('#page-search-result .infinite-scroll-bottom .list-block ul').html("");
+        //重置参数
+        search_page = 1;
+        search_loading = false;
+        search_maxItems = 0;
+        search_itemsPerLoad = 10;
+        search_lastIndex = 0;
+        //预先加载
+        search_addItems(search_itemsPerLoad, search_option);
+
 
         var temp_discount_type_list = "";
         for (var i = 0; i < discount_type_list.length; i++) {
@@ -960,22 +1050,6 @@ $(function() {
             }
         });
 
-
-
-        $('#page-search-result .infinite-scroll-bottom .list-block ul').html("");
-        search_page = 1;
-        // 加载flag
-        search_loading = false;
-        // 最多可加载的条目
-        search_maxItems = 0;
-
-        // 每次加载添加多少条目
-        search_itemsPerLoad = 10;
-
-        search_lastIndex = 0;
-
-        //预先加载
-        search_addItems(search_itemsPerLoad, search_option);
     });
 
 
@@ -998,121 +1072,22 @@ $(function() {
     });
 
 
-    function search_addItems(number, option) {
-
-        var default_opt = {
-            size: number,
-            category_id: "",
-            search_content: "",
-            sale_type: "",
-            price_order: "",
-            sales_order: ""
-        };
-
-        var opt = $.extend(default_opt, option);
-        console.log(opt.search_content);
-        func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + search_page,
-            data: opt,
-            successCallback: function(data) {
-                var html = '';
-                if (data.Common.code == 200) {
-                    search_maxItems = data.Common.info.total;
-                    var list = data.Common.info.list;
-
-                    for (var i = 0; i < list.length; i++) {
-                        var tag = "";
-                        var tag_word = getNameByValue(data.sale_type, discount_type_list);
-                        if (tag_word != "") {
-                            tag = "<span>" + tag_word + "</span>"
-                        }
-                        html += '<li>\
-                            <a href="details.html?p_id=' + list[i].id + '" class="item-content item-link">\
-                                <div class="item-media"><span class="product-img" style="background-image: url(' + list[i].feng_mian_image + ');"></span></div>\
-                                <div class="item-inner">\
-                                    <div class="item-title-row">\
-                                        <div class="item-title">' + list[i].name + '</div>\
-                                    </div>\
-                                    <div class="item-subtitle">' + list[i].summary + '</div>\
-                                    <div class="item-title-row">\
-                                        <div class="item-title tag-row">' + tag + '</div>\
-                                    </div>\
-                                    <div class="item-title-row">\
-                                        <div class="item-title price-row"><span>' + list[i].current_price + '</span></div>\
-                                    </div>\
-                                    <div class="item-subtitle">\
-                                        <i class="icon icon-eye"></i><span>' + list[i].browse_num + '</span><i class="icon icon-comment"></i><span>' + list[i].comment_num + '</span><i class="icon icon-star-empty"></i><span>' + list[i].collection_num + '</span></div>\
-                                </div>\
-                            </a>\
-                        </li>';
-                    }
-                } else {
-                    html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
-                }
-                // 添加新条目
-                $('#page-search-result .infinite-scroll-bottom .list-block ul').append(html);
-                //页数+1
-                search_page++;
-                // 更新最后加载的序号
-                search_lastIndex = $('#page-search-result .list-block ul li').length;
-
-                // 重置加载flag
-                search_loading = false;
-
-                if (search_lastIndex >= search_maxItems) {
-                    // 加载完毕，则注销无限加载事件，以防不必要的加载
-                    $.detachInfiniteScroll($('#page-search-result .infinite-scroll'));
-                    // 删除加载提示符
-                    $('#page-search-result .infinite-scroll-preloader').remove();
-                    return;
-                }
-                //容器发生改变,如果是js滚动，需要刷新滚动
-                $.refreshScroller();
-            }
-        });
-    }
 
     function search_infinite_reset(option) {
-
         var opt = option;
-
-
         search_page = 1;
-        // 加载flag
         search_loading = false;
-        // 最多可加载的条目
         search_maxItems = 0;
-
-        // 每次加载添加多少条目
         search_itemsPerLoad = 10;
-
         search_lastIndex = 0;
-
         if ($("#page-search-result .infinite-scroll-preloader").length == 0) {
-
             var preloader_html = '<div class="infinite-scroll-preloader"><div class="preloader"></div></div>';
             $("#page-search-result .infinite-scroll").append(preloader_html);
             $.attachInfiniteScroll($('#page-search-result .infinite-scroll'));
         }
         $('#page-search-result .infinite-scroll-bottom .list-block ul').html("");
-        // 添加新条目
         search_addItems(search_itemsPerLoad, opt);
     }
-
-    // 注册'infinite'事件处理函数
-    $(document).on('infinite', '#page-search-result .infinite-scroll-bottom', function() {
-
-        // 如果正在加载，则退出
-        if (search_loading) return;
-
-        // 设置flag
-        search_loading = true;
-
-
-        // 添加新条目
-        search_addItems(search_itemsPerLoad, search_option);
-
-    });
 
     function reset_list_by_category() {
         var curr_title = $("#panel-filter .sub-category-list").find(".active").text() || $("#panel-filter .category-list").find(".active").text() || "";
@@ -1129,6 +1104,7 @@ $(function() {
         console.info(search_option);
         search_infinite_reset(search_option);
     }
+
     $(document).on("click", "#panel-filter .category-list li", function(event) {
         event.preventDefault();
         /* Act on the event */
@@ -1253,7 +1229,7 @@ $(function() {
 
     /*****page-cart*****/
     $(document).on("pageInit", "#page-cart", function(e, pageId, $page) {
-        setCartSupIcon();
+        setIconSup();
         console.log(my_cart);
         if (my_cart != "") {
             var temp_data = {
@@ -1400,7 +1376,7 @@ $(function() {
                 $("#page-cart .cart-title").addClass("hide");
             }
             cartSum();
-            setCartSupIcon();
+            setIconSup();
             localStorage.cart = JSON.stringify(my_cart);
 
         } else {
@@ -1890,7 +1866,7 @@ $(function() {
             gender_icon = "icon-unknow";
         }
         $("#page-user-center .user-header-wrapper .icon-gender").removeClass("icon-male icon-female icon-unknow").addClass(gender_icon);
-        setCartSupIcon();
+        setIconSup();
     });
 
 
@@ -1906,9 +1882,20 @@ $(function() {
         current_tab.addClass("active");
         current_tab_link.addClass("active");
     });
+    /*****page-my-message*****/
+    $(document).on("pageInit", "#page-my-message", function(e, pageId, $page) {
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
+            data: {
+                open_id: userInfo.open_id,
+                sex: select_gander
+            },
+            successCallback: function(data) {
+                userInfo.sex = select_gander;
+            }
+        });
 
-
-
+    });
     /*****page-user-info*****/
     var gander_list = ["保密", "男", "女"];
     $(document).on("pageInit", "#page-user-info", function(e, pageId, $page) {

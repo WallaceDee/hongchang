@@ -40,7 +40,9 @@
                     <ul class="product-list">
                     </ul>
                 </div>
-                <div class="infinite-scroll-preloader"><div class="preloader"></div></div>
+                <div class="infinite-scroll-preloader">
+                    <div class="preloader"></div>
+                </div>
             </div>
         </div>
         <div class="panel-overlay"></div>
@@ -64,8 +66,6 @@
             </div>
             <p class="buttons-row close-panel"><a class="reset-btn button">重置</a><a href="#" class="button close-panel">完成</a></p>
         </div>
-
-
         <script id="page-search-result-sub-category" type="text/html">
             {{each list as $list i }}
             <div id="tab{{i}}" class="tab">
@@ -77,7 +77,29 @@
         </script>
         <script id="page-search-result-sub-category-item" type="text/html">
             {{each children as $list i }}
-            <li  data-category="{{$list.id}}">{{$list.name}}</li>
+            <li data-category="{{$list.id}}">{{$list.name}}</li>
+            {{/each}}
+        </script>
+        <script id="page-search-item" type="text/html">
+            {{each list as $list i}}
+            <li>
+                <a href="details.html?p_id={{$list.id}}" class="item-content item-link">
+                    <div class="item-media"><span class="product-img" style="background-image: url({{if $list.preview==''}}images/category_default_img.jpg{{else}}{{$list.feng_mian_image}}{{/if}});"></span></div>
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title">{{$list.name}}</div>
+                        </div>
+                        <div class="item-subtitle">{{$list.summary}}</div>
+                        <div class="item-title-row">
+                            <div class="item-title tag-row"> {{if $list.sale_type!=0}}<span>{{discount_format($list.sale_type)}}</span>{{/if}}</div>
+                        </div>
+                        <div class="item-title-row">
+                            <div class="item-title price-row"><span>{{$list.current_price}}</span></div>
+                        </div>
+                        <div class="item-subtitle"> <i class="icon icon-eye"></i><span>{{$list.browse_num}}</span><i class="icon icon-comment"></i><span>{{$list.comment_num}}</span><i class="icon icon-star-empty"></i><span>{{$list.collection_num}}</span></div>
+                    </div>
+                </a>
+            </li>
             {{/each}}
         </script>
     </div>

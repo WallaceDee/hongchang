@@ -202,6 +202,8 @@
 
 
 
+
+
 /*****markmark*****/
 
 .bg-green {
@@ -241,24 +243,58 @@ body {
 }
 
 
+a {
+    color: #D32C2C;
+}
+
+#page-category .category-list li a.active,
+.bar-tab .tab-item.active {
+    color: #D32C2C!important;
+}
+
+header,
+#page-user-center .user-header-wrapper .header-radius,
+#page-user-center .user-header,
+#page-index .swiper-pagination-progress .swiper-pagination-progressbar {
+    background-color: #D32C2C!important;
+}
+
+.buttons-row .button {
+    border: 1px solid #D32C2C;
+    color: #D32C2C;
+}
+
+.buttons-tab .button.active {
+    color: #D32C2C;
+    border-color: #D32C2C;
+}
+
+.title,
+.bar .button-link,
+#page-details .title a {
+    color: #fff!important;
+}
 
 
+.bar-tab .tab-item:active,
+#page-details .title a.active {
+    color: #000!important;
+}
 
 
+#page-details .title a.active {
+    border-color: #000!important;
+}
 
+header:after {
+    background-color: #D84949!important;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+.bar-tab .tab-item .badge.msg-point{
+    min-width: .4rem;
+    height: .4rem;
+        top: .3rem;
+}
 
 
 
@@ -287,6 +323,8 @@ body {
     background-color: #fff;
     color: #999;
 }
+
+
 
 
 
@@ -649,6 +687,8 @@ body {
 
 
 
+
+
 /*****page-index*****/
 
 #page-index .swiper-container .swiper-slide span {
@@ -903,6 +943,8 @@ body {
 
 
 
+
+
 /*****page-search*****/
 
 #page-search .list-block,
@@ -943,7 +985,7 @@ body {
 }
 
 #page-search-result .tab-item.on {
-    color: #f60;
+    color: #D32C2C;
 }
 
 #page-search-result .tab-item i {
@@ -994,8 +1036,7 @@ body {
 #panel-filter .category-list li.active a,
 #panel-filter .sub-category-list li.active,
 #panel-filter .discount-list li.active {
-
-    color: #f60;
+    color: #D32C2C;
 }
 
 #panel-filter .buttons-row {
@@ -1006,6 +1047,8 @@ body {
     padding-left: .75rem;
     padding-right: .75rem;
 }
+
+
 
 
 
@@ -1212,6 +1255,8 @@ body {
 
 
 
+
+
 /*****page-details*****/
 
 #page-details #tab2 img {
@@ -1261,6 +1306,8 @@ body {
 #page-details .desc .item-inner:after {
     display: none;
 }
+
+
 
 
 
@@ -1677,6 +1724,8 @@ body {
 
 
 
+
+
 /********page-cart******/
 
 #page-cart .list-block.media-list .cart-title {
@@ -1854,6 +1903,8 @@ body {
 
 
 
+
+
 /********page-order******/
 
 #page-order .item-title,
@@ -1992,6 +2043,8 @@ body {
 
 
 
+
+
 /*********page-order-detail*******/
 
 #page-order-detail .item-title,
@@ -2052,6 +2105,8 @@ body {
 
 
 
+
+
 /*********page-order-detail-result*******/
 
 #page-order-detail-result h3 {
@@ -2074,10 +2129,15 @@ body {
 }
 
 
+
+
 /*********page-comment*******/
-#page-comment .item-title,#page-comment textarea{
+
+#page-comment .item-title,
+#page-comment textarea {
     font-size: .7rem;
 }
+
 #page-comment .rater {
     text-align: left;
     display: inline-block;
@@ -2127,6 +2187,8 @@ body {
     display: inline-block;
     overflow: hidden;
 }
+
+
 
 
 /*********page-my-order*******/
@@ -2240,7 +2302,32 @@ body {
 
 
 
+
+
 /********page-user-center******/
+
+#page-user-center header .pull-right {
+    margin-right: .25rem;
+}
+
+#page-user-center header .badge {
+    position: absolute;
+    top: .5rem;
+    left: 50%;
+    z-index: 100;
+    height: .8rem;
+    min-width: .8rem;
+    padding: 0 .2rem;
+    font-size: .6rem;
+    line-height: .8rem;
+    color: red;
+    vertical-align: top;
+    background: #fff;
+    border-radius: .5rem;
+    margin-left: 0;
+    "
+
+}
 
 #page-user-center .user-header-wrapper {
     position: absolute;
@@ -2354,6 +2441,10 @@ body {
     padding-top: 1rem;
 }
 
+#page-user-center .order-block .bar-tab .tab-item {
+    color: #929292!important;
+}
+
 #page-user-center .item-title {
     font-size: .7rem;
 }
@@ -2378,6 +2469,8 @@ body {
 #page-user-center .list-block.funciton-block {
     margin-top: .5rem;
 }
+
+
 
 
 
@@ -2579,6 +2672,8 @@ body {
 
 
 
+
+
 /*********page-address*********/
 
 #page-address .icon.icon-form-checkbox+span,
@@ -2734,6 +2829,8 @@ body {
 
 
 
+
+
 /*****page-user-info*******/
 
 #page-user-info .list-block {
@@ -2774,6 +2871,8 @@ body {
     width: 100%;
     height: 100%;
 }
+
+
 
 
 
@@ -3059,6 +3158,8 @@ body {
 
 
 
+
+
 /*************page-map*************/
 
 #page-map #map-container .list-block,
@@ -3089,7 +3190,7 @@ body {
     display: block;
 
     width: 4rem;
-    height: 4rem;
+    height: 3rem;
 
     background-color: #eee;
     background-position: center;

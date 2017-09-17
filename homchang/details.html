@@ -93,7 +93,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="list-block section">
+<!--                         <div class="list-block section">
                             <ul>
                                 <li>
                                     <a class="item-link item-content address">
@@ -107,7 +107,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> -->
                         <div class="list-block section">
                             <ul>
                                 <li>
@@ -119,6 +119,7 @@
                             </ul>
                             <div class="content-block  surface-comment">
                                 <ul class="weui-comment">
+                                    <li class="no-data"><div><span>暂无评论</span></div></li>
                                 </ul>
                                 <a class="button show-all-comment hide">查看全部</a>
                             </div>
@@ -126,7 +127,6 @@
                     </div>
                     <div id="tab2" class="tab">
                         <div class="content-block">
-                            test
                         </div>
                     </div>
                     <div id="tab3" class="tab">
@@ -164,13 +164,13 @@
             {{each list as $list i }}
             <div class="swiper-slide"><span style="background-image: url({{$list}});"></span></div>{{/each}}
         </script>
-        <script id="page-details-comment-8" type="text/html">
+        <script id="page-details-comment" type="text/html">
             {{each list as $list i }}
             <li class="weui-comment-item">
-                <div class="weui-comment-li"><i class="icon-' + list[i].score + '-stars"></i></div>
-                <div class="userinfo"><strong class="nickname"></strong><span class="avatar" style="background-image: url(' + list[i].user.head_img + ');"> </span>
-                    <div class="weui-comment-msg">{{$lis.content}}</div>
-                    <p class="time">' + list[i].create_time + '</p>
+                <div class="weui-comment-li"><i class="icon-{{$list.score}}-stars"></i></div>
+                <div class="userinfo"><strong class="nickname">{{$list.user.user_name}}</strong><span class="avatar" style="background-image: url({{$list.user.head_img}});"> </span>
+                    <div class="weui-comment-msg">{{$list.content}}</div>
+                    <p class="time">{{date_format($list.create_time).datetime}}</p>
                 </div>
             </li>{{/each}}
         </script>

@@ -13,6 +13,9 @@
     <div class="page-group">
         <div id="page-user-center" class="page">
             <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-right" href="#page-my-message">
+                       <span class="icon icon-comment"></span>
+                   </a>
                 <h1 class="title">会员中心</h1>
             </header>
             <nav class="bar bar-tab">
@@ -24,7 +27,7 @@
                   <span class="icon icon-cart"></span>
                    <span class="tab-label">购物车</span>
                 </a>
-                <a class="tab-item active" href="user_center.html">
+                <a class="tab-item user-item active" href="user_center.html">
                   <span class="icon icon-user"></span>
                   <span class="tab-label">我</span>
                </a>
@@ -168,6 +171,30 @@
                 </div>
             </div>
         </div>
+        <div id="page-my-message">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+                     <span class="icon icon-left"></span>
+                     返回
+                 </a>
+                <h1 class="title">我的消息</h1>
+            </header>
+            <div class="content">
+                <div class="list-block media-list">
+                    <ul>
+                        <li class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title-row">
+                                        <div class="item-title">Facebook</div>
+                                        <div class="item-after">17:14</div>
+                                    </div>
+                                    <div class="item-text"></div>
+                                </div>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <script id="page-my-order-item" type="text/html">
             {{each list as $list i}}
             <li class="card" data-order-num="{{$list.order_no}}">
@@ -204,7 +231,7 @@
                         {{if $list.pay_status==0 }}<a class="cancel-btn" >取消订单</a><a href="order_detail.html?order_num={{$list.order_no}}" class="go-to-pay">去支付</a>
                          {{else if $list.pay_status==1}}<a class="refund-btn" >申请退款</a>
                         {{else if $list.pay_status==2}}<a class="refund-btn">申请退款</a> <a class="receipt-btn">确认收货</a>
-                        {{else if $list.pay_status==3}}<a class="refund-btn">申请退货</a> <a href="comment.html?order_num={{$list.order_no}}&p_id={{combind_pid($list.products)}}">去评价</a> 
+                        {{else if $list.pay_status==3}}<a class="refund-btn">申请退货</a> <a href="comment.html?order_num={{$list.id}}">去评价</a> 
                           {{else if $list.pay_status==5}}<a class="refund-btn">申请退货</a>
                     {{/if}}
                 </span>
