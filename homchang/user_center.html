@@ -171,7 +171,7 @@
                 </div>
             </div>
         </div>
-        <div id="page-my-message">
+        <div id="page-my-message" class="page">
             <header class="bar bar-nav">
                 <a class="button button-link button-nav pull-left back">
                      <span class="icon icon-left"></span>
@@ -179,22 +179,50 @@
                  </a>
                 <h1 class="title">我的消息</h1>
             </header>
-            <div class="content">
+            <div class="content infinite-scroll infinite-scroll-bottom" data-distance="100">
                 <div class="list-block media-list">
                     <ul>
-                        <li class="item-content">
-                                <div class="item-inner">
-                                    <div class="item-title-row">
-                                        <div class="item-title">Facebook</div>
-                                        <div class="item-after">17:14</div>
-                                    </div>
-                                    <div class="item-text"></div>
-                                </div>
-                            </li>
                     </ul>
                 </div>
+                <!-- 加载提示符 -->
+          <div class="infinite-scroll-preloader">
+              <div class="preloader"></div>
+          </div>
             </div>
         </div>
+                <div id="page-message-detail" class="page">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+                     <span class="icon icon-left"></span>
+                     返回
+                 </a>
+                <h1 class="title">消息详情</h1>
+            </header>
+<div class="content native-scroll">
+   <div class="content-block-title"></div>
+      <div class="content-block">
+        <p class="text"></p>
+        <p><a class="button back">确定</a></p>
+      </div>
+
+  </div>
+        </div>
+                                 <script id="page-my-message-item" type="text/html">
+                                    {{each list as $list i}}
+
+                        <li>
+                            <a   data-id={{$list.id}} class="item-content item-link {{if $list.is_read==0}}unread{{/if}}">
+                                <div class="item-inner">
+                                    <div class="item-title-row">
+                                        <div class="item-title"></div>
+                                        <div class="item-after">{{date_format($list.create_time).datetime}}</div> 
+                                    </div>
+                                    <div class="item-text">{{$list.content}}</div>
+                                </div>
+                            </a>
+                            </li>
+                            {{/each}}
+                        </script>
         <script id="page-my-order-item" type="text/html">
             {{each list as $list i}}
             <li class="card" data-order-num="{{$list.order_no}}">

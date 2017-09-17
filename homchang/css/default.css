@@ -2470,13 +2470,15 @@ header:after {
     margin-top: .5rem;
 }
 
+/*******page-my-message********/
 
+#page-my-message .item-after{
+    font-size: .7rem;
+}
 
-
-
-
-
-
+#page-my-message .unread{
+    background-color: #efefef;
+}
 
 
 

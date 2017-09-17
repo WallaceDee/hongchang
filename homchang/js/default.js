@@ -146,6 +146,10 @@ function getMsg() {
                 var data = data.Common.info;
                 console.log(data.new_count);
                 sessionStorage.new_msg_count = data.new_count;
+
+                if ($(".user-item").length != 0&&data.new_count!=0) {
+                    $(".user-item").append('<span class="badge msg-point"></span>');
+                }
             }
         }
     });
@@ -346,7 +350,9 @@ function getNameByValue(val, arr) {
 }
 //时间戳格式化
 function func_format_date(timestamp) {
-
+    if (timestamp == "" || timestamp == null || timestamp == undefined) {
+        return "未知时间";
+    }
     var temp = timestamp;
     if (timestamp.toString().length == 10) {
         temp = timestamp * 1000;
@@ -555,12 +561,70 @@ $(function() {
         $.closeModal();
     });
     /*****page-index*****/
-   
+    //无限加载
+    var index_hot_page = 1;
+    // 加载flag
+    var index_hot_loading = false;
+    // 最多可加载的条目
+    var index_hot_maxItems = 0;
+    // 每次加载添加多少条目
+    var index_hot_itemsPerLoad = 5;
+    var index_hot_lastIndex = 0;
+
+
+    function index_hot_addItems(number) {
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + index_hot_page,
+            data: {
+                size: index_hot_itemsPerLoad,
+                hot: 1
+            },
+            successCallback: function(data) {
+                var temp_html = '';
+                if (data.Common.code == 200) {
+                    index_hot_maxItems = data.Common.info.total;
+                    var temp_data = data.Common.info;
+                    temp_html = template('page-index-product', temp_data);
+                } else {
+                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+                }
+
+                $('#page-index .infinite-scroll-bottom .list-block.product-list>ul').append(temp_html);
+                index_hot_page++;
+                index_hot_lastIndex = $('#page-index .list-block.product-list>ul>li').length;
+                index_hot_loading = false;
+                if (index_hot_lastIndex >= index_hot_maxItems) {
+                    $.detachInfiniteScroll($('#page-index .infinite-scroll'));
+                    $('#page-index .infinite-scroll-preloader').remove();
+                    return;
+                }
+                $.refreshScroller();
+            }
+        });
+    }
+    $(document).on('infinite', '#page-index .infinite-scroll-bottom', function() {
+        if (index_hot_loading) return;
+        index_hot_loading = true;
+        index_hot_addItems(index_hot_itemsPerLoad);
+    });
+
 
     $(document).on("pageInit", "#page-index", function(e, pageId, $page) {
 
         setIconSup();
-
+        //清除html
+        $('#page-index .infinite-scroll-bottom .list-block>ul').html("");
+        //重置无限加载参数
+        index_hot_page = 1;
+        // 加载flag
+        index_hot_loading = false;
+        // 最多可加载的条目
+        index_hot_maxItems = 0;
+        // 每次加载添加多少条目
+        index_hot_itemsPerLoad = 5;
+        index_hot_lastIndex = 0;
+        //预先加载
+        index_hot_addItems(comment_itemsPerLoad);
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCarousels",
             data: {
@@ -607,21 +671,21 @@ $(function() {
             }
         });
 
-        func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
-            data: {
-                size: 30,
-                hot:1,
-                sales_order:1
-            },
-            successCallback: function(data) {
-                var temp_data = {
-                    list: data.Common.info.list
-                }
-                var temp_html = template("page-index-product", temp_data);
-                $("#page-index .product-list").html(temp_html);
-            }
-        });
+        // func_ajax({
+        //     url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
+        //     data: {
+        //         size: 30,
+        //         hot:1,
+        //         sales_order:1
+        //     },
+        //     successCallback: function(data) {
+        //         var temp_data = {
+        //             list: data.Common.info.list
+        //         }
+        //         var temp_html = template("page-index-product", temp_data);
+        //         $("#page-index .product-list").html(temp_html);
+        //     }
+        // });
 
 
     });
@@ -697,12 +761,16 @@ $(function() {
                 var temp_html = "";
                 if (data.Common.code == 200) {
                     comment_maxItems = data.Common.info.total;
-                    var temp_data = { list: data.Common.info.list };
+                    var temp_data = {
+                        list: data.Common.info.list
+                    };
                     temp_html = template("page-details-comment", temp_data);
                     if (comment_page == 1) {
                         var temp_data1 = [];
                         if (temp_data.list.length > 3) {
-                            temp_data1 = { list: temp_data.list.slice(0, 3) };
+                            temp_data1 = {
+                                list: temp_data.list.slice(0, 3)
+                            };
                             $("#page-details .show-all-comment").removeClass("hide");
                         } else {
                             temp_data1 = temp_data;
@@ -882,7 +950,7 @@ $(function() {
 
 
     /*****page-search*****/
-     //无限加载
+    //无限加载
     var hot_page = 1;
     // 加载flag
     var hot_loading = false;
@@ -897,13 +965,13 @@ $(function() {
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + hot_page,
             data: {
-                size:hot_itemsPerLoad,
-                hot:1
+                size: hot_itemsPerLoad,
+                hot: 1
             },
             successCallback: function(data) {
                 var temp_html = '';
                 if (data.Common.code == 200) {
-                   hot_maxItems = data.Common.info.total;
+                    hot_maxItems = data.Common.info.total;
                     var temp_data = data.Common.info;
                     temp_html = template('page-search-hot', temp_data);
                 } else {
@@ -933,20 +1001,19 @@ $(function() {
 
     $(document).on("pageInit", "#page-search", function(e, pageId, $page) {
 
-      //清除html
+        //清除html
         $('#page-search .infinite-scroll-bottom .list-block ul').html("");
         //重置参数
-      hot_page = 1;
-    // 加载flag
-     hot_loading = false;
-    // 最多可加载的条目
-     hot_maxItems = 0;
-    // 每次加载添加多少条目
-     hot_itemsPerLoad = 5;
-     hot_lastIndex = 0;
+        hot_page = 1;
+        // 加载flag
+        hot_loading = false;
+        // 最多可加载的条目
+        hot_maxItems = 0;
+        // 每次加载添加多少条目
+        hot_itemsPerLoad = 5;
+        hot_lastIndex = 0;
         //预先加载
         hot_addItems(hot_itemsPerLoad);
-
 
 
 
@@ -1913,18 +1980,87 @@ $(function() {
         current_tab_link.addClass("active");
     });
     /*****page-my-message*****/
-    $(document).on("pageInit", "#page-my-message", function(e, pageId, $page) {
+
+    //无限加载
+    var msg_page = 1;
+    // 加载flag
+    var msg_loading = false;
+    // 最多可加载的条目
+    var msg_maxItems = 0;
+    // 每次加载添加多少条目
+    var msg_itemsPerLoad =10;
+    var msg_lastIndex = 0;
+
+
+    function msg_addItems(number) {
         func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
+            url: "http://www.homchang.site/index.php/Api/index/getMessages?p=" + msg_page,
             data: {
-                open_id: userInfo.open_id,
-                sex: select_gander
+                size: msg_itemsPerLoad,
+                open_id: userInfo.open_id
             },
             successCallback: function(data) {
-                userInfo.sex = select_gander;
+                var temp_html = '';
+                if (data.Common.code == 200) {
+                    msg_maxItems = data.Common.info.total;
+                    var temp_data = data.Common.info;
+                    temp_html = template('page-my-message-item', temp_data);
+                } else {
+                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+                }
+                $('#page-my-message .infinite-scroll-bottom .list-block ul').append(temp_html);
+                msg_page++;
+                msg_lastIndex = $('#page-my-message .list-block>ul>li').length;
+                msg_loading = false;
+                if (msg_lastIndex >= msg_maxItems) {
+                    $.detachInfiniteScroll($('#page-my-message .infinite-scroll'));
+                    $('#page-my-message .infinite-scroll-preloader').remove();
+                    return;
+                }
+                $.refreshScroller();
             }
         });
+    }
+    $(document).on('infinite', '#page-my-message .infinite-scroll-bottom', function() {
+        if (msg_loading) return;
+        msg_loading = true;
+        msg_addItems(msg_itemsPerLoad);
+    });
 
+    $(document).on("pageInit", "#page-my-message", function(e, pageId, $page) {
+
+        //清除html
+        $('#page-my-message .infinite-scroll-bottom .list-block ul').html("");
+        //重置参数
+        msg_page = 1;
+        // 加载flag
+        msg_loading = false;
+        // 最多可加载的条目
+        msg_maxItems = 0;
+        // 每次加载添加多少条目
+        msg_itemsPerLoad = 10;
+        msg_lastIndex = 0;
+        //预先加载
+        msg_addItems(msg_itemsPerLoad);
+
+
+    });
+    $(document).on("click", "#page-my-message .list-block li>a", function(event) {
+        var m_id = $(this).attr("data-id");
+        console.log(m_id);
+        $("#page-message-detail .content-block-title").html($(this).find(".item-after").html());
+        $("#page-message-detail .content-block-title").attr("data-id", m_id);
+        $("#page-message-detail .text").html($(this).find(".item-text").html());
+        $.router.load("#page-message-detail");
+    });
+    $(document).on("pageInit", "#page-message-detail", function(e, pageId, $page) {
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/readMessage",
+            data: {
+                msg_id: $("#page-message-detail [data-id]").attr("data-id"),
+                open_id: userInfo.open_id
+            }
+        });
     });
     /*****page-user-info*****/
     var gander_list = ["保密", "男", "女"];

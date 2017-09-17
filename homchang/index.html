@@ -19,7 +19,7 @@
                 <a class="tab-item active" href="index.html"> <span class="icon icon-home"></span><span class="tab-label">首页</span></a> 
                 <a class="tab-item cart-item" href="cart.html"> <span class="icon icon-cart"></span><span class="tab-label">购物车</span></a> 
                 <a class="tab-item user-item" href="user_center.html"> <span class="icon icon-user"></span><span class="tab-label">我</span> </a></nav>
-            <div class="content native-scroll">
+            <div class="content  infinite-scroll infinite-scroll-bottom" data-distance="100">
                 <div class="swiper-container" data-space-between='10'>
                     <div class="swiper-wrapper"> </div>
                     <div class="swiper-pagination"></div>
@@ -32,6 +32,10 @@
                     <ul>
                     </ul>
                 </div>
+                 <!-- 加载提示符 -->
+          <div class="infinite-scroll-preloader">
+              <div class="preloader"></div>
+          </div>
                 <div class="footer">
                     <p class="footer-text">Copyright © 2017 鸿畅环保设备有限公司 <a class="external" href="http://www.miitbeian.gov.cn/">粤ICP备17111952号</a></p>
                 </div>
@@ -151,7 +155,7 @@
             {{/each}}
         </script>
     </div>
-    <script src="http://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=2.5.2"></script>
+
     <script src="js/zepto.min.js"></script>
     <script src="js/sm.js"></script>
     <script src="js/sm-extend.js"></script>
