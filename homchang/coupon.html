@@ -28,42 +28,50 @@
             </div>
             <div class="content native-scroll">
                 <div class="tabs">
-                    <div id="tab1" class="tab active">
+                    <div id="tab1" data-type="0" class="tab active">
                         <div class="list-block media-list">
                             <ul>
-                                <li class="item-content">
-                                    <div class="item-media">
-                                        <div class="icon icon-coupon-bg"></div><span class="price">5</span><span class="scope">直减</span></div>
-                                    <div class="item-inner">
-                                        <div class="item-title-row">
-                                            <div class="item-title">【微商城】新人专享5元直减券</div>
-                                        </div>
-                                        <div class="item-subtitle">鸿畅官方微商城</div>
-                                        <div class="item-subtitle">指定品类使用 </div>
-                                        <div class="item-subtitle">有效期:2017/08/28-2017/09/01 </div>
-                                    </div>
-                                </li>
                             </ul>
                         </div>
                     </div>
-                    <div id="tab2" class="tab">
-                        <div class="content-block">
-                            <p>This is tab 2 content</p>
+                    <div id="tab2" data-type="1" class="tab">
+                        <div class="list-block media-list">
+                            <ul>
+                            </ul>
                         </div>
                     </div>
-                    <div id="tab3" class="tab">
-                        <div class="content-block">
-                            <p>This is tab 3 content</p>
+                    <div id="tab3" data-type="2" class="tab">
+                        <div class="list-block media-list">
+                            <ul>
+                            </ul>
                         </div>
                     </div>
-                    <div id="tab4" class="tab">
-                        <div class="content-block">
-                            <p>This is tab 3 content</p>
+                    <div id="tab4" data-type="3" class="tab">
+                        <div class="list-block media-list">
+                            <ul>
+                            </ul>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <script id="page-coupon-item" type="text/html">
+            {{each list as $list i}}
+            <li class="item-content">
+                <div class="item-media">
+                    <div class="icon icon-coupon-bg"></div><span class="price">{{$list.base_info.get_limit}}</span><span class="scope">代金券</span></div>
+                <div class="item-inner">
+                    <div class="item-title-row">
+                        <div class="item-title">{{$list.title}}</div>
+                    </div>
+
+                    <div class="item-subtitle">{{$list.accept_category}}型号商品可使用</div>
+                                        <div class="item-text">{{$list.base_info.description}}</div>
+                    <div class="item-subtitle">有效期:{{date_format($list.base_info.date_info.begin_timestamp).date}}-{{date_format($list.base_info.date_info.end_timestamp).date}} </div>
+                </div>
+            </li>
+            {{/each}}
+        </script>
     </div>
     <script src="js/zepto.min.js"></script>
     <script src="js/sm.js"></script>

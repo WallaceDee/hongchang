@@ -13,6 +13,7 @@ var orderInfo = {
     address_id: "",
     express_type: "",
     products: [],
+    coupon: "",
     store: "",
     memo: ""
 };
@@ -90,7 +91,9 @@ template.helper("order_status_format", function(status) {
 template.helper("express_type_format", function(type) {
     return getNameByValue(type, express_type_list);
 });
-
+template.helper('acc_div', function(arg1, arg2) {
+    return accDiv(arg1, arg2);
+});
 var up = {};
 if (localStorage.userInfo != undefined) {
     userInfo = JSON.parse(localStorage.userInfo);
@@ -146,9 +149,19 @@ function getMsg() {
                 var data = data.Common.info;
                 console.log(data.new_count);
                 sessionStorage.new_msg_count = data.new_count;
-
-                if ($(".user-item").length != 0&&data.new_count!=0) {
-                    $(".user-item").append('<span class="badge msg-point"></span>');
+                if (sessionStorage.new_msg_count != "0") {
+                    if ($(".msg-point").length == 0) {
+                        var h = '<span class="badge msg-point"></span>';
+                        $(".user-item").append(h);
+                    }
+                    if ($("#page-user-center header .msg-count").length == 0) {
+                        var h = '<span class="badge msg-count">' + sessionStorage.new_msg_count + '</span>';
+                        $("#page-user-center header .pull-right").append(h);
+                    } else {
+                        $(".msg-count.badge").html(sessionStorage.new_msg_count);
+                    }
+                } else {
+                    $(".msg-count,.msg-point").remove();
                 }
             }
         }
@@ -187,12 +200,12 @@ setInterval(function() {
 (function($) {
     $.extend($.fn, {
         validate: function() {
-            var pass = true;
+            var is_pass = true;
             this.each(function(index, el) {
                 if ($(this).attr("required") != undefined) { //html的pattern要注意转义
                     if ($(this).val() == "") {
                         $.toast($(this).attr("emptyTips"));
-                        pass = false;
+                        is_pass = false;
                         return false;
                     } else {
                         if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
@@ -200,14 +213,14 @@ setInterval(function() {
                             console.log(reg);
                             if (!reg.test($(this).val())) {
                                 $.toast($(this).attr("notMatchTips"));
-                                pass = false;
+                                is_pass = false;
                                 return false;
                             }
                         }
                     }
                 }
             });
-            return pass;
+            return is_pass;
         }
     })
     $.getScript = function(url, callback) {
@@ -276,6 +289,28 @@ function accMul(arg1, arg2) {
         m += s2.split(".")[1].length
     } catch (e) {}
     return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m)
+}
+/**
+ * 除法
+ * @param arg1
+ * @param arg2
+ * @returns {Number}
+ */
+function accDiv(arg1, arg2) {
+    var t1 = 0,
+        t2 = 0,
+        r1, r2;
+    try {
+        t1 = arg1.toString().split(".")[1].length
+    } catch (e) {}
+    try {
+        t2 = arg2.toString().split(".")[1].length
+    } catch (e) {}
+    with(Math) {
+        r1 = Number(arg1.toString().replace(".", ""))
+        r2 = Number(arg2.toString().replace(".", ""))
+        return (r1 / r2) * pow(10, t2 - t1);
+    }
 }
 /** 
  * 加法 
@@ -488,43 +523,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                            'checkJsApi',
-                            'onMenuShareTimeline',
-                            'onMenuShareAppMessage',
-                            'onMenuShareQQ',
-                            'onMenuShareWeibo',
-                            'onMenuShareQZone',
-                            'hideMenuItems',
-                            'showMenuItems',
-                            'hideAllNonBaseMenuItem',
-                            'showAllNonBaseMenuItem',
-                            'translateVoice',
-                            'startRecord',
-                            'stopRecord',
-                            'onVoiceRecordEnd',
-                            'playVoice',
-                            'onVoicePlayEnd',
-                            'pauseVoice',
-                            'stopVoice',
-                            'uploadVoice',
-                            'downloadVoice',
-                            'chooseImage',
-                            'previewImage',
-                            'uploadImage',
-                            'downloadImage',
-                            'getNetworkType',
-                            'openLocation',
-                            'getLocation',
-                            'hideOptionMenu',
-                            'showOptionMenu',
-                            'closeWindow',
-                            'scanQRCode',
-                            'chooseWXPay',
-                            'openProductSpecificView',
-                            'addCard',
-                            'chooseCard',
-                            'openCard'
-                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                        'checkJsApi',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ',
+                        'onMenuShareWeibo',
+                        'onMenuShareQZone',
+                        'hideMenuItems',
+                        'showMenuItems',
+                        'hideAllNonBaseMenuItem',
+                        'showAllNonBaseMenuItem',
+                        'translateVoice',
+                        'startRecord',
+                        'stopRecord',
+                        'onVoiceRecordEnd',
+                        'playVoice',
+                        'onVoicePlayEnd',
+                        'pauseVoice',
+                        'stopVoice',
+                        'uploadVoice',
+                        'downloadVoice',
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'downloadImage',
+                        'getNetworkType',
+                        'openLocation',
+                        'getLocation',
+                        'hideOptionMenu',
+                        'showOptionMenu',
+                        'closeWindow',
+                        'scanQRCode',
+                        'chooseWXPay',
+                        'openProductSpecificView',
+                        'addCard',
+                        'chooseCard',
+                        'openCard'
+                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -833,6 +868,7 @@ $(function() {
                 $("#page-details .data .item-after .num").html(data.res_count);
                 $("#page-details .data .item-after .comment").html(data.comment_num);
                 $("#page-details .specification .item-title").html(data.specification);
+                $("#page-details .model .item-title").html(data.model);
                 $("#page-details #tab2 .content-block").html(data.description);
                 $(".popup-select .avatar").css("background-image", "url(" + data.feng_mian_image + ")");
                 $(".popup-select h3").html(data.current_price);
@@ -896,9 +932,8 @@ $(function() {
         if (my_cart != "") {
             var sum = 0;
             for (var i = 0; i < my_cart.length; i++) {
-                sum += Number(my_cart[i].count)
+                sum += Number(my_cart[i].count);
             }
-
             if ($(".cart-count").length == 0) {
                 var h = '<span class="badge cart-count">' + sum + '</span>';
                 $(".cart-item").append(h);
@@ -1594,14 +1629,82 @@ $(function() {
             }
         });
         //卡券
+         $(".popup-coupon .list-block ul").html('<li class="item-content "><div class="item-title">您暂无可以使用的优惠卷</div></li>');
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCardList",
             data: {
                 open_id: userInfo.open_id,
+                cart: JSON.stringify(orderInfo.products)
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    var temp_data = data.Common.info;
+                    var temp_html = template('page-order-coupon-item', {
+                        list: temp_data
+                    });
+                    console.log(temp_data);
+
+                    $(".popup-coupon .list-block ul").html("");
+                    $(".popup-coupon .list-block ul").append( '<li>\
+                        <label class="label-checkbox item-content">\
+                            <input type="radio" name="coupon" data-id="0"  value="">\
+                            <div class="item-media"><i class="icon icon-form-checkbox"></i></div>\
+                            <div class="item-media"><i class="icon icon-coupon"></i></div>\
+                            <div class="item-inner">\
+                                <div class="item-title-row">\
+                                    <div class="item-title">不使用优惠劵</div>\
+                                </div>\
+                            </div>\
+                        </label>\
+                    </li>');
+
+                    $(".popup-coupon .list-block ul").append(temp_html);
+
+                    $("#page-order .coupon-wrapper .item-after").html("请选择");
+                    //选择的卡券
+                    if (!(orderInfo.coupon.info == "" || orderInfo.coupon.info == undefined)) {
+
+
+                        $("#page-order .coupon-wrapper .item-after").html(orderInfo.coupon.name);
+                        $(".popup-coupon").find("input[data-id='" + orderInfo.coupon.id + "']").eq(0).prop("checked", true);
+                        $("#page-order .coupon-discount").removeClass("hide");
+                        $("#page-order .coupon-discount .item-after span").html(orderInfo.coupon.value.toFixed(2));
+                        var actual_price = accSub(parseFloat($("#page-order .sum-row .total-price").text()), parseFloat($("#page-order .coupon-discount .discount").text()));
+                        console.log(actual_price);
+                        $("#page-order  nav .total-price").html(Number(actual_price).toFixed(2));
+                    }
+                }
             }
         });
 
+        $(document).on("click", ".popup-coupon li", function(event) {
+            var name = $(this).find(".item-title").text();
+            var value = parseFloat($(this).find(".item-subtitle span").text()) || 0;
+            var id = $(this).find("input").attr("data-id") || 0;
+            var info = $(this).find("input").val() || "";
 
+            var temp_data = {
+                name: name,
+                value: value,
+                id: id,
+                info: info
+            }
+            orderInfo.coupon = temp_data;
+            sessionStorage.orderInfo = JSON.stringify(orderInfo);
+
+            $("#page-order .open-popup .item-after").html(name);
+
+            if (temp_data.value != 0) {
+                $("#page-order .coupon-discount").removeClass("hide");
+                $("#page-order .coupon-discount .item-after span").html(value.toFixed(2));
+            } else {
+                $("#page-order .coupon-discount").addClass("hide");
+                $("#page-order .coupon-discount .item-after span").html(0);
+            }
+            var actual_price = accSub(parseFloat($("#page-order .sum-row .total-price").text()), parseFloat($("#page-order .coupon-discount .discount").text()));
+            console.log(actual_price);
+            $("#page-order  nav .total-price").html(Number(actual_price).toFixed(2));
+        });
 
         //快递
         var default_express = "送货上门";
@@ -1661,9 +1764,14 @@ $(function() {
     });
 
 
+
+
+
     $(document).on("click", "#page-order .submit-order-btn", function(event) {
         event.preventDefault();
         /* Act on the event */
+
+        console.log($(".popup-coupon input[name='coupon']:checked").val());
         //todo
         console.log(orderInfo);
         var temp_data = {
@@ -1672,7 +1780,8 @@ $(function() {
             total_price: $("nav .total-price").text(),
             location_id: orderInfo.address_id,
             pick_type: orderInfo.express_type,
-            buyer_message: orderInfo.memo
+            buyer_message: orderInfo.memo,
+            coupon: orderInfo.coupon.info
         }
         if (orderInfo.express_type == 2 && (orderInfo.address_id == "" || orderInfo.address_id == undefined)) {
             $.toast("请添加收货地址");
@@ -1686,7 +1795,7 @@ $(function() {
             temp_data.branch_id = orderInfo.store.id;
         }
 
-
+        console.log(temp_data);
         //提交订单
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/orderCommit",
@@ -1988,7 +2097,7 @@ $(function() {
     // 最多可加载的条目
     var msg_maxItems = 0;
     // 每次加载添加多少条目
-    var msg_itemsPerLoad =10;
+    var msg_itemsPerLoad = 10;
     var msg_lastIndex = 0;
 
 
@@ -2047,21 +2156,59 @@ $(function() {
     });
     $(document).on("click", "#page-my-message .list-block li>a", function(event) {
         var m_id = $(this).attr("data-id");
-        console.log(m_id);
-        $("#page-message-detail .content-block-title").html($(this).find(".item-after").html());
-        $("#page-message-detail .content-block-title").attr("data-id", m_id);
+        var unread = $(this).hasClass("unread");
+        $("#page-message-detail .content-block-title").html($(this).find(".item-after").html()).attr("data-id", m_id);
+        if (unread) {
+            $("#page-message-detail .content-block-title").addClass("unread");
+        }
         $("#page-message-detail .text").html($(this).find(".item-text").html());
         $.router.load("#page-message-detail");
     });
     $(document).on("pageInit", "#page-message-detail", function(e, pageId, $page) {
+        if ($("#page-message-detail .content-block-title").hasClass("unread")) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/readMessage",
+                data: {
+                    msg_id: $("#page-message-detail [data-id]").attr("data-id"),
+                    open_id: userInfo.open_id
+                },
+                successCallback: function(data) {
+                    if (data.Common.code = 200) {
+                        sessionStorage.new_msg_count = Number(sessionStorage.new_msg_count) - 1;
+                    }
+                }
+            });
+            $("#page-message-detail .content-block-title .unread").removeClass("unread");
+        }
+    });
+    /*****page-coupon*****/
+    $(document).on("pageInit", "#page-coupon", function(e, pageId, $page) {
         func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/readMessage",
+            url: "http://www.homchang.site/index.php/Api/index/getCardList",
             data: {
-                msg_id: $("#page-message-detail [data-id]").attr("data-id"),
                 open_id: userInfo.open_id
+            },
+            successCallback: function(data) {
+
+                if (data.Common.code == 200) {
+                    var temp_list = classifyArrayByField("deadline_type", data.Common.info);
+                    console.log(temp_list);
+                    for (var i = 0; i < temp_list.length; i++) {
+                        var $container = $("#page-coupon [data-type='" + temp_list[i].deadline_type + "']");
+                        var temp_data = {
+                            list: temp_list[i].data
+                        };
+                        var temp_html = template("page-coupon-item", temp_data);
+                        $container.find("ul").html(temp_html);
+                    }
+
+                }
             }
         });
     });
+
+
+
     /*****page-user-info*****/
     var gander_list = ["保密", "男", "女"];
     $(document).on("pageInit", "#page-user-info", function(e, pageId, $page) {

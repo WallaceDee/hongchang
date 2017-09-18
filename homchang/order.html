@@ -48,7 +48,7 @@
                 </div>
                 <div class="list-block">
                     <ul>
-                        <li>
+                        <li class="coupon-wrapper">
                             <a class="item-link item-content open-popup" data-popup=".popup-coupon">
                                 <div class="item-inner">
                                     <div class="item-title">优惠劵</div>
@@ -94,6 +94,12 @@
                                 <div class="item-after sum-row">共<span class="total-count">0</span>件商品 小计:<span class="total-price">0</span></div>
                             </div>
                         </li>
+                        <li class="item-content  coupon-discount hide">
+                            <div class="item-inner">
+                                <div class="item-title"></div>
+                                <div class="item-after">优惠劵：-￥<span class="discount">0</span></div>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -129,34 +135,34 @@
         <!-- About Popup -->
         <div class="popup popup-coupon">
             <h2 class="title">优惠劵</h2>
-            <div class="content-block">
-                <div class="list-block media-list">
-                    <ul>
-                        <li class="item-content ">
-                            <div class="item-title">您暂无可以使用的优惠卷</div>
-                        </li>
-<!--                         <li>
-                            <label class="label-checkbox item-content">
-                                <input type="radio" name="my-radio">
-                                <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
-                                <div class="item-media"><i class="icon icon-coupon"></i></div>
-                                <div class="item-inner">
-                                    <div class="item-title-row">
-                                        <div class="item-title">石头</div>
-                                    </div>
-                                    <div class="item-subtitle">New messages from John Doe</div>
-                                </div>
-                            </label>
-                        </li> -->
-                    </ul>
-                </div>
+            <div class="list-block media-list">
+                <ul>              
+                </ul>
             </div>
             <a class="close-popup">关闭</a>
         </div>
+        <script id="page-order-coupon-item" type="text/html">
+            {{each list as $list i}}
+            <li>
+                <label class="label-checkbox item-content">
+                    <input type="radio" name="coupon" value="{{$list.card_json}}" data-id="{{$list.id}}">
+                    <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
+                    <div class="item-media"><i class="icon icon-coupon"></i></div>
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title">{{$list.title}}</div>
+                        </div>
+                        <div class="item-subtitle">-￥<span>{{acc_div($list.reduce_cost,100).toFixed(2)}}</span></div>
+                        <div class="item-subtitle">{{$list.accept_category}}型号商品适用</div>
+                    </div>
+                </label>
+            </li>
+            {{/each}}
+        </script>
         <script id="page-order-item" type="text/html">
             {{each list as $list i }} {{if $list.select==true}}
             <li>
-                <a  class="item-link item-content">
+                <a class="item-link item-content">
                     <div class="item-media"><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
                     <div class="item-inner">
                         <div class="item-title-row">
@@ -183,7 +189,7 @@
                             <div class="item-title">{{list.name}}</div>
                         </div>
                         <div class="item-text">地址：{{list.address}}</div>
-                         <div class="item-subtitle">距离{{list.distance}}km</div>
+                        <div class="item-subtitle">距离{{list.distance}}km</div>
                         <div class="item-subtitle">电话：{{list.tel}}</div>
                     </div>
                 </a>

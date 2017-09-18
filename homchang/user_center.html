@@ -185,12 +185,12 @@
                     </ul>
                 </div>
                 <!-- 加载提示符 -->
-          <div class="infinite-scroll-preloader">
-              <div class="preloader"></div>
-          </div>
+                <div class="infinite-scroll-preloader">
+                    <div class="preloader"></div>
+                </div>
             </div>
         </div>
-                <div id="page-message-detail" class="page">
+        <div id="page-message-detail" class="page">
             <header class="bar bar-nav">
                 <a class="button button-link button-nav pull-left back">
                      <span class="icon icon-left"></span>
@@ -198,31 +198,29 @@
                  </a>
                 <h1 class="title">消息详情</h1>
             </header>
-<div class="content native-scroll">
-   <div class="content-block-title"></div>
-      <div class="content-block">
-        <p class="text"></p>
-        <p><a class="button back">确定</a></p>
-      </div>
-
-  </div>
+            <div class="content native-scroll">
+                <div class="content-block-title"></div>
+                <div class="content-block">
+                    <p class="text"></p>
+                    <p><a class="button back">确定</a></p>
+                </div>
+            </div>
         </div>
-                                 <script id="page-my-message-item" type="text/html">
-                                    {{each list as $list i}}
-
-                        <li>
-                            <a   data-id={{$list.id}} class="item-content item-link {{if $list.is_read==0}}unread{{/if}}">
-                                <div class="item-inner">
-                                    <div class="item-title-row">
-                                        <div class="item-title"></div>
-                                        <div class="item-after">{{date_format($list.create_time).datetime}}</div> 
-                                    </div>
-                                    <div class="item-text">{{$list.content}}</div>
-                                </div>
-                            </a>
-                            </li>
-                            {{/each}}
-                        </script>
+        <script id="page-my-message-item" type="text/html">
+            {{each list as $list i}}
+            <li>
+                <a data-id={{$list.id}} class="item-content item-link {{if $list.is_read==0}}unread{{/if}}">
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title"></div>
+                            <div class="item-after">{{date_format($list.create_time).datetime}}</div>
+                        </div>
+                        <div class="item-text">{{$list.content}}</div>
+                    </div>
+                </a>
+            </li>
+            {{/each}}
+        </script>
         <script id="page-my-order-item" type="text/html">
             {{each list as $list i}}
             <li class="card" data-order-num="{{$list.order_no}}">
@@ -254,7 +252,7 @@
                     </div>
                 </div>
                 <div class="card-footer">
-                    <span class="total pull-left">共2件商品<span>合计：￥{{$list.total_price}}</span></span>
+                    <span class="total pull-left">共{{sum_count($list.products)}}件商品<span>合计：￥{{$list.total_price}}</span></span>
                     <span class="pull-right">
                         {{if $list.pay_status==0 }}<a class="cancel-btn" >取消订单</a><a href="order_detail.html?order_num={{$list.order_no}}" class="go-to-pay">去支付</a>
                          {{else if $list.pay_status==1}}<a class="refund-btn" >申请退款</a>
