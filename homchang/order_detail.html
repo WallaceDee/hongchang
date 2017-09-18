@@ -21,7 +21,13 @@
             </a>
             </header>
             <nav class="bar bar-tab">
-                {{if list.pay_status==0}} <a class="tab-item big-tab-item pay">付款</a>{{/if}}
+                {{if list.pay_status==0}}<a class="tab-item big-tab-item cancel-btn">取消订单</a> <a class="tab-item big-tab-item pay">付款</a>
+
+                        {{else if list.pay_status==1}}<a class="tab-item big-tab-item refund-btn" >申请退款</a>
+                        {{else if list.pay_status==2}}<a class="refund-btn">申请退款</a> <a class="receipt-btn">确认收货</a>
+                         {{else if list.pay_status==3}}<a class="refund-btn">申请退货</a> <a href="comment.html?order_num={{$list.id}}">去评价</a> 
+                               {{else if list.pay_status==5}}<a class="refund-btn">申请退货</a>
+                {{/if}}
             </nav>
             <div class="content native-scroll">
                 <div class="list-block media-list address-block">
@@ -130,12 +136,14 @@
                             <div class="item-inner">
                                 <div class="item-title-row">
                                     <div class="item-title">商品总额</div>
-                                    <div class="item-after">￥{{list.total_price}}</div>
+                                    <div class="item-after">￥{{acc_add(list.total_price,list.discounts).toFixed(2)}}</div>
                                 </div>
+                                {{if list.discounts!="0.00"}}
                                 <div class="item-title-row">
                                     <div class="item-title">-优惠劵</div>
-                                    <div class="item-after">￥0.00</div>
+                                    <div class="item-after">-￥{{list.discounts}}</div>
                                 </div>
+                                {{/if}}
                             </div>
                         </li>
                         <li class="item-content">

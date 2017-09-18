@@ -226,7 +226,7 @@
             <li class="card" data-order-num="{{$list.order_no}}">
                 <div class="card-header">
                     <span>{{date_format($list.create_time).datetime}}</span>
-                    <span>{{order_status_format($list.pay_status)}}</span>
+                    <span>{{$list.pay_status}}{{order_status_format($list.pay_status)}}</span>
                 </div>
                 <div class="card-content">
                     <div class="card-content-inner">

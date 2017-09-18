@@ -1,3 +1,6 @@
+function clean(){
+    localStorage.clear();
+}
 var domain = document.domain;
 
 var entrance_url = window.location.href; //记录入口url地址，解决ios pushState 地址栏不变的bug
@@ -93,6 +96,9 @@ template.helper("express_type_format", function(type) {
 });
 template.helper('acc_div', function(arg1, arg2) {
     return accDiv(arg1, arg2);
+});
+template.helper('acc_add', function(arg1, arg2) {
+    return accAdd(arg1, arg2);
 });
 var up = {};
 if (localStorage.userInfo != undefined) {
@@ -523,43 +529,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                        'checkJsApi',
-                        'onMenuShareTimeline',
-                        'onMenuShareAppMessage',
-                        'onMenuShareQQ',
-                        'onMenuShareWeibo',
-                        'onMenuShareQZone',
-                        'hideMenuItems',
-                        'showMenuItems',
-                        'hideAllNonBaseMenuItem',
-                        'showAllNonBaseMenuItem',
-                        'translateVoice',
-                        'startRecord',
-                        'stopRecord',
-                        'onVoiceRecordEnd',
-                        'playVoice',
-                        'onVoicePlayEnd',
-                        'pauseVoice',
-                        'stopVoice',
-                        'uploadVoice',
-                        'downloadVoice',
-                        'chooseImage',
-                        'previewImage',
-                        'uploadImage',
-                        'downloadImage',
-                        'getNetworkType',
-                        'openLocation',
-                        'getLocation',
-                        'hideOptionMenu',
-                        'showOptionMenu',
-                        'closeWindow',
-                        'scanQRCode',
-                        'chooseWXPay',
-                        'openProductSpecificView',
-                        'addCard',
-                        'chooseCard',
-                        'openCard'
-                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                            'translateVoice',
+                            'startRecord',
+                            'stopRecord',
+                            'onVoiceRecordEnd',
+                            'playVoice',
+                            'onVoicePlayEnd',
+                            'pauseVoice',
+                            'stopVoice',
+                            'uploadVoice',
+                            'downloadVoice',
+                            'chooseImage',
+                            'previewImage',
+                            'uploadImage',
+                            'downloadImage',
+                            'getNetworkType',
+                            'openLocation',
+                            'getLocation',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'closeWindow',
+                            'scanQRCode',
+                            'chooseWXPay',
+                            'openProductSpecificView',
+                            'addCard',
+                            'chooseCard',
+                            'openCard'
+                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -1629,7 +1635,7 @@ $(function() {
             }
         });
         //卡券
-         $(".popup-coupon .list-block ul").html('<li class="item-content "><div class="item-title">您暂无可以使用的优惠卷</div></li>');
+        $(".popup-coupon .list-block ul").html('<li class="item-content "><div class="item-title">您暂无可以使用的优惠卷</div></li>');
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCardList",
             data: {
@@ -1645,7 +1651,7 @@ $(function() {
                     console.log(temp_data);
 
                     $(".popup-coupon .list-block ul").html("");
-                    $(".popup-coupon .list-block ul").append( '<li>\
+                    $(".popup-coupon .list-block ul").append('<li>\
                         <label class="label-checkbox item-content">\
                             <input type="radio" name="coupon" data-id="0"  value="">\
                             <div class="item-media"><i class="icon icon-form-checkbox"></i></div>\
@@ -1765,8 +1771,6 @@ $(function() {
 
 
 
-
-
     $(document).on("click", "#page-order .submit-order-btn", function(event) {
         event.preventDefault();
         /* Act on the event */
@@ -1812,6 +1816,17 @@ $(function() {
                     }
                     my_cart = temp_cart;
                     localStorage.cart = JSON.stringify(my_cart);
+
+
+                        orderInfo = {
+                            address_id: "",
+                            express_type: "",
+                            products: [],
+                            coupon: "",
+                            store: "",
+                            memo: ""
+                        };
+                        sessionStorage.orderInfo=JSON.stringify(orderInfo);
                     $.router.load("order_detail.html?order_num=" + order_num);
                 } else {
                     $.toast("提交订单失败，请刷新页面重试！")
@@ -1845,7 +1860,7 @@ $(function() {
         });
     });
 
-    $(document).on("click", "#page-order-detail .pay", function(event) {
+    $(document).on("click", "#page-order-detail .pay,#page-order-detail .pay", function(event) {
         event.preventDefault();
         /* Act on the event */
         var order_num = $("#page-order-detail .order-num").text();
@@ -1939,7 +1954,7 @@ $(function() {
     $(document).on("click", "#page-my-order .card-header,#page-my-order .card-content", function(event) {
         event.preventDefault();
         var order_num = $(this).parent("li.card").attr("data-order-num");
-        window.location.href = "order_detail.html?order_num=" + order_num;
+        $.router.load("order_detail.html?order_num=" + order_num);
     });
     // $(document).on("click", "#page-my-order .go-to-pay", function(event) {
     //     event.preventDefault();
@@ -1947,10 +1962,10 @@ $(function() {
     //     window.location.href = "order_detail.html?order_num=" + order_num;
     // });
 
-    $(document).on("click", "#page-my-order .refund-btn", function(event) {
+    $(document).on("click", "#page-my-order .refund-btn,#page-order-detail .refund-btn", function(event) {
         event.preventDefault();
         var text = $(this).text();
-        var order_num = $(this).parents("li.card").attr("data-order-num");
+        var order_num = $(this).parents("li.card").attr("data-order-num")||getParameter("order_num");
 
         $.confirm("确定要" + text + "吗？", function() {
             func_ajax({
@@ -1969,10 +1984,10 @@ $(function() {
             });
         });
     });
-    $(document).on("click", "#page-my-order .cancel-btn", function(event) {
+    $(document).on("click", "#page-my-order .cancel-btn,#page-order-detail .cancel-btn", function(event) {
         event.preventDefault();
         var $this_order_ele = $(this).parents("li.card");
-        var order_num = $this_order_ele.attr("data-order-num");
+        var order_num = $this_order_ele.attr("data-order-num")||getParameter("order_num");
 
         $.confirm("确定要取消订单吗？", function() {
             func_ajax({
@@ -1991,10 +2006,10 @@ $(function() {
             });
         });
     });
-    $(document).on("click", "#page-my-order .receipt-btn", function(event) {
+    $(document).on("click", "#page-my-order .receipt-btn,#page-order-detail .receipt-btn", function(event) {
         event.preventDefault();
         var $this_order_ele = $(this).parents("li.card");
-        var order_num = $this_order_ele.attr("data-order-num");
+        var order_num = $this_order_ele.attr("data-order-num")||getParameter("order_num");
 
         $.confirm("确认收货吗？", function() {
             func_ajax({
