@@ -6,30 +6,14 @@
  */
 // jshint ignore: start
 + function($) {
-
-    $.smConfig.productPicker = [{
-        "name": "美的",
-        "sub": [{
-                "name": "空调"
-            },
-            {
-                "name": "洗衣机"
-            }
-        ],
-    }, {
-        "name": "日立",
-        "sub": [{
-            "name": "空调"
-        }]
-    }];
-
+    $.smConfig.productPicker = [];
 }(Zepto);
 // jshint ignore: end
 
 /* jshint unused:false*/
 
-+
-function($) {
+
+function productPickerInit() {
     "use strict";
     var format = function(data) {
         var result = [];
@@ -114,17 +98,17 @@ function($) {
         cols: [{
                 textAlign: 'center',
                 values: provinces,
-                cssClass: "col-province"
+                cssClass: "col-first"
             },
             {
                 textAlign: 'center',
                 values: initCities,
-                cssClass: "col-city"
+                cssClass: "col-second"
             },
             {
                 textAlign: 'center',
                 values: initDistricts,
-                cssClass: "col-district"
+                cssClass: "col-third"
             }
         ]
     };
@@ -159,4 +143,4 @@ function($) {
         });
     };
 
-}(Zepto);
+};

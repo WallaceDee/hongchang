@@ -26,7 +26,8 @@ if (sessionStorage.orderInfo != undefined) {
 }
 
 var bespeakInfo = {
-    category_id: "",
+    category: "",
+    error_list: "",
     error_type: "",
     desc: "",
     imgs: [],
@@ -407,21 +408,21 @@ function getNameByValue(val, arr) {
     return result;
 }
 Date.prototype.format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1,
-        "d+": this.getDate(),
-        "h+": this.getHours(),
-        "m+": this.getMinutes(),
-        "s+": this.getSeconds(),
-        "q+": Math.floor((this.getMonth() + 3) / 3),
-        "S": this.getMilliseconds()
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-}
-//时间戳格式化
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes(),
+            "s+": this.getSeconds(),
+            "q+": Math.floor((this.getMonth() + 3) / 3),
+            "S": this.getMilliseconds()
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+    //时间戳格式化
 function func_format_date(timestamp) {
     if (timestamp == "" || timestamp == null || timestamp == undefined) {
         return "未知时间";
@@ -561,43 +562,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                        'checkJsApi',
-                        'onMenuShareTimeline',
-                        'onMenuShareAppMessage',
-                        'onMenuShareQQ',
-                        'onMenuShareWeibo',
-                        'onMenuShareQZone',
-                        'hideMenuItems',
-                        'showMenuItems',
-                        'hideAllNonBaseMenuItem',
-                        'showAllNonBaseMenuItem',
-                        'translateVoice',
-                        'startRecord',
-                        'stopRecord',
-                        'onVoiceRecordEnd',
-                        'playVoice',
-                        'onVoicePlayEnd',
-                        'pauseVoice',
-                        'stopVoice',
-                        'uploadVoice',
-                        'downloadVoice',
-                        'chooseImage',
-                        'previewImage',
-                        'uploadImage',
-                        'downloadImage',
-                        'getNetworkType',
-                        'openLocation',
-                        'getLocation',
-                        'hideOptionMenu',
-                        'showOptionMenu',
-                        'closeWindow',
-                        'scanQRCode',
-                        'chooseWXPay',
-                        'openProductSpecificView',
-                        'addCard',
-                        'chooseCard',
-                        'openCard'
-                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                            'translateVoice',
+                            'startRecord',
+                            'stopRecord',
+                            'onVoiceRecordEnd',
+                            'playVoice',
+                            'onVoicePlayEnd',
+                            'pauseVoice',
+                            'stopVoice',
+                            'uploadVoice',
+                            'downloadVoice',
+                            'chooseImage',
+                            'previewImage',
+                            'uploadImage',
+                            'downloadImage',
+                            'getNetworkType',
+                            'openLocation',
+                            'getLocation',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'closeWindow',
+                            'scanQRCode',
+                            'chooseWXPay',
+                            'openProductSpecificView',
+                            'addCard',
+                            'chooseCard',
+                            'openCard'
+                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -2650,15 +2651,127 @@ $(function() {
 
         var today = new Date().format("yyyy-MM-dd");
         console.log(today);
-        $("#page-bespeak .product-picker").productPicker({});
 
 
-        $(".fault-picker").picker({
+        //回显
+        if (!(bespeakInfo.category == "" || bespeakInfo.category == undefined)) {
+            $("#page-bespeak .product-picker").val(bespeakInfo.category.first + " " + bespeakInfo.category.second);
+        }
+
+        var error_list = [];
+        var curr_name = "";
+        if (!(bespeakInfo.error_list == "" || bespeakInfo.error_list == undefined)) {
+            for (var i = 0; i < bespeakInfo.error_list.length; i++) {
+                error_list.push(bespeakInfo.error_list[i].name);
+                if (bespeakInfo.error_type == bespeakInfo.error_list[i].id) {
+                    curr_name = bespeakInfo.error_list[i].name;
+                }
+            }
+        }
+        $(".error-picker").val(curr_name);
+
+        $(".error-picker").picker({
+            value: curr_name,
             cols: [{
                 textAlign: 'center',
-                values: ["不制冷", "不通电"]
+                values: error_list
             }]
+
         });
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/getCategoriesByParentId",
+            data: {
+                parent_id: 0
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    var temp_list = data.Common.info;
+                    for (var i = 0; i < temp_list.length; i++) {
+                        for (var j = 0; j < temp_list[i].children.length; j++) {
+                            delete temp_list[i].children[j].parent_id;
+                            delete temp_list[i].children[j].preview;
+                        }
+                        delete temp_list[i].parent_id;
+                        delete temp_list[i].preview;
+                        temp_list[i].sub = temp_list[i].children;
+                        delete temp_list[i].children;
+                    }
+                    console.log(temp_list);
+                    $.smConfig.productPicker = temp_list;
+                    productPickerInit();
+                    $("#page-bespeak .product-picker").productPicker({
+                        onClose: function() {
+                            var temp_list = $("#page-bespeak .product-picker").val().split(" ");
+                            var category_name = temp_list[0];
+                            var sub_category_name = temp_list[1];
+
+
+                            bespeakInfo.category = {
+                                first: category_name,
+                                second: sub_category_name
+                            };
+                            sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+
+                            console.log(sub_category_name);
+                            var c = $.smConfig.productPicker;
+                            var c_id = 1;
+                            for (var i = 0; i < c.length; i++) {
+                                for (var j = 0; j < c[i].sub.length; j++) {
+                                    if (c[i].sub[j].name == sub_category_name) {
+                                        c_id = c[i].sub[j].id;
+                                    }
+                                }
+                            }
+                            console.log(c_id);
+                            func_ajax({
+                                url: "http://www.homchang.site/index.php/Api/index/getMalfunctions",
+                                data: {
+                                    category_id: c_id,
+                                    open_id: userInfo.open_id
+                                },
+                                successCallback: function(data) {
+                                    if (data.Common.code = 200) {
+                                        var temp_list = data.Common.info;
+                                        console.info(temp_list);
+
+                                        bespeakInfo.error_list = temp_list;
+                                        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+
+
+                                        var displayValues = [];
+                                        for (var i = 0; i < temp_list.length; i++) {
+                                            displayValues.push(temp_list[i].name);
+                                        }
+                                        var back_up = $(".error-picker").clone();
+                                        $(".error-picker").after(back_up).remove();
+                                        $(".error-picker").picker({
+                                            cols: [{
+                                                textAlign: 'center',
+                                                values: displayValues
+                                            }],
+                                            onClose: function() {
+                                                var error_name = $("#page-bespeak .error-picker").val();
+                                                var error_id = 1;
+                                                for (var i = 0; i < temp_list.length; i++) {
+                                                    if (temp_list[i].name == error_name) {
+                                                        error_id = temp_list[i].id;
+                                                    }
+                                                }
+                                                console.log(error_id);
+                                                bespeakInfo.error_type = error_id;
+                                                sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+
+
 
         if ($(".picker-modal-inline").length == 0) {
             $("#date").calendar({
@@ -2670,10 +2783,7 @@ $(function() {
                 }
             });
         }
-        //回显
-        // if (!(bespeakInfo.desc == "" || bespeakInfo.desc == undefined)) {
 
-        // }
         $("#page-bespeak [name='desc']").html(bespeakInfo.desc);
         $("#page-bespeak [name='telephone']").val(bespeakInfo.telephone);
         $("#page-bespeak [name='code']").val(bespeakInfo.code);
@@ -2697,14 +2807,34 @@ $(function() {
                     var default_data = data.Common.info[0];
                     bespeakInfo.address_id = default_data.id;
                     sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
-
+                    $("#page-bespeak [name='address']").val(default_data.id);
                     $("#page-bespeak .address-block .item-title-row .item-title").html(default_data.contact + " " + default_data.tel);
                     $("#page-bespeak .address-block .item-text").html(default_data.address);
                 }
             }
         });
     });
+    $(document).on('click', '#page-bespeak #tab1 .button-success', function() {
 
+
+        var flag = $("#page-bespeak #tab1 [name='category'],#page-bespeak #tab1 [name='error'],#page-bespeak #tab1 [name='telephone'],#page-bespeak #tab1 [name='code'],#page-bespeak #tab1 [name='datetime'],#page-bespeak #tab1 [name='address']").validate();
+        if (flag) {
+            $.alert("1");
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/addSchedule",
+                data: {
+                    open_id: userInfo.open_id,
+                    type:2,
+                    malf_id:bespeakInfo.error_type,
+                    comment:bespeakInfo.desc,
+                    images:bespeakInfo.imgs.join("||"),
+                    tel:bespeakInfo.telephone,
+                    appointment_time:bespeakInfo.datetime,
+                    location_id:bespeakInfo.address_id
+                }
+            });
+        }
+    });
 
     $(document).on('click', '#page-bespeak .uploader-btn', function() {
 
@@ -2716,10 +2846,14 @@ $(function() {
             text: '照相',
             bold: true,
             color: 'danger',
-            onClick: function() { fun_uploadType("camera", allow_select_num); }
+            onClick: function() {
+                fun_uploadType("camera", allow_select_num);
+            }
         }, {
             text: '从手机相册选择',
-            onClick: function() { fun_uploadType("album", allow_select_num); }
+            onClick: function() {
+                fun_uploadType("album", allow_select_num);
+            }
         }];
         var buttons2 = [{
             text: '取消',
