@@ -194,7 +194,7 @@ wx.ready(function(){
 						var photo_array=new Array();
 						for(photo_index;photo_index<photo_length;photo_index++){
 							photo_array.push(res.localIds[photo_index]);
-							html+='<li><span data-localIds="'+res.localIds[photo_index]+'" class="uploading" style="background-image:url('+res.localIds[photo_index]+');"></span><div class="uploading-content"><div class="preloader"></div></div></li>';
+							html+='<li><img src="'+res.localIds[photo_index]+'" alt="" /><span data-localIds="'+res.localIds[photo_index]+'" class="uploading" style="background-image:url('+res.localIds[photo_index]+');"></span><div class="uploading-content"><div class="preloader"></div></div></li>';
 						}
 						$(".uploader-wrapper ul li").first().before(html);
 						//

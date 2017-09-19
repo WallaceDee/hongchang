@@ -20,20 +20,15 @@
                   返回
             </a>
             </header>
+            {{if list.pay_status==0||list.pay_status==1||list.pay_status==2||list.pay_status==3||list.pay_status==5}}
             <nav class="bar bar-tab">
-                {{if list.pay_status==0}}<a class="tab-item big-tab-item cancel-btn">取消订单</a> <a class="tab-item big-tab-item pay">付款</a>
-
-                        {{else if list.pay_status==1}}<a class="tab-item big-tab-item refund-btn" >申请退款</a>
-                        {{else if list.pay_status==2}}<a class="refund-btn">申请退款</a> <a class="receipt-btn">确认收货</a>
-                         {{else if list.pay_status==3}}<a class="refund-btn">申请退货</a> <a href="comment.html?order_num={{$list.id}}">去评价</a> 
-                               {{else if list.pay_status==5}}<a class="refund-btn">申请退货</a>
-                {{/if}}
+                {{if list.pay_status==0}}<a class="tab-item big-tab-item cancel-btn">取消订单</a> <a class="tab-item big-tab-item pay">付款</a> {{else if list.pay_status==1}}<a class="tab-item big-tab-item refund-btn">申请退款</a> {{else if list.pay_status==2}}<a class="refund-btn">申请退款</a> <a class="receipt-btn">确认收货</a> {{else if list.pay_status==3}}<a class="refund-btn">申请退货</a> <a href="comment.html?order_num={{$list.id}}">去评价</a> {{else if list.pay_status==5}}<a class="refund-btn">申请退货</a> {{/if}} {{/if}}
             </nav>
             <div class="content native-scroll">
                 <div class="list-block media-list address-block">
                     <ul>
                         <li class="status-content">
-                            <span>{{if list.pay_status==0}}<i class="icon icon-wallet"></i>等待买家付款{{else if list.pay_status==1}}<i class="icon icon-car"></i>等待卖家发货{{else if list.pay_status==2}}<i class="icon icon-car"></i>等待收货{{else if list.pay_status==3}}<i class="icon icon-check"></i>已完成{{else if list.pay_status==4}}<i class="icon icon-close"></i>已取消{{/if}}</span>
+                            <span>{{if list.pay_status==0}}<i class="icon icon-wallet"></i>等待买家付款{{else if list.pay_status==1}}<i class="icon icon-car"></i>等待卖家发货{{else if list.pay_status==2}}<i class="icon icon-car"></i>等待收货{{else if list.pay_status==3}}<i class="icon icon-check"></i>已完成{{else if list.pay_status==4}}<i class="icon icon-close"></i>已取消{{else if list.pay_status==6}}<i class="icon icon-refund"></i>已退款{{else if list.pay_status==7}}<i class="icon icon-refund"></i>申请退款/退货中{{/if}}</span>
                         </li>
                         <li class="item-content">
                             <div class="item-media"><i class="icon icon-my-location"></i></div>

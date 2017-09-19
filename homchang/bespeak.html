@@ -30,7 +30,7 @@
                                         <div class="item-inner">
                                             <div class="item-title label">保修产品</div>
                                             <div class="item-input">
-                                                <input class="product-picker" type="text" placeholder="请选择产品类型">
+                                                <input name="category" class="product-picker" type="text" placeholder="请选择产品类型">
                                             </div>
                                         </div>
                                         <a class="item-media my-product"><i class="icon icon-more"></i></a>
@@ -41,7 +41,7 @@
                                         <div class="item-inner">
                                             <div class="item-title label">故障类型</div>
                                             <div class="item-input">
-                                                <input class="fault-picker" type="text" placeholder="请选择故障类型">
+                                                <input name="error" class="fault-picker" type="text" placeholder="请选择故障类型">
                                             </div>
                                         </div>
                                     </div>
@@ -51,7 +51,7 @@
                                         <div class="item-inner">
                                             <div class="item-title label">故障描述</div>
                                             <div class="item-input">
-                                                <textarea></textarea>
+                                                <textarea name="desc"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -62,7 +62,6 @@
                                             <div class="item-title label">现场图片</div>
                                             <div class="item-input">
                                                 <p class="tips-p">可上传三张图片</p>
-                                                <input type="hidden" value="">
                                             </div>
                                         </div>
                                     </div>
@@ -70,7 +69,6 @@
                                 <li>
                                     <div class="uploader-wrapper">
                                         <ul>
-                                            <li><span style="background-image:url(data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAoHBwgHBgoICAgLCgoLDhgQDg0NDh0VFhEYIx8lJCIfIiEmKzcvJik0KSEiMEExNDk7Pj4+JS5ESUM8SDc9Pjv/2wBDAQoLCw4NDhwQEBw7KCIoOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozv/wAARCABuAG4DASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwDxmiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==);"></span><i class="icon icon-close"></i></li>
                                             <li>
                                                 <span class="uploader-btn"></span>
                                             </li>
@@ -81,7 +79,7 @@
                                         <div class="item-inner">
                                             <div class="item-title label">手机号码</div>
                                             <div class="item-input">
-                                                <input type="number" placeholder="请输入您的手机号码">
+                                                   <input name="telephone" type="number" required pattern="^1[3|4|5|8][0-9]\d{8}$" placeholder="请填写联系人手机号码"  maxlength="11" emptyTips="请填写联系人手机号码" notMatchTips="请输入正确的手机号">
                                             </div>
                                         </div>
                                     </div>
@@ -91,7 +89,7 @@
                                         <div class="item-inner">
                                             <div class="item-title label">验证码</div>
                                             <div class="item-input">
-                                                <input type="number" placeholder="请输入您的手机号码">
+                                                <input name="code" type="number" placeholder="请输入手机验证码">
                                             </div>
                                             <div class="item-after">
                                                 <button class="button get-verifyCode-btn">获取验证码</button>
@@ -104,20 +102,20 @@
                                         <div class="item-inner">
                                             <div class="item-title label">预约时间</div>
                                             <div class="item-input">
-                                                <input type="text" placeholder="请选择预约服务的时间">
+                                                <input name="datetime" type="text" placeholder="请选择预约服务的时间" readonly>
                                             </div>
                                         </div>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#page-inset-address" class="item-content  item-link">
+                                    <a href="address.html" class="item-content  item-link address-block">
                                         <div class="item-inner">
                                             <div class="item-title label">联系人</div>
                                             <div class="address-content">
                                                 <div class="item-title-row">
-                                                    <div class="item-title">标题</div>
+                                                    <div class="item-title"></div>
                                                 </div>
-                                                <div class="item-subtitle">子标题</div>
+                                                <div class="item-text">点击添加联系人</div>
                                             </div>
                                         </div>
                                     </a>
@@ -131,124 +129,62 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-          <div class="page" id="page-inset-address">
-    <header class="bar bar-nav">
-        <a class="button button-link button-nav pull-left back">
-                        <span class="icon icon-left"></span>返回
-                    </a>
-        <h1 class='title'>选择地址</h1>
-    </header>
-    <div class="content native-scroll">
-        <div class="list-block">
-            <ul>
-                <li>
-                    <a href="add_address.html" class="item-link item-content">
-                        <div class="item-inner">
-                            <div class="item-title">新增地址</div>
-                        </div>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="content-block-title">我的地址</div>
-        <div class="list-block cards-list">
-            <ul>
-                <li class="card">
-                    <div class="card-content">
-                        <div class="card-content-inner">
-                            <div class="user-info"><span>陈先生</span><span>132****449</span></div>
-                            <p class="address-info">广东广州市番禺区毕是鸠路250号2楼</p>
+                    <div class="content-block">
+                        <div class="row">
+                            <div class="col-100"><a href="#" class="button button-big button-fill button-success">Submit</a></div>
                         </div>
                     </div>
-                    <div class="card-footer"> <span class="pull-left">
-              <label class="label-checkbox item-content">
-              <input type="radio" name="address">
-              <div class="item-media"><i class="icon icon-form-checkbox"></i><span></span></div>
-                    </label>
-                    </span> <span class="pull-right opeartion-btn"><a href="edit_address.html"><i class="icon icon-edit"></i>编辑</a> <a class="delete-btn"><i class="icon icon-remove"></i>删除</a></span> </div>
-        </li>
-        <li class="card">
-            <div class="card-content">
-                <div class="card-content-inner">
-                    <div class="user-info"><span>陈先生</span><span>132****449</span></div>
-                    <p class="address-info">广东广州市番禺区毕是鸠路250号2楼</p>
                 </div>
             </div>
-            <div class="card-footer"> <span class="pull-left">
-              <label class="label-checkbox item-content">
-              <input type="radio" name="address">
-              <div class="item-media"><i class="icon icon-form-checkbox"></i><span></span></div>
-            </label>
-            </span> <span class="pull-right opeartion-btn"><a href="edit_address.html"><i class="icon icon-edit"></i>编辑</a> <a class="delete-btn"><i class="icon icon-remove"></i>删除</a></span> </div>
-    </li>
-    <li class="card">
-        <div class="card-content">
-            <div class="card-content-inner">
-                <div class="user-info"><span>陈先生</span><span>132****449</span></div>
-                <p class="address-info">广东广州市番禺区毕是鸠路250号2楼</p>
-            </div>
-        </div>
-        <div class="card-footer"> <span class="pull-left">
-              <label class="label-checkbox item-content">
-              <input type="radio" name="address">
-              <div class="item-media"><i class="icon icon-form-checkbox"></i><span></span></div>
-        </label>
-        </span> <span class="pull-right opeartion-btn"><a href="edit_address.html"><i class="icon icon-edit"></i>编辑</a> <a class="delete-btn"><i class="icon icon-remove"></i>删除</a></span> </div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-    <!-- About datetime -->
-    <div class="popup popup-datetime">
-        <div id="date"></div>
-        <div class="list-block">
-            <ul>
-                <li class="item-content title-content">
-                    <div class="item-inner">
-                        <div class="item-title">期望服务时间段<span>(非必须)</span></div>
-                    </div>
-                </li>
-                <li class="item-content service-time-list-wrapper">
-                    <ul class="service-time-list">
-                        <li>
-                            <label>
-                                <input type="radio" name="time" value="08:00-10:00"><span>08:00-10:00</span></label>
+            <!-- About datetime -->
+            <div class="popup popup-datetime">
+                <div id="date"></div>
+                <div class="list-block">
+                    <ul>
+                        <li class="item-content title-content">
+                            <div class="item-inner">
+                                <div class="item-title">期望服务时间段<span>(非必须)</span></div>
+                            </div>
                         </li>
-                        <li>
-                            <label>
-                                <input type="radio" name="time" value="10:00-12:00"><span>10:00-12:00</span></label>
+                        <li class="item-content service-time-list-wrapper">
+                            <ul class="service-time-list">
+                                <li>
+                                    <label>
+                                        <input type="radio" name="time" value="08:00-10:00"><span>08:00-10:00</span></label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input type="radio" name="time" value="10:00-12:00"><span>10:00-12:00</span></label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input type="radio" name="time" value="12:00-14:00"><span>12:00-14:00</span></label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input type="radio" name="time" value="14:00-16:00"><span>14:00-16:00</span></label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input type="radio" name="time" value="16:00-18:00"><span>16:00-18:00</span></label>
+                                </li>
+                                <li>
+                                    <label>
+                                        <input type="radio" name="time" value="18:00-20:00"><span>18:00-20:00</span></label>
+                                </li>
+                            </ul>
                         </li>
-                        <li>
-                            <label>
-                                <input type="radio" name="time" value="12:00-14:00"><span>12:00-14:00</span></label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="radio" name="time" value="14:00-16:00"><span>14:00-16:00</span></label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="radio" name="time" value="16:00-18:00"><span>16:00-18:00</span></label>
-                        </li>
-                        <li>
-                            <label>
-                                <input type="radio" name="time" value="18:00-20:00"><span>18:00-20:00</span></label>
+                        <li class="tips">温馨提示：服务商接单后将与您确认最终服务时间，敬请留意。</li>
+                        <li class="row btn-row">
+                            <div class="col-50"><a class="close-popup  button">取消</a></div>
+                            <div class="col-50"><a  class="button pick">确认</a></div>
                         </li>
                     </ul>
-                </li>
-                <li class="tips">温馨提示：服务商接单后将与您确认最终服务时间，敬请留意。</li>
-                <li class="row btn-row">
-                    <div class="col-50"><a class="close-popup  button">取消</a></div>
-                    <div class="col-50"><a href="#" class="button">确认</a></div>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
     </div>
-    </div>
-    </div>
+    <script src="http://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=2.5.2"></script>
     <script src="js/zepto.min.js"></script>
     <script src="js/sm.js"></script>
     <script src="js/sm-extend.js"></script>

@@ -108,7 +108,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="" class="item-link item-content">
+                            <a  class="item-link item-content service-btn">
                                 <div class="item-media"><i class="icon icon-service"></i></div>
                                 <div class="item-inner">
                                     <div class="item-title">人工客服</div>
@@ -226,7 +226,7 @@
             <li class="card" data-order-num="{{$list.order_no}}">
                 <div class="card-header">
                     <span>{{date_format($list.create_time).datetime}}</span>
-                    <span>{{$list.pay_status}}{{order_status_format($list.pay_status)}}</span>
+                    <span>{{order_status_format($list.pay_status)}}</span>
                 </div>
                 <div class="card-content">
                     <div class="card-content-inner">

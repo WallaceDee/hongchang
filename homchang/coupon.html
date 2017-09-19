@@ -59,15 +59,16 @@
             {{each list as $list i}}
             <li class="item-content">
                 <div class="item-media">
-                    <div class="icon icon-coupon-bg"></div><span class="price">{{$list.base_info.get_limit}}</span><span class="scope">代金券</span></div>
+                    <div class="icon icon-coupon-bg"></div><span class="price">{{$list.reduce_cost/100}}</span><span class="scope">代金券</span></div>
                 <div class="item-inner">
                     <div class="item-title-row">
                         <div class="item-title">{{$list.title}}</div>
                     </div>
-
-                    <div class="item-subtitle">{{$list.accept_category}}型号商品可使用</div>
-                                        <div class="item-text">{{$list.base_info.description}}</div>
-                    <div class="item-subtitle">有效期:{{date_format($list.base_info.date_info.begin_timestamp).date}}-{{date_format($list.base_info.date_info.end_timestamp).date}} </div>
+                    <div class="item-subtitle">{{if $list.accept_category!=null}}{{$list.accept_category}}型号商品可使{{else}}全场所有型号商品可用{{/if}}</div>
+                    <div class="item-subtitle">{{$list.brand_name}}</div>
+                  
+                    <div class="item-subtitle">  有效期:{{if $list.date_info.type=="DATE_TYPE_FIX_TIME_RANGE"}}{{date_format($list.date_info.begin_timestamp).date}}-{{date_format($list.date_info.end_timestamp).date}} 
+                    {{else if $list.date_info.type=="DATE_TYPE_FIX_TERM"}} {{$list.date_info.fixed_term}}天 {{/if}}</div>
                 </div>
             </li>
             {{/each}}

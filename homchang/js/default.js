@@ -1,4 +1,4 @@
-function clean(){
+function clean() {
     localStorage.clear();
 }
 var domain = document.domain;
@@ -20,8 +20,24 @@ var orderInfo = {
     store: "",
     memo: ""
 };
+
 if (sessionStorage.orderInfo != undefined) {
     orderInfo = JSON.parse(sessionStorage.orderInfo);
+}
+
+var bespeakInfo = {
+    category_id: "",
+    error_type: "",
+    desc: "",
+    imgs: [],
+    telephone: "",
+    code: "",
+    datetime: "",
+    address_id: ""
+};
+
+if (sessionStorage.bespeakInfo != undefined) {
+    bespeakInfo = JSON.parse(sessionStorage.bespeakInfo);
 }
 //    sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
 var discount_type_list = [{
@@ -206,6 +222,7 @@ setInterval(function() {
 (function($) {
     $.extend($.fn, {
         validate: function() {
+
             var is_pass = true;
             this.each(function(index, el) {
                 if ($(this).attr("required") != undefined) { //html的pattern要注意转义
@@ -389,6 +406,21 @@ function getNameByValue(val, arr) {
     }
     return result;
 }
+Date.prototype.format = function(fmt) {
+    var o = {
+        "M+": this.getMonth() + 1,
+        "d+": this.getDate(),
+        "h+": this.getHours(),
+        "m+": this.getMinutes(),
+        "s+": this.getSeconds(),
+        "q+": Math.floor((this.getMonth() + 3) / 3),
+        "S": this.getMilliseconds()
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
 //时间戳格式化
 function func_format_date(timestamp) {
     if (timestamp == "" || timestamp == null || timestamp == undefined) {
@@ -529,43 +561,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                            'checkJsApi',
-                            'onMenuShareTimeline',
-                            'onMenuShareAppMessage',
-                            'onMenuShareQQ',
-                            'onMenuShareWeibo',
-                            'onMenuShareQZone',
-                            'hideMenuItems',
-                            'showMenuItems',
-                            'hideAllNonBaseMenuItem',
-                            'showAllNonBaseMenuItem',
-                            'translateVoice',
-                            'startRecord',
-                            'stopRecord',
-                            'onVoiceRecordEnd',
-                            'playVoice',
-                            'onVoicePlayEnd',
-                            'pauseVoice',
-                            'stopVoice',
-                            'uploadVoice',
-                            'downloadVoice',
-                            'chooseImage',
-                            'previewImage',
-                            'uploadImage',
-                            'downloadImage',
-                            'getNetworkType',
-                            'openLocation',
-                            'getLocation',
-                            'hideOptionMenu',
-                            'showOptionMenu',
-                            'closeWindow',
-                            'scanQRCode',
-                            'chooseWXPay',
-                            'openProductSpecificView',
-                            'addCard',
-                            'chooseCard',
-                            'openCard'
-                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                        'checkJsApi',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ',
+                        'onMenuShareWeibo',
+                        'onMenuShareQZone',
+                        'hideMenuItems',
+                        'showMenuItems',
+                        'hideAllNonBaseMenuItem',
+                        'showAllNonBaseMenuItem',
+                        'translateVoice',
+                        'startRecord',
+                        'stopRecord',
+                        'onVoiceRecordEnd',
+                        'playVoice',
+                        'onVoicePlayEnd',
+                        'pauseVoice',
+                        'stopVoice',
+                        'uploadVoice',
+                        'downloadVoice',
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'downloadImage',
+                        'getNetworkType',
+                        'openLocation',
+                        'getLocation',
+                        'hideOptionMenu',
+                        'showOptionMenu',
+                        'closeWindow',
+                        'scanQRCode',
+                        'chooseWXPay',
+                        'openProductSpecificView',
+                        'addCard',
+                        'chooseCard',
+                        'openCard'
+                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -920,15 +952,35 @@ $(function() {
         $("#page-details .tab-link").removeClass("active");
         $("#page-details [href='#tab3']").addClass("active");
         $("#page-details .tab").removeClass("active");
-        $("#page-details #tab3").addClass("active");
+        $("#page-details #tab3").addClass("active")
+    });
+
+    $(document).on("click", "#page-details .service-btn,#page-user-center .service-btn", function(event) {
+        var img_path = "";
+        event.preventDefault();
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/getCarousels",
+            data: {
+                type: 4
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    img_path = data.Common.info[0].img
+                    $.alert('<img src="' + img_path + '" alt="客服二维码"  style="width:100%;"/>', '长按二维码添加客服');
+                } else {
+                    $.toast("未知错误，获取客服二维码失败");
+                }
+            }
+        });
     });
     $(document).on("click", "#page-details .collect-btn", function(event) {
         event.preventDefault();
         func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/addCollection",
+            url: "http://www.homchang.site/index.php/Api/index/optCollection",
             data: {
                 open_id: userInfo.open_id,
-                product_id: getParameter("p_id")
+                product_id: getParameter("p_id"),
+                collect: 1
             }
         });
     });
@@ -1818,15 +1870,15 @@ $(function() {
                     localStorage.cart = JSON.stringify(my_cart);
 
 
-                        orderInfo = {
-                            address_id: "",
-                            express_type: "",
-                            products: [],
-                            coupon: "",
-                            store: "",
-                            memo: ""
-                        };
-                        sessionStorage.orderInfo=JSON.stringify(orderInfo);
+                    orderInfo = {
+                        address_id: "",
+                        express_type: "",
+                        products: [],
+                        coupon: "",
+                        store: "",
+                        memo: ""
+                    };
+                    sessionStorage.orderInfo = JSON.stringify(orderInfo);
                     $.router.load("order_detail.html?order_num=" + order_num);
                 } else {
                     $.toast("提交订单失败，请刷新页面重试！")
@@ -1965,7 +2017,7 @@ $(function() {
     $(document).on("click", "#page-my-order .refund-btn,#page-order-detail .refund-btn", function(event) {
         event.preventDefault();
         var text = $(this).text();
-        var order_num = $(this).parents("li.card").attr("data-order-num")||getParameter("order_num");
+        var order_num = $(this).parents("li.card").attr("data-order-num") || getParameter("order_num");
 
         $.confirm("确定要" + text + "吗？", function() {
             func_ajax({
@@ -1987,7 +2039,7 @@ $(function() {
     $(document).on("click", "#page-my-order .cancel-btn,#page-order-detail .cancel-btn", function(event) {
         event.preventDefault();
         var $this_order_ele = $(this).parents("li.card");
-        var order_num = $this_order_ele.attr("data-order-num")||getParameter("order_num");
+        var order_num = $this_order_ele.attr("data-order-num") || getParameter("order_num");
 
         $.confirm("确定要取消订单吗？", function() {
             func_ajax({
@@ -2009,7 +2061,7 @@ $(function() {
     $(document).on("click", "#page-my-order .receipt-btn,#page-order-detail .receipt-btn", function(event) {
         event.preventDefault();
         var $this_order_ele = $(this).parents("li.card");
-        var order_num = $this_order_ele.attr("data-order-num")||getParameter("order_num");
+        var order_num = $this_order_ele.attr("data-order-num") || getParameter("order_num");
 
         $.confirm("确认收货吗？", function() {
             func_ajax({
@@ -2325,12 +2377,12 @@ $(function() {
             bold: true,
             color: 'danger',
             onClick: function() {
-                fun_uploadType("camera", allow_select_num);
+                func_uploadType_avatar("camera", allow_select_num);
             }
         }, {
             text: '从手机相册选择',
             onClick: function() {
-                fun_uploadType("album", allow_select_num);
+                func_uploadType_avatar("album", allow_select_num);
             }
         }];
         var buttons2 = [{
@@ -2381,7 +2433,7 @@ $(function() {
      * @param {String} type 上传类型
      * @param {Number} num 允许选择数量
      */
-    function fun_uploadType(type, num) {
+    function func_uploadType_avatar(type, num) {
         $.showIndicator();
         wx.chooseImage({
             count: num, // 默认9
@@ -2389,7 +2441,7 @@ $(function() {
             sourceType: [type], // 可以指定来源是相册还是相机，默认二者都有
             success: function(res) {
                 // $.showIndicator();
-                upload(res.localIds);
+                upload_avatar(res.localIds);
             }
         });
     }
@@ -2398,17 +2450,14 @@ $(function() {
      *上传图片接口
      *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)
      */
-    function upload(url_list) {
+    function upload_avatar(url_list) {
         wx.uploadImage({
             localId: url_list[0], // 需要上传的图片的本地ID，由chooseImage接口获得
             isShowProgressTips: 0, // 默认为1，显示进度提示
             success: function(res) {
                 //下载图片接口
-                download(res.serverId); // 返回图片的服务器端
+                download_avatar(res.serverId); // 返回图片的服务器端
                 console.log(res.serverId);
-            },
-            fail: function(res) {
-                $.alert(JSON.stringify(res));
             }
         });
     }
@@ -2416,9 +2465,8 @@ $(function() {
      *微信图片下载
      *@param {Object} server_id 要下载的server_id数组(微信返回的server_id)
      */
-    function download(server_id) {
+    function download_avatar(server_id) {
         //          alert(server_id);
-
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/uploadImages",
             data: {
@@ -2428,9 +2476,7 @@ $(function() {
             successCallback: function(data) {
                 if (data.Common.code == 200) {
                     cropper_url = data.Common.info;
-
                     $.popup(".popup-cutter");
-
                 }
             }
         });
@@ -2600,6 +2646,10 @@ $(function() {
     /*****page-bespeak*****/
 
     $(document).on("pageInit", "#page-bespeak", function(e, pageId, $page) {
+        wxApi();
+
+        var today = new Date().format("yyyy-MM-dd");
+        console.log(today);
         $("#page-bespeak .product-picker").productPicker({});
 
 
@@ -2609,13 +2659,259 @@ $(function() {
                 values: ["不制冷", "不通电"]
             }]
         });
-        $("#date").calendar({
-            value: ['2015-12-05']
+
+        if ($(".picker-modal-inline").length == 0) {
+            $("#date").calendar({
+                minDate: [today],
+                onChange: function(p, values, displayValues) {
+                    console.log(displayValues[0]);
+                    $("#page-bespeak [name='datetime']").val(displayValues[0]);
+                    $(".popup-datetime [name='time']").prop("checked", false);
+                }
+            });
+        }
+        //回显
+        // if (!(bespeakInfo.desc == "" || bespeakInfo.desc == undefined)) {
+
+        // }
+        $("#page-bespeak [name='desc']").html(bespeakInfo.desc);
+        $("#page-bespeak [name='telephone']").val(bespeakInfo.telephone);
+        $("#page-bespeak [name='code']").val(bespeakInfo.code);
+        $("#page-bespeak [name='datetime']").val(bespeakInfo.datetime);
+        if (!(bespeakInfo.imgs == [] || bespeakInfo.imgs == undefined)) {
+            var temp_html = "";
+            for (var i = 0; i < bespeakInfo.imgs.length; i++) {
+                temp_html += '<li><span><img src="' + bespeakInfo.imgs[i] + '"></span><i class="icon icon-close"></i></li>'
+            }
+            $("#page-bespeak .uploader-wrapper ul li").before(temp_html);
+        }
+        //订单默认地址
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/getLocations",
+            data: {
+                open_id: userInfo.open_id,
+                is_main: 1
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    var default_data = data.Common.info[0];
+                    bespeakInfo.address_id = default_data.id;
+                    sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+
+                    $("#page-bespeak .address-block .item-title-row .item-title").html(default_data.contact + " " + default_data.tel);
+                    $("#page-bespeak .address-block .item-text").html(default_data.address);
+                }
+            }
         });
     });
 
 
+    $(document).on('click', '#page-bespeak .uploader-btn', function() {
 
+        var allow_select_num = 4 - $(".uploader-wrapper ul li").length;
+        var buttons1 = [{
+            text: '请选择',
+            label: true
+        }, {
+            text: '照相',
+            bold: true,
+            color: 'danger',
+            onClick: function() { fun_uploadType("camera", allow_select_num); }
+        }, {
+            text: '从手机相册选择',
+            onClick: function() { fun_uploadType("album", allow_select_num); }
+        }];
+        var buttons2 = [{
+            text: '取消',
+            bg: 'danger'
+        }];
+        var groups = [buttons1, buttons2];
+        $.actions(groups);
+    });
+
+
+    /*
+     *选择上传类型
+     * @param {String} type 上传类型
+     * @param {Number} num 允许选择数量
+     */
+    function fun_uploadType(type, num) {
+        //拍照或从手机相册中选图接口
+        var photo_index = 0;
+        wx.chooseImage({
+            count: num, // 默认9
+            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+            sourceType: [type], // 可以指定来源是相册还是相机，默认二者都有
+            success: function(res) {
+                //遍历res.localIds，添加待上传的图片html
+                var html = "";
+                var photo_length = res.localIds.length;
+                $.showPreloader("正在上传图片<br><span id='uploading-index'>0</span>/<span id='uploading-count'>" + photo_length + "</span>");
+                var photo_array = new Array();
+                for (photo_index; photo_index < photo_length; photo_index++) {
+                    photo_array.push(res.localIds[photo_index]);
+                    html += '<li><span data-localIds="' + res.localIds[photo_index] + '" class="uploading" ><img src="' + res.localIds[photo_index] + '" alt="" /></span><div class="uploading-content"><div class="preloader"></div></div></li>';
+                }
+                console.log(html);
+                $(".uploader-wrapper ul li").first().before(html);
+                //
+                upload(photo_array.reverse()); //调用上传函数，倒序
+            }
+        });
+    }
+    /*
+     *上传图片接口
+     *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)
+     */
+    function upload(url_list) {
+        if (url_list.length > 0) {
+            $("#uploading-index").text(Number($("#uploading-index").text()) + 1); //改变上传图片
+            wx.uploadImage({
+                localId: url_list[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+                isShowProgressTips: 0, // 默认为1，显示进度提示
+                success: function(res) {
+                    var curr_ele = $(".uploader-wrapper").find("[data-localIds='" + url_list[0] + "']"); //查找出当前上传的DOM对象
+                    download(res.serverId, curr_ele, url_list); // 返回图片的服务器端
+                }
+            });
+        } else {
+            $.hidePreloader();
+        }
+    }
+
+    /*
+     *微信图片下载
+     *@param {Object} server_id 要下载的server_id数组(微信返回的server_id)
+     *@param {Object} curr_ele 当前下载图片的Jq对象
+     *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)；用于upload(url_list)函数的
+     */
+    function download(server_id, curr_ele, url_list) {
+
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/uploadImages",
+            data: {
+                serverId: server_id,
+                open_id: userInfo.open_id
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    var this_path = data.Common.info;
+                    curr_ele.attr("src", this_path);
+
+                    var path_list = [];
+                    $("#page-bespeak .uploader-wrapper img").each(function(index, ele) {
+                        path_list.push($(ele).attr("src"));
+                    });
+                    bespeakInfo.imgs = path_list;
+                    sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+                    //记录图片
+
+                    //图片下载成功，从上传数组url_list中删除
+                    url_list.splice(0, 1);
+                    //当前图片上传成功，移除图片的loading动画，添加删除按钮
+                    curr_ele.removeClass("uploading").next().remove();
+                    curr_ele.after("<i class='icon icon-close'></i>");
+                    //继续调用上传函数直到全部上传完毕
+                    upload(url_list);
+                }
+            }
+        });
+    }
+
+    $(document).on("click", ".popup-datetime .pick", function(event) {
+        var date = $("#page-bespeak [name='datetime']").val();
+        if (date != "") {
+            var time = $(".popup-datetime [name='time']:checked").val() || "";
+
+            var datetime = time;
+            if (time != "") {
+                datetime = date + " " + time
+            }
+            $("#page-bespeak [name='datetime']").val(datetime);
+            console.log(datetime);
+            $.closeModal(".popup-datetime");
+            //记录预约时间
+            bespeakInfo.datetime = datetime;
+            sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+        } else {
+            $.toast("请先选择日期");
+        }
+    });
+
+
+    if (sessionStorage.count != undefined) {
+        var count = sessionStorage.count;
+        var $btn = $("#page-bespeak .get-verifyCode-btn");
+        $btn.html("重新获取(" + count + "s)").prop('disabled', true);
+        var resend = setInterval(function() {
+            count--;
+            if (count > 0) {
+                $btn.html("重新获取(" + count + "s)").prop('disabled', true);
+                sessionStorage.count = count;
+            } else {
+                clearInterval(resend);
+                $btn.html("获取验证码").removeAttr('disabled');
+                sessionStorage.clear("count");
+            }
+        }, 1000);
+    }
+    $(document).on("click", "#page-bespeak .get-verifyCode-btn", function(event) {
+        var flag = $("#page-bespeak input[name='telephone']").validate();
+        if (flag) {
+            var temp_phone = $("#page-bespeak input[name='telephone']").val();
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getVerifyCode",
+                data: {
+                    open_id: userInfo.open_id,
+                    phone: temp_phone
+                },
+                successCallback: function(data) {
+                    if (data.Common.code = 200) {
+                        $.alert("验证码已发送，请注意查收！");
+                    }
+                }
+            });
+            var $btn = $(this);
+            var count = 60;
+            var resend = setInterval(function() {
+                count--;
+                if (count > 0) {
+                    $btn.html("重新获取(" + count + "s)");
+                    sessionStorage.count = count;
+                } else {
+                    clearInterval(resend);
+                    $btn.html("获取验证码").removeAttr('disabled');
+                    sessionStorage.clear("count");
+                }
+            }, 1000);
+            $btn.prop('disabled', true);
+        }
+    });
+    $(document).on("change", "#page-bespeak [name='code']", function(event) {
+        //记录填写的验证码
+        bespeakInfo.code = $(this).val();
+        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+    });
+    $(document).on("change", "#page-bespeak [name='telephone']", function(event) {
+        //记录填写的电话号码
+        bespeakInfo.telephone = $(this).val();
+        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+    });
+    $(document).on("change", "#page-bespeak [name='desc']", function(event) {
+        //记录填写的故障
+        bespeakInfo.desc = $(this).val();
+        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+    });
+    $(document).on("click", "#page-bespeak .uploader-wrapper .icon-close", function(event) {
+        //记录填写的故障
+        $(this).parent("li").remove();
+        var path_list = [];
+        $("#page-bespeak .uploader-wrapper img").each(function(index, ele) {
+            path_list.push($(ele).attr("src"));
+        });
+        bespeakInfo.imgs = path_list;
+        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+    });
     /*****page-map*****/
 
     $(document).on("pageInit", "#page-map,#page-inset-map", function(e, pageId, $page) {

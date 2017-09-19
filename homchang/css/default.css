@@ -2113,11 +2113,16 @@ margin-bottom: .5rem;
     height: 100%;
     padding-left: .75rem;
 }
+#page-order-detail .pay{
+        background-color: #4cd964;
+        color: #fff;
+}
+#page-order-detail .receipt-btn{
 
+      background-color:#0894ec;
+        color: #fff;
 
-
-
-
+}
 
 /*********page-order-detail-result*******/
 
@@ -3058,12 +3063,13 @@ margin-bottom: .5rem;
     height: 0;
     margin: 0;
     padding-bottom: 100%;
-    /* 关键就在这里 */
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
+    text-align: center;
+    background-color: #eee;
 }
+.uploader-wrapper ul li span img{
+    height: 100%;
 
+}
 .uploader-btn:before,
 .uploader-btn:after {
     position: absolute;
@@ -3191,7 +3197,9 @@ margin-bottom: .5rem;
     font-size: .6rem!important;
 }
 
-
+#page-bespeak .list-block .item-text{
+    height: inherit;
+}
 
 
 
