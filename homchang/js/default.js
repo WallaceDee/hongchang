@@ -217,7 +217,9 @@ setInterval(function() {
             var clientWidth = docEl.clientWidth;
             var htmlFontSize = 20;
             var designWidth = 375;
-            if (!clientWidth) { return; }
+            if (!clientWidth) {
+                return;
+            }
             docEl.style.fontSize = htmlFontSize * (clientWidth / designWidth) + 'px';
             var reality = Number(docEl.style.fontSize.substr(0, docEl.style.fontSize.length - 2));
             var theory = htmlFontSize * (clientWidth / designWidth);
@@ -225,7 +227,9 @@ setInterval(function() {
                 docEl.style.fontSize = htmlFontSize * theory / reality * (clientWidth / designWidth) + 'px';
             }
         };
-    if (!doc.addEventListener) { return; }
+    if (!doc.addEventListener) {
+        return;
+    }
     win.addEventListener(resizeEvt, recalc, false);
     doc.addEventListener('DOMContentLoaded', recalc, false);
 })(document, window);
@@ -417,21 +421,21 @@ function getNameByValue(val, arr) {
     return result;
 }
 Date.prototype.format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1,
-        "d+": this.getDate(),
-        "h+": this.getHours(),
-        "m+": this.getMinutes(),
-        "s+": this.getSeconds(),
-        "q+": Math.floor((this.getMonth() + 3) / 3),
-        "S": this.getMilliseconds()
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-}
-//时间戳格式化
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes(),
+            "s+": this.getSeconds(),
+            "q+": Math.floor((this.getMonth() + 3) / 3),
+            "S": this.getMilliseconds()
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+    //时间戳格式化
 function func_format_date(timestamp) {
     if (timestamp == "" || timestamp == null || timestamp == undefined) {
         return "未知时间";
@@ -570,43 +574,43 @@ function wxApi(fun_callback) {
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                        'checkJsApi',
-                        'onMenuShareTimeline',
-                        'onMenuShareAppMessage',
-                        'onMenuShareQQ',
-                        'onMenuShareWeibo',
-                        'onMenuShareQZone',
-                        'hideMenuItems',
-                        'showMenuItems',
-                        'hideAllNonBaseMenuItem',
-                        'showAllNonBaseMenuItem',
-                        'translateVoice',
-                        'startRecord',
-                        'stopRecord',
-                        'onVoiceRecordEnd',
-                        'playVoice',
-                        'onVoicePlayEnd',
-                        'pauseVoice',
-                        'stopVoice',
-                        'uploadVoice',
-                        'downloadVoice',
-                        'chooseImage',
-                        'previewImage',
-                        'uploadImage',
-                        'downloadImage',
-                        'getNetworkType',
-                        'openLocation',
-                        'getLocation',
-                        'hideOptionMenu',
-                        'showOptionMenu',
-                        'closeWindow',
-                        'scanQRCode',
-                        'chooseWXPay',
-                        'openProductSpecificView',
-                        'addCard',
-                        'chooseCard',
-                        'openCard'
-                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                            'checkJsApi',
+                            'onMenuShareTimeline',
+                            'onMenuShareAppMessage',
+                            'onMenuShareQQ',
+                            'onMenuShareWeibo',
+                            'onMenuShareQZone',
+                            'hideMenuItems',
+                            'showMenuItems',
+                            'hideAllNonBaseMenuItem',
+                            'showAllNonBaseMenuItem',
+                            'translateVoice',
+                            'startRecord',
+                            'stopRecord',
+                            'onVoiceRecordEnd',
+                            'playVoice',
+                            'onVoicePlayEnd',
+                            'pauseVoice',
+                            'stopVoice',
+                            'uploadVoice',
+                            'downloadVoice',
+                            'chooseImage',
+                            'previewImage',
+                            'uploadImage',
+                            'downloadImage',
+                            'getNetworkType',
+                            'openLocation',
+                            'getLocation',
+                            'hideOptionMenu',
+                            'showOptionMenu',
+                            'closeWindow',
+                            'scanQRCode',
+                            'chooseWXPay',
+                            'openProductSpecificView',
+                            'addCard',
+                            'chooseCard',
+                            'openCard'
+                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -987,7 +991,6 @@ $(function() {
             data: {
                 open_id: userInfo.open_id,
                 product_id: getParameter("p_id"),
-                collect: 1
             }
         });
     });
@@ -1635,6 +1638,26 @@ $(function() {
         $(".total-count").html(total_count);
     }
 
+    /*****page-fallow*****/
+
+    $(document).on("pageInit", "#page-fallow", function(e, pageId, $page) {
+
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/getMyCollections",
+            data: {
+                open_id: userInfo.open_id,
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    var temp_data = data.Common.info;
+                    var temp_html=template("page-fallow-item",{list:temp_data});
+                    console.info(temp_html);
+                    $("#page-fallow .list-block ul").html(temp_html);
+                }
+            }
+        });
+
+    });
 
     /*****page-order*****/
     $(document).on("pageInit", "#page-order", function(e, pageId, $page) {
@@ -2104,7 +2127,7 @@ $(function() {
                     $.toast("评论成功");
                     setTimeout(function() {
                         $.router.load("user_center.html#page-my-order");
-                    }, 1000);
+                    }, 2000);
                 } else {
                     $.toast("未知错误，评论失败！");
                 }
@@ -2281,7 +2304,7 @@ $(function() {
 
         });
         var maxDate = func_format_date(new Date()).date;
-        $("#page-user-info .birthday-picker").val(func_format_date(userInfo.birthday).date)
+        $("#page-user-info .birthday-picker").val(func_format_date(userInfo.birthday).date);
         $("#page-user-info .birthday-picker").calendar({
             maxDate: [maxDate],
             onChange: function(p, values, displayValues) {
@@ -2302,6 +2325,9 @@ $(function() {
 
             }
         });
+        if (!(userInfo.mobile_phone == null || userInfo.mobile_phone == "" || userInfo.mobile_phone == undefined)) {
+            $("#page-user-info .phone").val(userInfo.mobile_phone);
+        }
     });
 
     $(document).on("click", "#page-user-info .username", function(event) {
@@ -2460,6 +2486,51 @@ $(function() {
         });
     }
 
+
+
+    /*****page-bind*****/
+
+    $(document).on("click", "#page-bind .button-success", function(event) {
+        var flag = $("#page-bind [name='telephone'],#page-bind [name='code']").validate();
+        if (flag) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/associatePhone",
+                data: {
+                    open_id: userInfo.open_id,
+                    phone: $("#page-bind [name='telephone']").val(),
+                    code: $("#page-bind [name='code']").val()
+                },
+                successCallback: function(data) {
+                    if (data.Common.code == 200) {
+                        $.toast("绑定成功");
+                        userInfo.mobile_phone = $("#page-bind [name='telephone']").val();
+                        setTimeout(function() {
+                            $.router.back();
+                        }, 2000);
+                    }
+                }
+            });
+        }
+    });
+
+
+    $(document).on("click", "#page-bind .get-verifyCode-btn", function(event) {
+        var flag = $("#page-bind [name='telephone']").validate();
+        if (flag) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getVerifyCode",
+                data: {
+                    open_id: userInfo.open_id,
+                    phone: $("#page-bind [name='telephone']").val()
+                },
+                successCallback: function(data) {
+                    if (data.Common.code = 200) {
+                        $.alert("验证码已发送，请注意查收！");
+                    }
+                }
+            });
+        }
+    });
     /*****page-address*****/
     $(document).on("pageInit", "#page-address", function(e, pageId, $page) {
         func_ajax({
@@ -2620,10 +2691,9 @@ $(function() {
 
 
     /*****page-bespeak*****/
-
+    var public_error_list = [];
     $(document).on("pageInit", "#page-bespeak", function(e, pageId, $page) {
         wxApi();
-
         var today = new Date().format("yyyy-MM-dd");
         //回显
         if (!(repairInfo.category == "" || repairInfo.category == undefined)) {
@@ -2657,24 +2727,24 @@ $(function() {
             },
             successCallback: function(data) {
                 if (data.Common.code == 200) {
-                    var temp_list = data.Common.info;
-                    for (var i = 0; i < temp_list.length; i++) {
-                        for (var j = 0; j < temp_list[i].children.length; j++) {
-                            delete temp_list[i].children[j].parent_id;
-                            delete temp_list[i].children[j].preview;
+                    var temp_product_list = data.Common.info;
+                    for (var i = 0; i < temp_product_list.length; i++) {
+                        for (var j = 0; j < temp_product_list[i].children.length; j++) {
+                            delete temp_product_list[i].children[j].parent_id;
+                            delete temp_product_list[i].children[j].preview;
                         }
-                        delete temp_list[i].parent_id;
-                        delete temp_list[i].preview;
-                        temp_list[i].sub = temp_list[i].children;
-                        delete temp_list[i].children;
+                        delete temp_product_list[i].parent_id;
+                        delete temp_product_list[i].preview;
+                        temp_product_list[i].sub = temp_product_list[i].children;
+                        delete temp_product_list[i].children;
                     }
 
-                    productPickerInit(temp_list);
+                    productPickerInit(temp_product_list); //加工后的商品类型联动数据
                     $("#page-bespeak .product-picker").productPicker({
                         onClose: function() {
-                            var temp_list = $("#page-bespeak .product-picker").val().split(" ");
-                            var category_name = temp_list[0];
-                            var sub_category_name = temp_list[1];
+                            var temp_name_list = $("#page-bespeak .product-picker").val().split(" ");
+                            var category_name = temp_name_list[0];
+                            var sub_category_name = temp_name_list[1];
 
 
                             repairInfo.category = {
@@ -2682,12 +2752,12 @@ $(function() {
                                 second: sub_category_name
                             };
                             sessionStorage.repairInfo = JSON.stringify(repairInfo);
-                            var c =temp_list;
-                            var c_id = 1;
+                            var c = temp_product_list;
+                            var c_id = 0;
                             for (var i = 0; i < c.length; i++) {
                                 for (var j = 0; j < c[i].sub.length; j++) {
                                     if (c[i].sub[j].name == sub_category_name) {
-                                        c_id = c[i].sub[j].id;
+                                        c_id = c[i].sub[j].id; //根据选取的二级分类的名取对应得id值
                                     }
                                 }
                             }
@@ -2698,37 +2768,36 @@ $(function() {
                                     open_id: userInfo.open_id
                                 },
                                 successCallback: function(data) {
-                                    if (data.Common.code = 200) {
-                                        var temp_list = data.Common.info;
 
-                                        repairInfo.error_list = temp_list;
+                                    //重置errorpicker
+                                    var displayValues = [];
+                                    $("#page-bespeak .error-picker").val("");
+                                    repairInfo.error_type = "";
+                                    sessionStorage.repairInfo = JSON.stringify(repairInfo);
+                                    var back_up = $("#page-bespeak .error-picker").clone();
+                                    $("#page-bespeak .error-picker").after(back_up).remove();
+                                    if (data.Common.code == 200) {
+                                        public_error_list = data.Common.info;
+                                        console.log(public_error_list);
+                                        repairInfo.error_list = public_error_list;
                                         sessionStorage.repairInfo = JSON.stringify(repairInfo);
-
-
-                                        var displayValues = [];
-                                        for (var i = 0; i < temp_list.length; i++) {
-                                            displayValues.push(temp_list[i].name);
+                                        for (var i = 0; i < public_error_list.length; i++) {
+                                            displayValues.push(public_error_list[i].name);
                                         }
-                                        var back_up = $(".error-picker").clone();
-                                        $(".error-picker").after(back_up).remove();
-                                        $(".error-picker").picker({
+                                        $("#page-bespeak .error-picker").picker({
                                             cols: [{
                                                 textAlign: 'center',
                                                 values: displayValues
-                                            }],
-                                            onClose: function() {
-                                                var error_name = $("#page-bespeak .error-picker").val();
-                                                var error_id = 1;
-                                                for (var i = 0; i < temp_list.length; i++) {
-                                                    if (temp_list[i].name == error_name) {
-                                                        error_id = temp_list[i].id;
-                                                    }
-                                                }
-  
-                                                repairInfo.error_type = error_id;
-                                                sessionStorage.repairInfo = JSON.stringify(repairInfo);
-                                            }
+                                            }]
                                         });
+                                    } else {
+                                        $("#page-bespeak .error-picker").picker({
+                                            cols: [{
+                                                textAlign: 'center',
+                                                values: [""],
+                                                displayValues: ["该类型暂无故障类型"]
+                                            }]
+                                        })
                                     }
                                 }
                             });
@@ -2740,10 +2809,29 @@ $(function() {
 
 
 
+        if (!(repairInfo.telephone == "" || repairInfo.telephone == undefined)) {
+            $("#page-bespeak #tab1 [name='telephone']").val(repairInfo.telephone);
+        } else if (!(userInfo.mobile_phone == null || userInfo.mobile_phone == "" || userInfo.mobile_phone == undefined)) {
+            $("#page-bespeak #tab1 [name='telephone']").val(userInfo.mobile_phone);
+        }
+
+        if (!(setupInfo.telephone == "" || setupInfo.telephone == undefined)) {
+            $("#page-bespeak #tab2 [name='telephone']").val(setupInfo.telephone);
+        } else if (!(userInfo.mobile_phone == null || userInfo.mobile_phone == "" || userInfo.mobile_phone == undefined)) {
+            $("#page-bespeak #tab2 [name='telephone']").val(userInfo.mobile_phone);
+        }
+
         $("#page-bespeak #tab1 [name='desc']").html(repairInfo.desc);
-        $("#page-bespeak #tab1 [name='telephone']").val(repairInfo.telephone);
+
+
         $("#page-bespeak #tab1 [name='code']").val(repairInfo.code);
         $("#page-bespeak #tab1 [name='datetime']").val(repairInfo.datetime);
+
+        $("#page-bespeak #tab2 [name='desc']").html(setupInfo.desc);
+
+        $("#page-bespeak #tab2 [name='code']").val(setupInfo.code);
+        $("#page-bespeak #tab2 [name='datetime']").val(setupInfo.datetime);
+
         if (!(repairInfo.imgs == [] || repairInfo.imgs == undefined)) {
             $("#page-bespeak #tab1 .uploader-wrapper li").not($(".uploader-btn").parent()).remove();
             var temp_html = "";
@@ -2778,10 +2866,8 @@ $(function() {
                     repairInfo.address_id = default_data.id;
                     sessionStorage.repairInfo = JSON.stringify(repairInfo);
 
-
                     setupInfo.address_id = default_data.id;
                     sessionStorage.setupInfo = JSON.stringify(setupInfo);
-
 
                     $("#page-bespeak [name='address']").val(default_data.id);
                     $("#page-bespeak .address-block .item-title-row .item-title").html(default_data.contact + " " + default_data.tel);
@@ -2793,14 +2879,24 @@ $(function() {
             $("#page-bespeak #tab2 [name='product-name']").val(setupInfo.product.name);
             $("#page-bespeak #tab2 [name='product-id']").val(setupInfo.product.id);
         }
-        $("#page-bespeak #tab2 [name='desc']").html(setupInfo.desc);
-        $("#page-bespeak #tab2 [name='telephone']").val(setupInfo.telephone);
-        $("#page-bespeak #tab2 [name='code']").val(setupInfo.code);
-        $("#page-bespeak #tab2 [name='datetime']").val(setupInfo.datetime);
 
 
 
     });
+
+    $(document).on("change", "#page-bespeak .error-picker", function() {
+        console.log("1111");
+        var error_name = $(this).val();
+        var error_id = 1;
+        for (var i = 0; i < public_error_list.length; i++) {
+            if (public_error_list[i].name == error_name) {
+                error_id = public_error_list[i].id;
+            }
+        }
+        repairInfo.error_type = error_id;
+        sessionStorage.repairInfo = JSON.stringify(repairInfo);
+    });
+
     $(document).on('click', '#page-bespeak #tab1 .button-success', function() {
         var flag = $("#page-bespeak #tab1 [name='category'],#page-bespeak #tab1 [name='error'],#page-bespeak #tab1 [name='telephone'],#page-bespeak #tab1 [name='code'],#page-bespeak #tab1 [name='datetime'],#page-bespeak #tab1 [name='address']").validate();
         if (flag) {
