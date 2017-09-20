@@ -5,15 +5,7 @@
  * =====================================================
  */
 // jshint ignore: start
-+ function($) {
-    $.smConfig.productPicker = [];
-}(Zepto);
-// jshint ignore: end
-
-/* jshint unused:false*/
-
-
-function productPickerInit() {
+function productPickerInit(productData) {
     "use strict";
     var format = function(data) {
         var result = [];
@@ -51,7 +43,7 @@ function productPickerInit() {
         return [""];
     };
 
-    var raw = $.smConfig.productPicker;
+    var raw = productData;
     var provinces = raw.map(function(d) {
         return d.name;
     });

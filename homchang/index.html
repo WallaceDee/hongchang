@@ -15,9 +15,9 @@
             <header class="bar bar-nav"> <a href="search.html" class="button button-link button-nav pull-right"> <span class="icon icon-search"></span> </a>
                 <h1 class="title">鸿畅商城</h1>
             </header>
-            <nav class="bar bar-tab"> 
-                <a class="tab-item active" href="index.html"> <span class="icon icon-home"></span><span class="tab-label">首页</span></a> 
-                <a class="tab-item cart-item" href="cart.html"> <span class="icon icon-cart"></span><span class="tab-label">购物车</span></a> 
+            <nav class="bar bar-tab">
+                <a class="tab-item active" href="index.html"> <span class="icon icon-home"></span><span class="tab-label">首页</span></a>
+                <a class="tab-item cart-item" href="cart.html"> <span class="icon icon-cart"></span><span class="tab-label">购物车</span></a>
                 <a class="tab-item user-item" href="user_center.html"> <span class="icon icon-user"></span><span class="tab-label">我</span> </a></nav>
             <div class="content  infinite-scroll infinite-scroll-bottom" data-distance="100">
                 <div class="swiper-container" data-space-between='10'>
@@ -32,10 +32,10 @@
                     <ul>
                     </ul>
                 </div>
-                 <!-- 加载提示符 -->
-          <div class="infinite-scroll-preloader">
-              <div class="preloader"></div>
-          </div>
+                <!-- 加载提示符 -->
+                <div class="infinite-scroll-preloader">
+                    <div class="preloader"></div>
+                </div>
                 <div class="footer">
                     <p class="footer-text">Copyright © 2017 鸿畅环保设备有限公司 <a class="external" href="http://www.miitbeian.gov.cn/">粤ICP备17111952号</a></p>
                 </div>
@@ -123,7 +123,7 @@
                                     <i>￥</i><em>{{$list.current_price}}</em>
                                     <del>￥{{$list.origin_price}}</del>
                                 </li>
-                           <li class="product-sub-desc-item"><i class="icon icon-eye"></i><em>{{$list.browse_num}}</em><i class="icon icon-comment"></i><em>{{$list.comment_num}}</em><i class="icon icon-star-empty"></i><em>{{$list.collection_num}}</em></li>
+                                <li class="product-sub-desc-item"><i class="icon icon-eye"></i><em>{{$list.browse_num}}</em><i class="icon icon-comment"></i><em>{{$list.comment_num}}</em><i class="icon icon-star-empty"></i><em>{{$list.collection_num}}</em></li>
                             </ul>
                         </div>
                     </div>
@@ -137,25 +137,25 @@
                 <div class="content-block-title">热销品类</div>
                 <div class="list-block">
                     <ul class="sub-category-list">
-                                {{if  $list.children==""}}
-            <li class="no-data">
-                <div><span>暂无数据</span></div>
-            </li>{{else}} {{each $list.children as $children c}}
-            <li>
-                <a href="search_result.html?c_id={{$children.id}}">
-                    <div><span style="background-image: url({{if $children.preview==''}}images/category_default_img.jpg{{else}}{{$children.preview}}{{/if}});"></span>
-                        <p>{{$children.name}}</p>
-                    </div>
-                </a>
-            </li>
-            {{/each}} {{/if}}
+                        {{if $list.children==""}}
+                        <li class="no-data">
+                            <div><span>暂无数据</span></div>
+                        </li>{{else}} {{each $list.children as $children c}}
+                        <li>
+                            <a href="search_result.html?c_id={{$children.id}}">
+                                <div><span style="background-image: url({{if $children.preview==''}}images/category_default_img.jpg{{else}}{{$children.preview}}{{/if}});"></span>
+                                    <p>{{$children.name}}</p>
+                                </div>
+                            </a>
+                        </li>
+                        {{/each}} {{/if}}
                     </ul>
                 </div>
             </div>
             {{/each}}
         </script>
     </div>
-<script src="http://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=2.5.2"></script>
+    <script src="http://wechatfe.github.io/vconsole/lib/vconsole.min.js?v=2.5.2"></script>
     <script src="js/zepto.min.js"></script>
     <script src="js/sm.js"></script>
     <script src="js/sm-extend.js"></script>

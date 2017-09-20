@@ -25,7 +25,7 @@ if (sessionStorage.orderInfo != undefined) {
     orderInfo = JSON.parse(sessionStorage.orderInfo);
 }
 
-var bespeakInfo = {
+var repairInfo = {
     category: "",
     error_list: "",
     error_type: "",
@@ -37,9 +37,23 @@ var bespeakInfo = {
     address_id: ""
 };
 
-if (sessionStorage.bespeakInfo != undefined) {
-    bespeakInfo = JSON.parse(sessionStorage.bespeakInfo);
+if (sessionStorage.repairInfo != undefined) {
+    repairInfo = JSON.parse(sessionStorage.repairInfo);
 }
+
+var setupInfo = {
+    product: "",
+    desc: "",
+    telephone: "",
+    code: "",
+    datetime: "",
+    address_id: ""
+};
+
+if (sessionStorage.setupInfo != undefined) {
+    setupInfo = JSON.parse(sessionStorage.setupInfo);
+}
+
 //    sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
 var discount_type_list = [{
     name: "每月优惠",
@@ -126,10 +140,9 @@ if (localStorage.userInfo != undefined) {
     };
 } else {
     var code = getParameter("code");
-    console.log("已取得code-" + code);
     if (code == null) {
         var curr_url = location.href.split('#')[0];
-        window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx027d7825030faa03&redirect_uri=" + curr_url + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect"
+        window.location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx027d7825030faa03&redirect_uri=" + curr_url + "&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";
     } else {
         up = {
             type: 1,
@@ -145,7 +158,6 @@ func_ajax({
         if (data.Common.code == 200) {
             userInfo = data.Common.info;
             localStorage.userInfo = JSON.stringify(data.Common.info);
-            console.log("用户信息已缓存！");
         }
     }
 });
@@ -167,18 +179,17 @@ function getMsg() {
             size: 1
         },
         success: function(data) {
-            console.log(data);
             if (data.Common.code == 200) {
-                var data = data.Common.info;
-                console.log(data.new_count);
-                sessionStorage.new_msg_count = data.new_count;
+                var temp_data = data.Common.info;
+                sessionStorage.new_msg_count = temp_data.new_count;
+                var h = "";
                 if (sessionStorage.new_msg_count != "0") {
                     if ($(".msg-point").length == 0) {
-                        var h = '<span class="badge msg-point"></span>';
+                        h = '<span class="badge msg-point"></span>';
                         $(".user-item").append(h);
                     }
                     if ($("#page-user-center header .msg-count").length == 0) {
-                        var h = '<span class="badge msg-count">' + sessionStorage.new_msg_count + '</span>';
+                        h = '<span class="badge msg-count">' + sessionStorage.new_msg_count + '</span>';
                         $("#page-user-center header .pull-right").append(h);
                     } else {
                         $(".msg-count.badge").html(sessionStorage.new_msg_count);
@@ -206,7 +217,7 @@ setInterval(function() {
             var clientWidth = docEl.clientWidth;
             var htmlFontSize = 20;
             var designWidth = 375;
-            if (!clientWidth) return;
+            if (!clientWidth) { return; }
             docEl.style.fontSize = htmlFontSize * (clientWidth / designWidth) + 'px';
             var reality = Number(docEl.style.fontSize.substr(0, docEl.style.fontSize.length - 2));
             var theory = htmlFontSize * (clientWidth / designWidth);
@@ -214,16 +225,15 @@ setInterval(function() {
                 docEl.style.fontSize = htmlFontSize * theory / reality * (clientWidth / designWidth) + 'px';
             }
         };
-    if (!doc.addEventListener) return;
+    if (!doc.addEventListener) { return; }
     win.addEventListener(resizeEvt, recalc, false);
     doc.addEventListener('DOMContentLoaded', recalc, false);
 })(document, window);
 
-;
+
 (function($) {
     $.extend($.fn, {
         validate: function() {
-
             var is_pass = true;
             this.each(function(index, el) {
                 if ($(this).attr("required") != undefined) { //html的pattern要注意转义
@@ -234,7 +244,6 @@ setInterval(function() {
                     } else {
                         if ($(this).attr("pattern") != undefined) { //html的pattern要注意转义
                             var reg = new RegExp($(this).attr("pattern"));
-                            console.log(reg);
                             if (!reg.test($(this).val())) {
                                 $.toast($(this).attr("notMatchTips"));
                                 is_pass = false;
@@ -246,7 +255,7 @@ setInterval(function() {
             });
             return is_pass;
         }
-    })
+    });
     $.getScript = function(url, callback) {
         var head = document.getElementsByTagName('head')[0];
         var js = document.createElement('script');
@@ -263,13 +272,13 @@ setInterval(function() {
                 if (js.readyState == 'loaded' || js.readyState == 'complete') {
                     callbackFn();
                 }
-            }
+            };
         } else {
             js.onload = function() {
                 callbackFn();
-            }
+            };
         }
-    }
+    };
 })(Zepto);
 
 
@@ -307,12 +316,12 @@ function accMul(arg1, arg2) {
         s1 = arg1.toString(),
         s2 = arg2.toString();
     try {
-        m += s1.split(".")[1].length
+        m += s1.split(".")[1].length;
     } catch (e) {}
     try {
-        m += s2.split(".")[1].length
+        m += s2.split(".")[1].length;
     } catch (e) {}
-    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m)
+    return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
 }
 /**
  * 除法
@@ -325,14 +334,14 @@ function accDiv(arg1, arg2) {
         t2 = 0,
         r1, r2;
     try {
-        t1 = arg1.toString().split(".")[1].length
+        t1 = arg1.toString().split(".")[1].length;
     } catch (e) {}
     try {
-        t2 = arg2.toString().split(".")[1].length
+        t2 = arg2.toString().split(".")[1].length;
     } catch (e) {}
     with(Math) {
-        r1 = Number(arg1.toString().replace(".", ""))
-        r2 = Number(arg2.toString().replace(".", ""))
+        r1 = Number(arg1.toString().replace(".", ""));
+        r2 = Number(arg2.toString().replace(".", ""));
         return (r1 / r2) * pow(10, t2 - t1);
     }
 }
@@ -345,17 +354,17 @@ function accDiv(arg1, arg2) {
 function accAdd(arg1, arg2) {
     var r1, r2, m, c;
     try {
-        r1 = arg1.toString().split(".")[1].length
+        r1 = arg1.toString().split(".")[1].length;
     } catch (e) {
-        r1 = 0
+        r1 = 0;
     }
     try {
-        r2 = arg2.toString().split(".")[1].length
+        r2 = arg2.toString().split(".")[1].length;
     } catch (e) {
-        r2 = 0
+        r2 = 0;
     }
     c = Math.abs(r1 - r2);
-    m = Math.pow(10, Math.max(r1, r2))
+    m = Math.pow(10, Math.max(r1, r2));
     if (c > 0) {
         var cm = Math.pow(10, c);
         if (r1 > r2) {
@@ -369,7 +378,7 @@ function accAdd(arg1, arg2) {
         arg1 = Number(arg1.toString().replace(".", ""));
         arg2 = Number(arg2.toString().replace(".", ""));
     }
-    return (arg1 + arg2) / m
+    return (arg1 + arg2) / m;
 }
 /** 
  * 减法 
@@ -380,14 +389,14 @@ function accAdd(arg1, arg2) {
 function accSub(arg1, arg2) {
     var r1, r2, m, n;
     try {
-        r1 = arg1.toString().split(".")[1].length
+        r1 = arg1.toString().split(".")[1].length;
     } catch (e) {
-        r1 = 0
+        r1 = 0;
     }
     try {
-        r2 = arg2.toString().split(".")[1].length
+        r2 = arg2.toString().split(".")[1].length;
     } catch (e) {
-        r2 = 0
+        r2 = 0;
     }
     m = Math.pow(10, Math.max(r1, r2));
     //last modify by deeka  
@@ -408,21 +417,21 @@ function getNameByValue(val, arr) {
     return result;
 }
 Date.prototype.format = function(fmt) {
-        var o = {
-            "M+": this.getMonth() + 1,
-            "d+": this.getDate(),
-            "h+": this.getHours(),
-            "m+": this.getMinutes(),
-            "s+": this.getSeconds(),
-            "q+": Math.floor((this.getMonth() + 3) / 3),
-            "S": this.getMilliseconds()
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    }
-    //时间戳格式化
+    var o = {
+        "M+": this.getMonth() + 1,
+        "d+": this.getDate(),
+        "h+": this.getHours(),
+        "m+": this.getMinutes(),
+        "s+": this.getSeconds(),
+        "q+": Math.floor((this.getMonth() + 3) / 3),
+        "S": this.getMilliseconds()
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+//时间戳格式化
 function func_format_date(timestamp) {
     if (timestamp == "" || timestamp == null || timestamp == undefined) {
         return "未知时间";
@@ -537,12 +546,11 @@ function wxApi(fun_callback) {
     var wx_config_data = new Object();
 
     var curr_url = location.href.split('#')[0];
-    console.info($.device.ios);
     var is_ios_wx = $.device.ios && ($.device.webView != null);
     if (is_ios_wx) {
         curr_url = entrance_url;
     }
-    console.info("浏览器地址栏" + curr_url);
+    // console.info("浏览器地址栏" + curr_url);
 
     //ios只需配置一次config
     if ((!is_ios_and_initWx && is_ios_wx) || !is_ios_wx) {
@@ -553,52 +561,52 @@ function wxApi(fun_callback) {
                 open_id: userInfo.open_id
             },
             successCallback: function(data) {
-                console.log(data);
+
                 wx_config_data = data.Common.info;
                 wx.config({
-                    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                     appId: wx_config_data.appId, // 必填，公众号的唯一标识
                     timestamp: wx_config_data.timestamp, // 必填，生成签名的时间戳
                     nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
                     signature: wx_config_data.signature, // 必填，签名，见附录1
                     jsApiList: [
-                            'checkJsApi',
-                            'onMenuShareTimeline',
-                            'onMenuShareAppMessage',
-                            'onMenuShareQQ',
-                            'onMenuShareWeibo',
-                            'onMenuShareQZone',
-                            'hideMenuItems',
-                            'showMenuItems',
-                            'hideAllNonBaseMenuItem',
-                            'showAllNonBaseMenuItem',
-                            'translateVoice',
-                            'startRecord',
-                            'stopRecord',
-                            'onVoiceRecordEnd',
-                            'playVoice',
-                            'onVoicePlayEnd',
-                            'pauseVoice',
-                            'stopVoice',
-                            'uploadVoice',
-                            'downloadVoice',
-                            'chooseImage',
-                            'previewImage',
-                            'uploadImage',
-                            'downloadImage',
-                            'getNetworkType',
-                            'openLocation',
-                            'getLocation',
-                            'hideOptionMenu',
-                            'showOptionMenu',
-                            'closeWindow',
-                            'scanQRCode',
-                            'chooseWXPay',
-                            'openProductSpecificView',
-                            'addCard',
-                            'chooseCard',
-                            'openCard'
-                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                        'checkJsApi',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage',
+                        'onMenuShareQQ',
+                        'onMenuShareWeibo',
+                        'onMenuShareQZone',
+                        'hideMenuItems',
+                        'showMenuItems',
+                        'hideAllNonBaseMenuItem',
+                        'showAllNonBaseMenuItem',
+                        'translateVoice',
+                        'startRecord',
+                        'stopRecord',
+                        'onVoiceRecordEnd',
+                        'playVoice',
+                        'onVoicePlayEnd',
+                        'pauseVoice',
+                        'stopVoice',
+                        'uploadVoice',
+                        'downloadVoice',
+                        'chooseImage',
+                        'previewImage',
+                        'uploadImage',
+                        'downloadImage',
+                        'getNetworkType',
+                        'openLocation',
+                        'getLocation',
+                        'hideOptionMenu',
+                        'showOptionMenu',
+                        'closeWindow',
+                        'scanQRCode',
+                        'chooseWXPay',
+                        'openProductSpecificView',
+                        'addCard',
+                        'chooseCard',
+                        'openCard'
+                    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -896,7 +904,6 @@ $(function() {
                 var swiper_temp_data = {
                     list: data.imgs
                 };
-                console.log(data);
                 current_product = data;
                 var temp_html = template("page-details-swiper", swiper_temp_data);
                 $("#page-details .swiper-wrapper").html(temp_html);
@@ -918,7 +925,6 @@ $(function() {
                 $("#page-details .discount .tag-list").html(d);
 
                 wxApi(function() {
-                    console.log("http://" + domain + data.imgs[0]);
                     $(document).on("click", "#page-details .swiper-slide", function(event) {
                         event.preventDefault();
                         var preview_list = [];
@@ -1038,7 +1044,6 @@ $(function() {
             my_cart[t].count = Number(my_cart[t].count) + count;
         }
         localStorage.cart = JSON.stringify(my_cart);
-        console.log(my_cart);
         setIconSup();
     });
 
@@ -1150,7 +1155,6 @@ $(function() {
             sales_order: ""
         };
         var opt = $.extend(default_opt, option);
-        console.log(opt.search_content);
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + search_page,
             data: opt,
@@ -1258,7 +1262,6 @@ $(function() {
     $(document).on("keydown", "#page-search-result #search", function(event) {
         if (event.keyCode == 13) {
             search_option.search_content = $(this).val();
-            console.info(search_option);
             search_infinite_reset(search_option);
         }
     });
@@ -1286,14 +1289,12 @@ $(function() {
         $("#page-search-result header .title").html(curr_title);
         var curr_category_id = $("#panel-filter .sub-category-list").find(".active").attr("data-category") || $("#panel-filter .category-list").find(".active").attr("data-category") || "";
         search_option.category_id = curr_category_id;
-        console.info(search_option);
         search_infinite_reset(search_option);
     }
 
     function reset_list_by_discount() {
         var curr_discount_value = $("#panel-filter .discount-list").find(".active").attr("data-discount") || "";
         search_option.sale_type = curr_discount_value;
-        console.info(search_option);
         search_infinite_reset(search_option);
     }
 
@@ -1359,9 +1360,7 @@ $(function() {
     $(document).on("click", "#panel-filter .reset-btn", function(event) {
         $("#panel-filter .discount-list .active").removeClass("active");
         $("#page-search-result .item-filter").removeClass("on");
-
         search_option.sale_type = null;
-        console.info(search_option);
         search_infinite_reset(search_option);
     });
     $(document).on("click", "#page-search-result .item-default,#page-search-result .item-price,#page-search-result .item-sales", function(event) {
@@ -1443,7 +1442,6 @@ $(function() {
                 break;
             }
         }
-        console.log("isall" + is_all);
         if (is_all) {
             $("#page-cart .select-all input").prop("checked", true);
         }
@@ -1499,7 +1497,6 @@ $(function() {
             var item_list = $("#page-cart .product-item label").find("input[type='checkbox']:checked");
             item_list.push($(this).find("input[type='checkbox']")[0]);
             item_list = item_list.parents(".product-item");
-            console.log(item_list);
             //更新缓存购物车物品的选择状态//选择
             my_cart[$(this).parents("li").index()].select = true;
             localStorage.cart = JSON.stringify(my_cart);
@@ -1641,8 +1638,6 @@ $(function() {
 
     /*****page-order*****/
     $(document).on("pageInit", "#page-order", function(e, pageId, $page) {
-
-        console.log(orderInfo);
         var temp_data = {
             list: []
         };
@@ -1701,8 +1696,6 @@ $(function() {
                     var temp_html = template('page-order-coupon-item', {
                         list: temp_data
                     });
-                    console.log(temp_data);
-
                     $(".popup-coupon .list-block ul").html("");
                     $(".popup-coupon .list-block ul").append('<li>\
                         <label class="label-checkbox item-content">\
@@ -1722,14 +1715,11 @@ $(function() {
                     $("#page-order .coupon-wrapper .item-after").html("请选择");
                     //选择的卡券
                     if (!(orderInfo.coupon.info == "" || orderInfo.coupon.info == undefined)) {
-
-
                         $("#page-order .coupon-wrapper .item-after").html(orderInfo.coupon.name);
                         $(".popup-coupon").find("input[data-id='" + orderInfo.coupon.id + "']").eq(0).prop("checked", true);
                         $("#page-order .coupon-discount").removeClass("hide");
                         $("#page-order .coupon-discount .item-after span").html(orderInfo.coupon.value.toFixed(2));
                         var actual_price = accSub(parseFloat($("#page-order .sum-row .total-price").text()), parseFloat($("#page-order .coupon-discount .discount").text()));
-                        console.log(actual_price);
                         $("#page-order  nav .total-price").html(Number(actual_price).toFixed(2));
                     }
                 }
@@ -1750,9 +1740,7 @@ $(function() {
             }
             orderInfo.coupon = temp_data;
             sessionStorage.orderInfo = JSON.stringify(orderInfo);
-
             $("#page-order .open-popup .item-after").html(name);
-
             if (temp_data.value != 0) {
                 $("#page-order .coupon-discount").removeClass("hide");
                 $("#page-order .coupon-discount .item-after span").html(value.toFixed(2));
@@ -1761,7 +1749,6 @@ $(function() {
                 $("#page-order .coupon-discount .item-after span").html(0);
             }
             var actual_price = accSub(parseFloat($("#page-order .sum-row .total-price").text()), parseFloat($("#page-order .coupon-discount .discount").text()));
-            console.log(actual_price);
             $("#page-order  nav .total-price").html(Number(actual_price).toFixed(2));
         });
 
@@ -1799,7 +1786,6 @@ $(function() {
         event.preventDefault();
         /* Act on the event */
         var value = $(".express-type").val();
-        console.log(value);
         if (value == "到店自提") {
             $("#page-order .inset-map-wrapper").removeClass("hide");
             orderInfo.express_type = 1;
@@ -1827,8 +1813,6 @@ $(function() {
     $(document).on("click", "#page-order .submit-order-btn", function(event) {
         event.preventDefault();
         /* Act on the event */
-
-        console.log($(".popup-coupon input[name='coupon']:checked").val());
         //todo
         console.log(orderInfo);
         var temp_data = {
@@ -1851,8 +1835,6 @@ $(function() {
         if (orderInfo.express_type == 1) {
             temp_data.branch_id = orderInfo.store.id;
         }
-
-        console.log(temp_data);
         //提交订单
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/orderCommit",
@@ -1972,7 +1954,6 @@ $(function() {
                         list: data.Common.info
                     }));
                     var temp_list = classifyArrayByField("pay_status", data.Common.info);
-                    console.log(temp_list);
                     var container_list = [];
                     var combind_html = ""; //pay_status 1和2合并
                     var combind_html1 = ""; //pay_status 6和7合并
@@ -1983,9 +1964,7 @@ $(function() {
                             list: temp_list[i].data
                         };
                         var temp_html = template("page-my-order-item", temp_data);
-
                         if (temp_list[i].pay_status == "1" || temp_list[i].pay_status == "2") {
-                            console.info($container);
                             combind_html += temp_html;
                         } else if (temp_list[i].pay_status == "6" || temp_list[i].pay_status == "7") {
                             combind_html1 += temp_html;
@@ -1995,6 +1974,12 @@ $(function() {
                     }
                     $("#page-my-order [data-type='1']").find("ul").html(combind_html);
                     $("#page-my-order [data-type='4']").find("ul").html(combind_html1);
+                    console.log("-------已退款container--------");
+                    console.log($("#page-my-order [data-type='4']").find("ul"));
+                    console.log("------end of 已退款container---------");
+                    console.log("-------已退款html--------");
+                    console.log(combind_html1);
+                    console.log("------end of 已退款html---------");
                     $("#page-my-order .tab").not("[data-type='all']").not(container_list).find("ul").html('<li class="no-order"><p><i class="icon icon-order"></i></p><p class="tips">您还没有相关的订单</p><p class="sub-tips">可以去看看有哪些想买的</p></li>');
                 }
             }
@@ -2296,13 +2281,25 @@ $(function() {
 
         });
         var maxDate = func_format_date(new Date()).date;
-        console.log(func_format_date(userInfo.birthday).date);
-        $(".birthday-picker").val(func_format_date(userInfo.birthday).date)
-
-        $(".birthday-picker").calendar({
+        $("#page-user-info .birthday-picker").val(func_format_date(userInfo.birthday).date)
+        $("#page-user-info .birthday-picker").calendar({
             maxDate: [maxDate],
             onChange: function(p, values, displayValues) {
-                console.log(displayValues)
+                var select_date = displayValues[0];
+                console.log(select_date);
+                func_ajax({
+                    url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
+                    data: {
+                        open_id: userInfo.open_id,
+                        birthday: select_date
+                    },
+                    successCallback: function(data) {
+                        var d = select_date.split("-");
+                        userInfo.birthday = new Date(d[0] * 1, d[1] * 1 - 1, d[2] * 1).getTime();
+                        console.log(new Date(d[0] * 1, d[1] * 1 - 1, d[2] * 1));
+                    }
+                });
+
             }
         });
     });
@@ -2311,7 +2308,6 @@ $(function() {
         event.preventDefault();
         /* Act on the event */
         $.prompt("修改昵称", function(value) {
-            console.log('Your name is "' + value + '".');
             func_ajax({
                 url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
                 data: {
@@ -2348,25 +2344,7 @@ $(function() {
             }
         });
     });
-    $(document).on("change", "#page-user-info .birthday-picker", function(event) {
-        event.preventDefault();
-        /* Act on the event */
-        var select_date = $(this).val();
-        console.log(select_date);
-        func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
-            data: {
-                open_id: userInfo.open_id,
-                birthday: select_date
-            },
-            successCallback: function(data) {
-                var d = select_date.split("-");
-                userInfo.birthday = new Date(d[0] * 1, d[1] * 1 - 1, d[2] * 1).getTime();
 
-                console.log(new Date(d[0] * 1, d[1] * 1 - 1, d[2] * 1));
-            }
-        });
-    });
 
     $(document).on("click", "#page-user-info .avatar", function() {
         var allow_select_num = 1;
@@ -2458,7 +2436,6 @@ $(function() {
             success: function(res) {
                 //下载图片接口
                 download_avatar(res.serverId); // 返回图片的服务器端
-                console.log(res.serverId);
             }
         });
     }
@@ -2536,7 +2513,6 @@ $(function() {
                     location_id: delete_id
                 },
                 successCallback: function(data) {
-                    console.log(data);
                     if (data.Common.code == 200) {
                         $delete_ele.remove();
                         if ($("#page-address .list-block.cards-list li").length == 0) {
@@ -2577,7 +2553,6 @@ $(function() {
             var last_address = address_list.pop();
             address_list.join(" ");
             var first_address = address_list;
-            console.log(first_address);
             $("#page-edit-address [name='last-address']").val(last_address);
             $("#page-edit-address .city-picker").cityPicker({
                 value: first_address
@@ -2650,21 +2625,18 @@ $(function() {
         wxApi();
 
         var today = new Date().format("yyyy-MM-dd");
-        console.log(today);
-
-
         //回显
-        if (!(bespeakInfo.category == "" || bespeakInfo.category == undefined)) {
-            $("#page-bespeak .product-picker").val(bespeakInfo.category.first + " " + bespeakInfo.category.second);
+        if (!(repairInfo.category == "" || repairInfo.category == undefined)) {
+            $("#page-bespeak .product-picker").val(repairInfo.category.first + " " + repairInfo.category.second);
         }
 
         var error_list = [];
         var curr_name = "";
-        if (!(bespeakInfo.error_list == "" || bespeakInfo.error_list == undefined)) {
-            for (var i = 0; i < bespeakInfo.error_list.length; i++) {
-                error_list.push(bespeakInfo.error_list[i].name);
-                if (bespeakInfo.error_type == bespeakInfo.error_list[i].id) {
-                    curr_name = bespeakInfo.error_list[i].name;
+        if (!(repairInfo.error_list == "" || repairInfo.error_list == undefined)) {
+            for (var i = 0; i < repairInfo.error_list.length; i++) {
+                error_list.push(repairInfo.error_list[i].name);
+                if (repairInfo.error_type == repairInfo.error_list[i].id) {
+                    curr_name = repairInfo.error_list[i].name;
                 }
             }
         }
@@ -2696,9 +2668,8 @@ $(function() {
                         temp_list[i].sub = temp_list[i].children;
                         delete temp_list[i].children;
                     }
-                    console.log(temp_list);
-                    $.smConfig.productPicker = temp_list;
-                    productPickerInit();
+
+                    productPickerInit(temp_list);
                     $("#page-bespeak .product-picker").productPicker({
                         onClose: function() {
                             var temp_list = $("#page-bespeak .product-picker").val().split(" ");
@@ -2706,14 +2677,12 @@ $(function() {
                             var sub_category_name = temp_list[1];
 
 
-                            bespeakInfo.category = {
+                            repairInfo.category = {
                                 first: category_name,
                                 second: sub_category_name
                             };
-                            sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
-
-                            console.log(sub_category_name);
-                            var c = $.smConfig.productPicker;
+                            sessionStorage.repairInfo = JSON.stringify(repairInfo);
+                            var c =temp_list;
                             var c_id = 1;
                             for (var i = 0; i < c.length; i++) {
                                 for (var j = 0; j < c[i].sub.length; j++) {
@@ -2722,7 +2691,6 @@ $(function() {
                                     }
                                 }
                             }
-                            console.log(c_id);
                             func_ajax({
                                 url: "http://www.homchang.site/index.php/Api/index/getMalfunctions",
                                 data: {
@@ -2732,10 +2700,9 @@ $(function() {
                                 successCallback: function(data) {
                                     if (data.Common.code = 200) {
                                         var temp_list = data.Common.info;
-                                        console.info(temp_list);
 
-                                        bespeakInfo.error_list = temp_list;
-                                        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+                                        repairInfo.error_list = temp_list;
+                                        sessionStorage.repairInfo = JSON.stringify(repairInfo);
 
 
                                         var displayValues = [];
@@ -2757,9 +2724,9 @@ $(function() {
                                                         error_id = temp_list[i].id;
                                                     }
                                                 }
-                                                console.log(error_id);
-                                                bespeakInfo.error_type = error_id;
-                                                sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+  
+                                                repairInfo.error_type = error_id;
+                                                sessionStorage.repairInfo = JSON.stringify(repairInfo);
                                             }
                                         });
                                     }
@@ -2773,28 +2740,30 @@ $(function() {
 
 
 
+        $("#page-bespeak #tab1 [name='desc']").html(repairInfo.desc);
+        $("#page-bespeak #tab1 [name='telephone']").val(repairInfo.telephone);
+        $("#page-bespeak #tab1 [name='code']").val(repairInfo.code);
+        $("#page-bespeak #tab1 [name='datetime']").val(repairInfo.datetime);
+        if (!(repairInfo.imgs == [] || repairInfo.imgs == undefined)) {
+            $("#page-bespeak #tab1 .uploader-wrapper li").not($(".uploader-btn").parent()).remove();
+            var temp_html = "";
+            for (var i = 0; i < repairInfo.imgs.length; i++) {
+                temp_html += '<li><span><img src="' + repairInfo.imgs[i] + '"></span><i class="icon icon-close"></i></li>'
+            }
+            $("#page-bespeak #tab1 .uploader-wrapper ul li").before(temp_html);
+        }
+
+
         if ($(".picker-modal-inline").length == 0) {
             $("#date").calendar({
                 minDate: [today],
                 onChange: function(p, values, displayValues) {
-                    console.log(displayValues[0]);
-                    $("#page-bespeak [name='datetime']").val(displayValues[0]);
-                    $(".popup-datetime [name='time']").prop("checked", false);
+                    $(".popup-datetime  [name='date']").val(displayValues[0]);
+                    $(".popup-datetime  [name='time']").prop("checked", false);
                 }
             });
         }
 
-        $("#page-bespeak [name='desc']").html(bespeakInfo.desc);
-        $("#page-bespeak [name='telephone']").val(bespeakInfo.telephone);
-        $("#page-bespeak [name='code']").val(bespeakInfo.code);
-        $("#page-bespeak [name='datetime']").val(bespeakInfo.datetime);
-        if (!(bespeakInfo.imgs == [] || bespeakInfo.imgs == undefined)) {
-            var temp_html = "";
-            for (var i = 0; i < bespeakInfo.imgs.length; i++) {
-                temp_html += '<li><span><img src="' + bespeakInfo.imgs[i] + '"></span><i class="icon icon-close"></i></li>'
-            }
-            $("#page-bespeak .uploader-wrapper ul li").before(temp_html);
-        }
         //订单默认地址
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getLocations",
@@ -2805,39 +2774,105 @@ $(function() {
             successCallback: function(data) {
                 if (data.Common.code == 200) {
                     var default_data = data.Common.info[0];
-                    bespeakInfo.address_id = default_data.id;
-                    sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+
+                    repairInfo.address_id = default_data.id;
+                    sessionStorage.repairInfo = JSON.stringify(repairInfo);
+
+
+                    setupInfo.address_id = default_data.id;
+                    sessionStorage.setupInfo = JSON.stringify(setupInfo);
+
+
                     $("#page-bespeak [name='address']").val(default_data.id);
                     $("#page-bespeak .address-block .item-title-row .item-title").html(default_data.contact + " " + default_data.tel);
                     $("#page-bespeak .address-block .item-text").html(default_data.address);
                 }
             }
         });
+        if (!(setupInfo.product == [] || setupInfo.product == undefined)) {
+            $("#page-bespeak #tab2 [name='product-name']").val(setupInfo.product.name);
+            $("#page-bespeak #tab2 [name='product-id']").val(setupInfo.product.id);
+        }
+        $("#page-bespeak #tab2 [name='desc']").html(setupInfo.desc);
+        $("#page-bespeak #tab2 [name='telephone']").val(setupInfo.telephone);
+        $("#page-bespeak #tab2 [name='code']").val(setupInfo.code);
+        $("#page-bespeak #tab2 [name='datetime']").val(setupInfo.datetime);
+
+
+
     });
     $(document).on('click', '#page-bespeak #tab1 .button-success', function() {
-
-
         var flag = $("#page-bespeak #tab1 [name='category'],#page-bespeak #tab1 [name='error'],#page-bespeak #tab1 [name='telephone'],#page-bespeak #tab1 [name='code'],#page-bespeak #tab1 [name='datetime'],#page-bespeak #tab1 [name='address']").validate();
         if (flag) {
-            $.alert("1");
             func_ajax({
                 url: "http://www.homchang.site/index.php/Api/index/addSchedule",
                 data: {
                     open_id: userInfo.open_id,
-                    type:2,
-                    malf_id:bespeakInfo.error_type,
-                    comment:bespeakInfo.desc,
-                    images:bespeakInfo.imgs.join("||"),
-                    tel:bespeakInfo.telephone,
-                    appointment_time:bespeakInfo.datetime,
-                    location_id:bespeakInfo.address_id
+                    type: 2,
+                    malf_id: repairInfo.error_type,
+                    comment: repairInfo.desc,
+                    images: repairInfo.imgs.join("||"),
+                    tel: repairInfo.telephone,
+                    code: repairInfo.code,
+                    appointment_time: repairInfo.datetime,
+                    location_id: repairInfo.address_id
+                },
+                successCallback: function(data) {
+                    if (data.Common.code == 200) {
+                        repairInfo = {
+                            category: "",
+                            error_list: "",
+                            error_type: "",
+                            desc: "",
+                            imgs: [],
+                            telephone: "",
+                            code: "",
+                            datetime: "",
+                            address_id: ""
+                        };
+                        $.alert("预约成功！您已成功预约，稍后客服专员会与您取得联系，敬请留意。客服热线：400-110-8004/020-81401016/0757-83031318【鸿畅环保】");
+                    } else {
+                        $.toast("未知错误，预约失败");
+                    }
+                }
+            });
+        }
+    });
+    $(document).on('click', '#page-bespeak #tab2 .button-success', function() {
+        var flag = $("#page-bespeak #tab2 [name='product-id'],#page-bespeak #tab2 [name='desc'],#page-bespeak #tab2 [name='telephone'],#page-bespeak #tab2 [name='code'],#page-bespeak #tab2 [name='datetime'],#page-bespeak #tab2 [name='address']").validate();
+        if (flag) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/addSchedule",
+                data: {
+                    open_id: userInfo.open_id,
+                    type: 1,
+                    order_id: setupInfo.product.id,
+                    comment: setupInfo.desc,
+                    tel: setupInfo.telephone,
+                    code: setupInfo.code,
+                    appointment_time: setupInfo.datetime,
+                    location_id: setupInfo.address_id
+                },
+                successCallback: function(data) {
+                    if (data.Common.code == 200) {
+                        setupInfo = {
+                            product: "",
+                            desc: "",
+                            telephone: "",
+                            code: "",
+                            datetime: "",
+                            address_id: ""
+                        };
+                        $.alert("预约成功！您已成功预约，稍后客服专员会与您取得联系，敬请留意。客服热线：400-110-8004/020-81401016/0757-83031318【鸿畅环保】");
+                    } else {
+                        $.toast("未知错误，预约失败");
+                    }
                 }
             });
         }
     });
 
     $(document).on('click', '#page-bespeak .uploader-btn', function() {
-
         var allow_select_num = 4 - $(".uploader-wrapper ul li").length;
         var buttons1 = [{
             text: '请选择',
@@ -2886,7 +2921,6 @@ $(function() {
                     photo_array.push(res.localIds[photo_index]);
                     html += '<li><span data-localIds="' + res.localIds[photo_index] + '" class="uploading" ><img src="' + res.localIds[photo_index] + '" alt="" /></span><div class="uploading-content"><div class="preloader"></div></div></li>';
                 }
-                console.log(html);
                 $(".uploader-wrapper ul li").first().before(html);
                 //
                 upload(photo_array.reverse()); //调用上传函数，倒序
@@ -2930,14 +2964,15 @@ $(function() {
             successCallback: function(data) {
                 if (data.Common.code == 200) {
                     var this_path = data.Common.info;
-                    curr_ele.attr("src", this_path);
+
+                    curr_ele.find("img").attr("src", this_path);
 
                     var path_list = [];
                     $("#page-bespeak .uploader-wrapper img").each(function(index, ele) {
                         path_list.push($(ele).attr("src"));
                     });
-                    bespeakInfo.imgs = path_list;
-                    sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+                    repairInfo.imgs = path_list;
+                    sessionStorage.repairInfo = JSON.stringify(repairInfo);
                     //记录图片
 
                     //图片下载成功，从上传数组url_list中删除
@@ -2951,48 +2986,72 @@ $(function() {
             }
         });
     }
+    $(document).on("click", "#page-bespeak .open-popup-datetime", function(event) {
+        var target_classname = $(this).find("input").attr("class");
+        $(".popup-datetime [name='date']").attr("data-target", "." + target_classname);
+        $.popup(".popup-datetime");
+    });
 
     $(document).on("click", ".popup-datetime .pick", function(event) {
-        var date = $("#page-bespeak [name='datetime']").val();
+        var date = $(".popup-datetime [name='date']").val();
         if (date != "") {
             var time = $(".popup-datetime [name='time']:checked").val() || "";
 
-            var datetime = time;
+            var datetime = date;
             if (time != "") {
                 datetime = date + " " + time
             }
-            $("#page-bespeak [name='datetime']").val(datetime);
-            console.log(datetime);
+
+            var $get_datetime_ele = $($(".popup-datetime [name='date']").attr("data-target"));
+            $get_datetime_ele.val(datetime);
             $.closeModal(".popup-datetime");
-            //记录预约时间
-            bespeakInfo.datetime = datetime;
-            sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+            if ($get_datetime_ele.hasClass("repair-datetime")) {
+                //记录预约时间
+                repairInfo.datetime = datetime;
+                sessionStorage.repairInfo = JSON.stringify(repairInfo);
+            } else {
+                //记录预约时间
+                setupInfo.datetime = datetime;
+                sessionStorage.setupInfo = JSON.stringify(setupInfo);
+            }
         } else {
             $.toast("请先选择日期");
         }
     });
 
+    //妈的这个验证码，自己写完我都看不懂
+    function createCounter(iName, sessionStorageName, count, $btn) {
+        return 'var ' + iName + ' = setInterval(function() {\
+                ' + count + '--;\
+                if (' + count + ' > 0) {\
+                    ' + $btn + '.html("重新获取(" + ' + count + ' + "s)");\
+                    sessionStorage.' + sessionStorageName + ' = ' + count + ';\
+                } else {\
+                    clearInterval(' + iName + ');\
+                       ' + $btn + '.html("获取验证码").removeAttr("disabled");\
+                    sessionStorage.clear("' + sessionStorageName + '");\
+                }\
+            }, 1000);';
+    }
+    if (sessionStorage.r_count != undefined) {
+        var r_count = sessionStorage.r_count;
+        var i_name = "r_i";
+        var s_name = "r_count";
+        eval(createCounter(i_name, s_name, "r_count", '$("#page-bespeak .get-verifyCode-btn.repair-code")'));
+    }
 
-    if (sessionStorage.count != undefined) {
-        var count = sessionStorage.count;
-        var $btn = $("#page-bespeak .get-verifyCode-btn");
-        $btn.html("重新获取(" + count + "s)").prop('disabled', true);
-        var resend = setInterval(function() {
-            count--;
-            if (count > 0) {
-                $btn.html("重新获取(" + count + "s)").prop('disabled', true);
-                sessionStorage.count = count;
-            } else {
-                clearInterval(resend);
-                $btn.html("获取验证码").removeAttr('disabled');
-                sessionStorage.clear("count");
-            }
-        }, 1000);
+    if (sessionStorage.s_count != undefined) {
+        var s_count = sessionStorage.s_count;
+        var i_name = "s_i";
+        var s_name = "s_count";
+        eval(createCounter(i_name, s_name, "s_count", '$("#page-bespeak .get-verifyCode-btn.setup-code")'));
+
     }
     $(document).on("click", "#page-bespeak .get-verifyCode-btn", function(event) {
-        var flag = $("#page-bespeak input[name='telephone']").validate();
+        var $curr_phone = $(this).parents("li").prev("li").find("input[name='telephone']");
+        var flag = $curr_phone.validate();
         if (flag) {
-            var temp_phone = $("#page-bespeak input[name='telephone']").val();
+            var temp_phone = $curr_phone.val();
             func_ajax({
                 url: "http://www.homchang.site/index.php/Api/index/getVerifyCode",
                 data: {
@@ -3005,36 +3064,38 @@ $(function() {
                     }
                 }
             });
+            var count = 120;
             var $btn = $(this);
-            var count = 60;
-            var resend = setInterval(function() {
-                count--;
-                if (count > 0) {
-                    $btn.html("重新获取(" + count + "s)");
-                    sessionStorage.count = count;
-                } else {
-                    clearInterval(resend);
-                    $btn.html("获取验证码").removeAttr('disabled');
-                    sessionStorage.clear("count");
-                }
-            }, 1000);
-            $btn.prop('disabled', true);
+            var $btn_str = '$("#page-bespeak .get-verifyCode-btn.repair-code")';
+            var i_name = "r_i";
+            var s_name = "r_count";
+            if ($btn.hasClass("setup-code")) {
+                i_name = "s_i";
+                s_name = "s_count";
+                $btn_str = '$("#page-bespeak .get-verifyCode-btn.setup-code")';
+            }
+            var js_str = createCounter(i_name, s_name, "count", $btn_str);
+            eval(js_str);
+            $btn.prop("disabled", true);
         }
     });
-    $(document).on("change", "#page-bespeak [name='code']", function(event) {
+
+
+
+    $(document).on("change", "#page-bespeak #tab1 [name='code']", function(event) {
         //记录填写的验证码
-        bespeakInfo.code = $(this).val();
-        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+        repairInfo.code = $(this).val();
+        sessionStorage.repairInfo = JSON.stringify(repairInfo);
     });
-    $(document).on("change", "#page-bespeak [name='telephone']", function(event) {
+    $(document).on("change", "#page-bespeak #tab1 [name='telephone']", function(event) {
         //记录填写的电话号码
-        bespeakInfo.telephone = $(this).val();
-        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+        repairInfo.telephone = $(this).val();
+        sessionStorage.repairInfo = JSON.stringify(repairInfo);
     });
-    $(document).on("change", "#page-bespeak [name='desc']", function(event) {
+    $(document).on("change", "#page-bespeak #tab1 [name='desc']", function(event) {
         //记录填写的故障
-        bespeakInfo.desc = $(this).val();
-        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+        repairInfo.desc = $(this).val();
+        sessionStorage.repairInfo = JSON.stringify(repairInfo);
     });
     $(document).on("click", "#page-bespeak .uploader-wrapper .icon-close", function(event) {
         //记录填写的故障
@@ -3043,8 +3104,54 @@ $(function() {
         $("#page-bespeak .uploader-wrapper img").each(function(index, ele) {
             path_list.push($(ele).attr("src"));
         });
-        bespeakInfo.imgs = path_list;
-        sessionStorage.bespeakInfo = JSON.stringify(bespeakInfo);
+        repairInfo.imgs = path_list;
+        sessionStorage.repairInfo = JSON.stringify(repairInfo);
+    });
+    /*****page-select-product*****/
+    $(document).on("pageInit", "#page-select-product", function(e, pageId, $page) {
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/getOrderList",
+            data: {
+                open_id: userInfo.open_id,
+                overlay: 1
+            },
+            successCallback: function(data) {
+                if (data.Common.code == 200) {
+                    var temp_data = data.Common.info;
+                    var temp_html = template('page-select-product-item', {
+                        list: temp_data
+                    });
+                    $("#page-select-product .list-block ul").html(temp_html);
+                    if (!(setupInfo.product == [] || setupInfo.product == undefined)) {
+                        $("#page-select-product [name='product-radio'][value='" + setupInfo.product.id + "']").prop("checked", true);
+                    }
+                }
+            }
+        })
+    });
+    $(document).on("change", "#page-select-product [name='product-radio']", function(event) {
+        var curr_id = $("#page-select-product [name='product-radio']:checked").val();
+        var curr_name = $("#page-select-product [name='product-radio']:checked").nextAll(".item-inner").text().trim();
+        setupInfo.product = {
+            id: curr_id,
+            name: curr_name
+        };
+        sessionStorage.setupInfo = JSON.stringify(setupInfo);
+    });
+    $(document).on("change", "#page-bespeak #tab2 [name='desc']", function(event) {
+        //记录填写的备注信息
+        setupInfo.desc = $(this).val();
+        sessionStorage.setupInfo = JSON.stringify(setupInfo);
+    });
+    $(document).on("change", "#page-bespeak #tab2 [name='code']", function(event) {
+        //记录填写的验证码
+        setupInfo.code = $(this).val();
+        sessionStorage.setupInfo = JSON.stringify(setupInfo);
+    });
+    $(document).on("change", "#page-bespeak #tab2 [name='telephone']", function(event) {
+        //记录填写的电话号码
+        setupInfo.telephone = $(this).val();
+        sessionStorage.setupInfo = JSON.stringify(setupInfo);
     });
     /*****page-map*****/
 
@@ -3077,12 +3184,10 @@ $(function() {
         }
 
         function showPosition(position) {
-            console.log(position);
             var lat = position.coords.latitude;
             var lng = position.coords.longitude;
             //调用地图命名空间中的转换接口   type的可选值为 1:GPS经纬度，2:搜狗经纬度，3:百度经纬度，4:mapbar经纬度，5:google经纬度，6:搜狗墨卡托
             qq.maps.convertor.translate(new qq.maps.LatLng(lat, lng), 1, function(res) {
-                console.log(res);
                 //取出经纬度并且赋值
                 var latlng = res[0];
                 var anchor1 = new qq.maps.Point(12, 34),
@@ -3107,7 +3212,7 @@ $(function() {
                     content: '我的位置',
                     offset: new qq.maps.Size(-27, 0)
                 });
-                console.log(user_location);
+
                 func_ajax({
                     url: "http://www.homchang.site/index.php/Api/index/getBranches",
                     data: user_location,
@@ -3173,7 +3278,6 @@ $(function() {
     $(document).on("click", "#page-map #tab1 a.item-link,#page-map #tab2 a.item-link", function(event) {
         var $this = $(this);
         var location = $this.attr("data-location").split(",");
-        console.log(location);
         var name = $this.find(".item-title").text();
         var address = $this.find(".item-text").text();
         wx.openLocation({
