@@ -267,10 +267,10 @@ setInterval(function() {
         js.setAttribute('src', url);
         head.appendChild(js);
         var callbackFn = function() {
-                if (typeof callback === 'function') {
-                    callback();
-                }
-            };
+            if (typeof callback === 'function') {
+                callback();
+            }
+        };
         if (document.all) { //IE
             js.onreadystatechange = function() {
                 if (js.readyState == 'loaded' || js.readyState == 'complete') {
@@ -426,21 +426,21 @@ function getNameByValue(val, arr) {
     return result;
 }
 Date.prototype.format = function(fmt) {
-    var o = {
-        "M+": this.getMonth() + 1,
-        "d+": this.getDate(),
-        "h+": this.getHours(),
-        "m+": this.getMinutes(),
-        "s+": this.getSeconds(),
-        "q+": Math.floor((this.getMonth() + 3) / 3),
-        "S": this.getMilliseconds()
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-    return fmt;
-}
-//时间戳格式化
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes(),
+            "s+": this.getSeconds(),
+            "q+": Math.floor((this.getMonth() + 3) / 3),
+            "S": this.getMilliseconds()
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+    //时间戳格式化
 
 function func_format_date(timestamp) {
     if (timestamp == "" || timestamp == null || timestamp == undefined) {
@@ -1465,35 +1465,35 @@ $(function() {
             });
 
 
-            if (my_cart.length = temp_cart.length) {
-                for (var i = 0; i < my_cart.length; i++) {
-                    my_cart[i].count = temp_cart[i].count;
-                }
-            } else {
-                console.log("有删除");
-                var edited_cart = []
-                for (var i = 0; i < my_cart.length; i++) {
-                    for (var j = 0; j < temp_cart.length; j++) {
-                        if (my_cart[i].p_id == temp_cart[j].p_id) {
-                            edited_cart.push({
-                                p_id: my_cart[i].p_id,
-                                info: my_cart[i].info,
-                                count: temp_cart[j].count
-                            });
-                        }
-                    }
-                }
-                my_cart = edited_cart;
-            }
+            // if (my_cart.length = temp_cart.length) {
+            //     for (var i = 0; i < my_cart.length; i++) {
+            //         my_cart[i].count = temp_cart[i].count;
+            //     }
+            // } else {
+            //     console.log("有删除");
+            //     var edited_cart = []
+            //     for (var i = 0; i < my_cart.length; i++) {
+            //         for (var j = 0; j < temp_cart.length; j++) {
+            //             if (my_cart[i].p_id == temp_cart[j].p_id) {
+            //                 edited_cart.push({
+            //                     p_id: my_cart[i].p_id,
+            //                     info: my_cart[i].info,
+            //                     count: temp_cart[j].count
+            //                 });
+            //             }
+            //         }
+            //     }
+            //     my_cart = edited_cart;
+            // }
             //删除最后一个商品
             if ($("#page-cart .product-item").length == 0) {
                 $("#page-cart .list-block ul").html('<li class="no-goods">购物车空空如也<br>去挑几件好货吧</li>');
                 $("#page-cart .bar-nav-secondary").addClass("hide");
                 $("#page-cart .cart-title").addClass("hide");
             }
-            cartSum();
-            setSupIcon();
-            localStorage.cart = JSON.stringify(my_cart);
+            // cartSum();
+            // setSupIcon();
+            // localStorage.cart = JSON.stringify(my_cart);
 
         } else {
             //开启编辑
@@ -1513,7 +1513,7 @@ $(function() {
         event.preventDefault(); /* Act on the event */
         var $this = $(this);
         $.confirm("确定要删除这个商品吗？", function() {
-            $this.parents(".product-item").remove();
+
             var isAll = true;
             var isNotAll = true;
             $("#page-cart .product-item input[type='checkbox']").each(function() {
@@ -1525,7 +1525,19 @@ $(function() {
                 $("#page-cart .select-all input").prop("checked", true);
             }
 
+
+            var delete_id = $this.parent("li").attr("data-id");
+            for (var i = 0; i < my_cart.length; i++) {
+                if (delete_id == my_cart[i].p_id) {
+                    my_cart.splice(i, 1);
+                    break;
+                }
+            };
+            console.log(my_cart);
+            localStorage.cart = JSON.stringify(my_cart);
             cartSum();
+            setSupIcon();
+            $this.parents(".product-item").remove();
         });
     });
 
@@ -1587,6 +1599,7 @@ $(function() {
                         list: temp_data
                     });
                     console.info(temp_html);
+                    $("#page-fallow .list-block ul").removeClass("no-fallow-wrapper");
                     $("#page-fallow .list-block ul").html(temp_html);
                 }
             }
@@ -1903,10 +1916,12 @@ $(function() {
         }
         current_tab.addClass("active");
         current_tab_link.addClass("active");
+          $.showIndicator();
         getOrderList();
     });
 
     function getOrderList() {
+      
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getOrderList",
             data: {
@@ -1945,6 +1960,7 @@ $(function() {
                         }
                     }
                 }
+                $.hideIndicator();
             }
         });
     }
@@ -2200,7 +2216,7 @@ $(function() {
                 open_id: userInfo.open_id
             },
             successCallback: function(data) {
-                 $.hidePreloader("正在拉取微信卡券，请稍等");
+                $.hidePreloader("正在拉取微信卡券，请稍等");
                 if (data.Common.code == 200) {
                     var temp_list = classifyArrayByField("deadline_type", data.Common.info);
                     console.log(temp_list);
@@ -2223,7 +2239,7 @@ $(function() {
                 }
             }
         });
-            $.showPreloader("正在拉取微信卡券，请稍等");
+        $.showPreloader("正在拉取微信卡券，请稍等");
     });
 
 

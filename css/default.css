@@ -1768,7 +1768,7 @@ header:after {
 
 #page-cart .bar-nav-secondary>div:first-child {
     padding-left: .75rem;
-
+width: 2%;
     text-align: left;
 }
 
@@ -2208,21 +2208,25 @@ header:after {
     margin-left: .5rem;
 }
 
-#page-coupon  .no-coupon-wrapper{
+#page-coupon  .no-coupon-wrapper,#page-fallow  .no-fallow-wrapper{
     background: transparent;
 }
-#page-coupon  .no-coupon-wrapper：before{
+#page-coupon  .no-coupon-wrapper:before,
+#page-coupon  .no-coupon-wrapper:after,
+#page-fallow  .no-fallow-wrapper:before,
+#page-fallow  .no-fallow-wrapper:after{
   display: none;
 }
 #page-my-order .no-order,
-#page-coupon .no-coupon {
+#page-coupon .no-coupon,
+#page-fallow .no-fallow {
     text-align: center;
     margin-top: 2rem;
 }
 
 
 #page-my-order .no-order i.icon-order,
-#page-coupon .no-coupon i.icon-coupon {
+#page-coupon .no-coupon i.icon-coupon,#page-fallow .no-fallow i.icon-star-empty {
     background-color: #d1d1d1;
     color: #fff;
     display: block;
@@ -2237,14 +2241,14 @@ header:after {
 }
 
 #page-my-order .no-order .tips,
-#page-coupon .no-coupon .tips {
+#page-coupon .no-coupon .tips,#page-fallow .no-fallow .tips {
     font-weight: normal;
     font-size: 1rem;
     margin-bottom: .25rem;
 }
 
 #page-my-order .no-order .sub-tips,
-#page-coupon .no-coupon .sub-tips {
+#page-coupon .no-coupon .sub-tips,#page-fallow .no-fallow .sub-tips {
     margin-top: .25rem;
     font-size: .7rem;
     color: #999;
