@@ -162,7 +162,7 @@
         <script id="page-order-item" type="text/html">
             {{each list as $list i }} {{if $list.select==true}}
             <li>
-                <a class="item-link item-content">
+                <a class="item-link item-content" href="details.html?p_id={{$list.p_id}}">
                     <div class="item-media"><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
                     <div class="item-inner">
                         <div class="item-title-row">

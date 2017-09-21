@@ -267,10 +267,10 @@ setInterval(function() {
         js.setAttribute('src', url);
         head.appendChild(js);
         var callbackFn = function() {
-            if (typeof callback === 'function') {
-                callback();
-            }
-        };
+                if (typeof callback === 'function') {
+                    callback();
+                }
+            };
         if (document.all) { //IE
             js.onreadystatechange = function() {
                 if (js.readyState == 'loaded' || js.readyState == 'complete') {
@@ -310,11 +310,12 @@ function classifyArrayByField(field, array) {
     return result;
 }
 /** 
- * 乘法 
- * @param arg1 
- * @param arg2 
- * @returns {Number} 
+ * 乘法
+ * @param arg1
+ * @param arg2
+ * @returns {Number}
  */
+
 function accMul(arg1, arg2) {
     var m = 0,
         s1 = arg1.toString(),
@@ -333,6 +334,7 @@ function accMul(arg1, arg2) {
  * @param arg2
  * @returns {Number}
  */
+
 function accDiv(arg1, arg2) {
     var t1 = 0,
         t2 = 0,
@@ -350,11 +352,12 @@ function accDiv(arg1, arg2) {
     }
 }
 /** 
- * 加法 
- * @param arg1 
- * @param arg2 
- * @returns {Number} 
+ * 加法
+ * @param arg1
+ * @param arg2
+ * @returns {Number}
  */
+
 function accAdd(arg1, arg2) {
     var r1, r2, m, c;
     try {
@@ -385,11 +388,12 @@ function accAdd(arg1, arg2) {
     return (arg1 + arg2) / m;
 }
 /** 
- * 减法 
- * @param arg1 
- * @param arg2 
- * @returns 
+ * 减法
+ * @param arg1
+ * @param arg2
+ * @returns
  */
+
 function accSub(arg1, arg2) {
     var r1, r2, m, n;
     try {
@@ -409,6 +413,7 @@ function accSub(arg1, arg2) {
     return ((arg1 * m - arg2 * m) / m).toFixed(n);
 }
 //getDiscountWord
+
 function getNameByValue(val, arr) {
     var v = Number(val);
     var result = "";
@@ -421,27 +426,28 @@ function getNameByValue(val, arr) {
     return result;
 }
 Date.prototype.format = function(fmt) {
-        var o = {
-            "M+": this.getMonth() + 1,
-            "d+": this.getDate(),
-            "h+": this.getHours(),
-            "m+": this.getMinutes(),
-            "s+": this.getSeconds(),
-            "q+": Math.floor((this.getMonth() + 3) / 3),
-            "S": this.getMilliseconds()
-        };
-        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        for (var k in o)
-            if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        return fmt;
-    }
-    //时间戳格式化
+    var o = {
+        "M+": this.getMonth() + 1,
+        "d+": this.getDate(),
+        "h+": this.getHours(),
+        "m+": this.getMinutes(),
+        "s+": this.getSeconds(),
+        "q+": Math.floor((this.getMonth() + 3) / 3),
+        "S": this.getMilliseconds()
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+    if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+//时间戳格式化
+
 function func_format_date(timestamp) {
     if (timestamp == "" || timestamp == null || timestamp == undefined) {
         return "未知时间";
     }
     var temp = timestamp;
-    if (timestamp.toString().length == 10) {
+    if (timestamp.toString().length == 10 || timestamp.toString().length == 9) {
         temp = timestamp * 1000;
     }
 
@@ -459,54 +465,6 @@ function func_format_date(timestamp) {
     };
 }
 
-
-var time = 10; // time in seconds
-var $progressBar,
-    $bar,
-    $elem,
-    isPause,
-    tick,
-    percentTime;
-
-function progressBar(elem) {
-    $elem = elem;
-    if ($(".swiper-pagination-progressbar").length == 0) {
-        $progressBar = $("<div>", {
-            class: "swiper-pagination-progress"
-        });
-        $bar = $("<span>", {
-            class: "swiper-pagination-progressbar"
-        });
-        $elem.paginationContainer.after($progressBar.append($bar));
-    } else {
-        $bar = $("#page-index .swiper-pagination-progressbar");
-    }
-
-    start();
-}
-
-function start() {
-    percentTime = 0;
-    isPause = false;
-    tick = setInterval(interval, 10);
-};
-
-function interval() {
-    if (isPause === false) {
-        percentTime += 1 / time;
-        $bar.css({
-            width: percentTime + "%"
-        });
-        if (percentTime >= 100) {
-            $elem.slideNext();
-        }
-    }
-}
-
-function moved() {
-    clearTimeout(tick);
-    start();
-}
 
 function getParameter(key) {
     var url = window.location.search;
@@ -568,49 +526,17 @@ function wxApi(fun_callback) {
 
                 wx_config_data = data.Common.info;
                 wx.config({
-                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                    appId: wx_config_data.appId, // 必填，公众号的唯一标识
-                    timestamp: wx_config_data.timestamp, // 必填，生成签名的时间戳
-                    nonceStr: wx_config_data.nonceStr, // 必填，生成签名的随机串
-                    signature: wx_config_data.signature, // 必填，签名，见附录1
-                    jsApiList: [
-                            'checkJsApi',
-                            'onMenuShareTimeline',
-                            'onMenuShareAppMessage',
-                            'onMenuShareQQ',
-                            'onMenuShareWeibo',
-                            'onMenuShareQZone',
-                            'hideMenuItems',
-                            'showMenuItems',
-                            'hideAllNonBaseMenuItem',
-                            'showAllNonBaseMenuItem',
-                            'translateVoice',
-                            'startRecord',
-                            'stopRecord',
-                            'onVoiceRecordEnd',
-                            'playVoice',
-                            'onVoicePlayEnd',
-                            'pauseVoice',
-                            'stopVoice',
-                            'uploadVoice',
-                            'downloadVoice',
-                            'chooseImage',
-                            'previewImage',
-                            'uploadImage',
-                            'downloadImage',
-                            'getNetworkType',
-                            'openLocation',
-                            'getLocation',
-                            'hideOptionMenu',
-                            'showOptionMenu',
-                            'closeWindow',
-                            'scanQRCode',
-                            'chooseWXPay',
-                            'openProductSpecificView',
-                            'addCard',
-                            'chooseCard',
-                            'openCard'
-                        ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                    debug: false,
+                    // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: wx_config_data.appId,
+                    // 必填，公众号的唯一标识
+                    timestamp: wx_config_data.timestamp,
+                    // 必填，生成签名的时间戳
+                    nonceStr: wx_config_data.nonceStr,
+                    // 必填，生成签名的随机串
+                    signature: wx_config_data.signature,
+                    // 必填，签名，见附录1
+                    jsApiList: ['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone', 'hideMenuItems', 'showMenuItems', 'hideAllNonBaseMenuItem', 'showAllNonBaseMenuItem', 'translateVoice', 'startRecord', 'stopRecord', 'onVoiceRecordEnd', 'playVoice', 'onVoicePlayEnd', 'pauseVoice', 'stopVoice', 'uploadVoice', 'downloadVoice', 'chooseImage', 'previewImage', 'uploadImage', 'downloadImage', 'getNetworkType', 'openLocation', 'getLocation', 'hideOptionMenu', 'showOptionMenu', 'closeWindow', 'scanQRCode', 'chooseWXPay', 'openProductSpecificView', 'addCard', 'chooseCard', 'openCard'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
                 });
                 wx.ready(function() {
                     if (typeof(fun_callback) == "function") {
@@ -628,25 +554,40 @@ function wxApi(fun_callback) {
 $(function() {
     'use strict';
 
-    $(document).on("click", ".counter .minus", function() {
+    $(document).on("click", ".counter .minus", function(event) {
         var $counter = $(this).next("input");
         if ($counter.val() != 1) {
             $counter.val(parseInt($counter.val()) - 1);
             $("#page-details .chose-count").html($counter.val());
+            var curr_p_id = $counter.parents(".product-item[data-id]").attr("data-id");
+            for (var i = 0; i < my_cart.length; i++) {
+                if (curr_p_id == my_cart[i].p_id) {
+                    my_cart[i].count = Number($counter.val());
+                }
+            }
+            localStorage.cart = JSON.stringify(my_cart);
             cartSum();
+            setSupIcon();
         }
     });
 
-    $(document).on("click", ".counter .plus", function() {
+    $(document).on("click", ".counter .plus", function(event) {
         var $counter = $(this).prev("input");
         $counter.val(parseInt($counter.val()) + 1);
         $("#page-details .chose-count").html($counter.val());
+        var curr_p_id = $counter.parents(".product-item[data-id]").attr("data-id");
+        for (var i = 0; i < my_cart.length; i++) {
+            if (curr_p_id == my_cart[i].p_id) {
+                my_cart[i].count = Number($counter.val());
+            }
+        }
+        localStorage.cart = JSON.stringify(my_cart);
         cartSum();
+        setSupIcon();
     });
     $(document).on("click", ".popup-overlay", function() {
         $.closeModal();
-    });
-    /*****page-index*****/
+    }); /*****page-index*****/
     //无限加载
     var index_hot_page = 1;
     // 加载flag
@@ -659,34 +600,37 @@ $(function() {
 
 
     function index_hot_addItems(number) {
-        func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + index_hot_page,
-            data: {
-                size: index_hot_itemsPerLoad,
-                hot: 1
-            },
-            successCallback: function(data) {
-                var temp_html = '';
-                if (data.Common.code == 200) {
-                    index_hot_maxItems = data.Common.info.total;
-                    var temp_data = data.Common.info;
-                    temp_html = template('page-index-product', temp_data);
-                } else {
-                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
-                }
+        if (index_hot_page != 0) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + index_hot_page,
+                data: {
+                    size: index_hot_itemsPerLoad,
+                    hot: 1
+                },
+                successCallback: function(data) {
+                    var temp_html = '';
+                    if (data.Common.code == 200) {
+                        index_hot_maxItems = data.Common.info.total;
+                        var temp_data = data.Common.info;
+                        temp_html = template('page-index-product', temp_data);
+                    } else {
+                        temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+                    }
 
-                $('#page-index .infinite-scroll-bottom .list-block.product-list>ul').append(temp_html);
-                index_hot_page++;
-                index_hot_lastIndex = $('#page-index .list-block.product-list>ul>li').length;
-                index_hot_loading = false;
-                if (index_hot_lastIndex >= index_hot_maxItems) {
-                    $.detachInfiniteScroll($('#page-index .infinite-scroll'));
-                    $('#page-index .infinite-scroll-preloader').remove();
-                    return;
+                    $('#page-index .infinite-scroll-bottom .list-block.product-list>ul').append(temp_html);
+                    index_hot_page++;
+                    index_hot_lastIndex = $('#page-index .list-block.product-list>ul>li').length;
+                    index_hot_loading = false;
+                    if (index_hot_lastIndex >= index_hot_maxItems) {
+                        $.detachInfiniteScroll($('#page-index .infinite-scroll'));
+                        $('#page-index .infinite-scroll-preloader').remove();
+                        index_hot_page = 0;
+                        return;
+                    }
+                    $.refreshScroller();
                 }
-                $.refreshScroller();
-            }
-        });
+            });
+        }
     }
     $(document).on('infinite', '#page-index .infinite-scroll-bottom', function() {
         if (index_hot_loading) return;
@@ -697,20 +641,43 @@ $(function() {
 
     $(document).on("pageInit", "#page-index", function(e, pageId, $page) {
 
-        setIconSup();
-        //清除html
-        $('#page-index .infinite-scroll-bottom .list-block>ul').html("");
-        //重置无限加载参数
-        index_hot_page = 1;
-        // 加载flag
-        index_hot_loading = false;
-        // 最多可加载的条目
-        index_hot_maxItems = 0;
-        // 每次加载添加多少条目
-        index_hot_itemsPerLoad = 5;
-        index_hot_lastIndex = 0;
+        setSupIcon();
+        // //清除html
+        // $('#page-index .infinite-scroll-bottom .list-block>ul').html("");
+        // //重置无限加载参数
+        // index_hot_page = 1;
+        // // 加载flag
+        // index_hot_loading = false;
+        // // 最多可加载的条目
+        // index_hot_maxItems = 0;
+        // // 每次加载添加多少条目
+        // index_hot_itemsPerLoad = 5;
+        // index_hot_lastIndex = 0;
         //预先加载
-        index_hot_addItems(comment_itemsPerLoad);
+        if ($("#page-index .cards-list.product-list li").length == 0) { //加载过的标志，不再请求，不知道有没有bug，试下
+            index_hot_addItems(comment_itemsPerLoad);
+
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getCategoriesByParentId",
+                data: {
+                    parent_id: 0
+                },
+                successCallback: function(data) {
+                    var temp_data = {
+                        list: data.Common.info
+                    };
+                    var temp_html = template("page-index-category", temp_data);
+                    $("#page-index .product-nav-list .flex").html(temp_html);
+
+                    var temp_html1 = template("page-category-nav", temp_data);
+                    $("#page-category .category-list").html(temp_html1);
+
+                    var temp_html2 = template("page-category-sub-nav", temp_data);
+                    $("#page-category .tabs").html(temp_html2);
+                }
+            });
+        }
+
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCarousels",
             data: {
@@ -724,61 +691,16 @@ $(function() {
                 $("#page-index .swiper-wrapper").html(temp_html);
                 $("#page-index .swiper-container").swiper({
                     loop: true,
-                    onInit: progressBar,
-                    onTouchStart: function() {
-                        isPause = true;
-                    },
-                    onTouchEnd: function() {
-                        isPause = false;
-                    },
-                    onSlideChangeStart: moved
+                    autoplay: 5000,
+                    autoplayDisableOnInteraction: false
                 });
             }
+
         });
-
-
-        func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/getCategoriesByParentId",
-            data: {
-                parent_id: 0
-            },
-            successCallback: function(data) {
-                var temp_data = {
-                    list: data.Common.info
-                };
-                var temp_html = template("page-index-category", temp_data);
-                $("#page-index .product-nav-list .flex").html(temp_html);
-
-                var temp_html1 = template("page-category-nav", temp_data);
-                $("#page-category .category-list").html(temp_html1);
-
-                var temp_html2 = template("page-category-sub-nav", temp_data);
-                $("#page-category .tabs").html(temp_html2);
-            }
-        });
-
-        // func_ajax({
-        //     url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
-        //     data: {
-        //         size: 30,
-        //         hot:1,
-        //         sales_order:1
-        //     },
-        //     successCallback: function(data) {
-        //         var temp_data = {
-        //             list: data.Common.info.list
-        //         }
-        //         var temp_html = template("page-index-product", temp_data);
-        //         $("#page-index .product-list").html(temp_html);
-        //     }
-        // });
-
 
     });
-
     $(document).on("click", "#page-index .product-nav-list a", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         var category_tab_id = $(this).attr("data-href");
         sessionStorage.category_tab_id = category_tab_id;
         var current_tab = $("#page-category " + category_tab_id);
@@ -786,8 +708,7 @@ $(function() {
         $("#page-category .active").removeClass("active");
         current_tab.addClass("active");
         current_tab_link.addClass("active");
-    });
-    /*****page-category*****/
+    }); /*****page-category*****/
     $(document).on("pageInit", "#page-category", function(e, pageId, $page) {
 
         if ($("#page-category #tab0").length == 0) {
@@ -819,9 +740,6 @@ $(function() {
                 }
             });
         }
-
-
-
     });
     $(document).on("click", "#page-category .tab-link", function(event) {
         event.preventDefault();
@@ -886,7 +804,7 @@ $(function() {
         comment_addItems(comment_itemsPerLoad);
     });
     $(document).on("pageInit", "#page-details", function(e, pageId, $page) {
-        setIconSup();
+        setSupIcon();
 
         //清除html
         $('#page-details .infinite-scroll-bottom .list-container').html("");
@@ -901,7 +819,8 @@ $(function() {
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getProductInfo",
             data: {
-                product_id: getParameter("p_id")
+                product_id: getParameter("p_id"),
+                open_id: userInfo.open_id
             },
             successCallback: function(data) {
                 var data = data.Common.info;
@@ -922,26 +841,32 @@ $(function() {
                 $("#page-details #tab2 .content-block").html(data.description);
                 $(".popup-select .avatar").css("background-image", "url(" + data.feng_mian_image + ")");
                 $(".popup-select h3").html(data.current_price);
+                if (data.collection_status) {
+                    $("#page-details .collect-btn").addClass("collected");
+                }
                 var d = "暂无优惠";
                 if (getNameByValue(data.sale_type, discount_type_list) != "") {
                     d = '<span>' + getNameByValue(data.sale_type, discount_type_list) + '</span>';
                 }
                 $("#page-details .discount .tag-list").html(d);
 
-                wxApi(function() {
+                wxApi(function(imgs) {
+                    $(document).off("click", "#page-details .swiper-slide");
+
                     $(document).on("click", "#page-details .swiper-slide", function(event) {
                         event.preventDefault();
                         var preview_list = [];
                         var index = $(this).index();
-                        for (var i = 0; i < data.imgs.length; i++) {
-                            preview_list.push("http://" + domain + data.imgs[i]);
+                        for (var i = 0; i < imgs.length; i++) {
+                            preview_list.push("http://" + domain + imgs[i]);
                         }
+                        console.log(JSON.stringify(preview_list));
                         wx.previewImage({
                             current: preview_list[index],
                             urls: preview_list
                         });
                     });
-                });
+                }(data.imgs));
             }
         });
         $("#page-details .address input").cityPicker({});
@@ -991,11 +916,14 @@ $(function() {
             data: {
                 open_id: userInfo.open_id,
                 product_id: getParameter("p_id"),
+            },
+            successCallback: function(data) {
+                $("#page-details .collect-btn").toggleClass("collected");
             }
         });
     });
 
-    function setIconSup() {
+    function setSupIcon() {
         //console.log("更新购物车数量");
         if (my_cart != "") {
             var sum = 0;
@@ -1047,7 +975,7 @@ $(function() {
             my_cart[t].count = Number(my_cart[t].count) + count;
         }
         localStorage.cart = JSON.stringify(my_cart);
-        setIconSup();
+        setSupIcon();
     });
 
 
@@ -1064,34 +992,36 @@ $(function() {
 
 
     function hot_addItems(number) {
-        func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + hot_page,
-            data: {
-                size: hot_itemsPerLoad,
-                hot: 1
-            },
-            successCallback: function(data) {
-                var temp_html = '';
-                if (data.Common.code == 200) {
-                    hot_maxItems = data.Common.info.total;
-                    var temp_data = data.Common.info;
-                    temp_html = template('page-search-hot', temp_data);
-                } else {
-                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+        if (hot_page != 0) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + hot_page,
+                data: {
+                    size: hot_itemsPerLoad,
+                    hot: 1
+                },
+                successCallback: function(data) {
+                    var temp_html = '';
+                    if (data.Common.code == 200) {
+                        hot_maxItems = data.Common.info.total;
+                        var temp_data = data.Common.info;
+                        temp_html = template('page-search-hot', temp_data);
+                    } else {
+                        temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+                    }
+                    $('#page-search .infinite-scroll-bottom .list-block ul').append(temp_html);
+                    hot_page++;
+                    hot_lastIndex = $('#page-search .list-block ul li').length;
+                    hot_loading = false;
+                    if (hot_lastIndex >= hot_maxItems) {
+                        $.detachInfiniteScroll($('#page-search .infinite-scroll'));
+                        $('#page-search .infinite-scroll-preloader').remove();
+                        hot_page = 0;
+                        return;
+                    }
+                    $.refreshScroller();
                 }
-
-                $('#page-search .infinite-scroll-bottom .list-block ul').append(temp_html);
-                hot_page++;
-                hot_lastIndex = $('#page-search .list-block ul li').length;
-                hot_loading = false;
-                if (hot_lastIndex >= hot_maxItems) {
-                    $.detachInfiniteScroll($('#page-search .infinite-scroll'));
-                    $('#page-search .infinite-scroll-preloader').remove();
-                    return;
-                }
-                $.refreshScroller();
-            }
-        });
+            });
+        }
     }
     $(document).on('infinite', '#page-search .infinite-scroll-bottom', function() {
         if (hot_loading) return;
@@ -1103,36 +1033,28 @@ $(function() {
 
     $(document).on("pageInit", "#page-search", function(e, pageId, $page) {
 
-        //清除html
-        $('#page-search .infinite-scroll-bottom .list-block ul').html("");
-        //重置参数
-        hot_page = 1;
-        // 加载flag
-        hot_loading = false;
-        // 最多可加载的条目
-        hot_maxItems = 0;
-        // 每次加载添加多少条目
-        hot_itemsPerLoad = 5;
-        hot_lastIndex = 0;
-        //预先加载
-        hot_addItems(hot_itemsPerLoad);
-
-
-
-        // func_ajax({
-        //     url: "http://www.homchang.site/index.php/Api/index/getProducts?p=1",
-        //     data: {
-        //         size: 10,
-        //         hot: 1
-        //     },
-        //     successCallback: function(data) {
-        //         var temp_data = {
-        //             list: data.Common.info.list
-        //         }
-        //         var temp_html = template("page-search-item", temp_data);
-        //         $("#page-search .product-list").html(temp_html);
-        //     }
-        // });
+        // //清除html
+        // $('#page-search .infinite-scroll-bottom .list-block ul').html("");
+        // //重置参数
+        // hot_page = 1;
+        // // 加载flag
+        // hot_loading = false;
+        // // 最多可加载的条目
+        // hot_maxItems = 0;
+        // // 每次加载添加多少条目
+        // hot_itemsPerLoad = 5;
+        // hot_lastIndex = 0;
+        // //预先加载
+        var kw = "";
+        if (sessionStorage.keyword != undefined) {
+            kw = sessionStorage.keyword;
+        }
+        $("#page-search #search").val(kw);
+        if ($("#page-search .product-list li").length == 0) {
+            hot_addItems(hot_itemsPerLoad);
+        } else {
+            console.log("已加载第一页");
+        }
     });
 
 
@@ -1143,7 +1065,7 @@ $(function() {
     // 最多可加载的条目
     var search_maxItems = 0;
     // 每次加载添加多少条目
-    var search_itemsPerLoad = 10;
+    var search_itemsPerLoad = 5;
     var search_lastIndex = 0;
     //搜索条件
     var search_option = new Object();
@@ -1158,30 +1080,33 @@ $(function() {
             sales_order: ""
         };
         var opt = $.extend(default_opt, option);
-        func_ajax({
-            url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + search_page,
-            data: opt,
-            successCallback: function(data) {
-                var temp_html = '';
-                if (data.Common.code == 200) {
-                    search_maxItems = data.Common.info.total;
-                    var temp_data = data.Common.info;
-                    temp_html = template('page-search-item', temp_data);
-                } else {
-                    temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+        if (search_page != 0) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + search_page,
+                data: opt,
+                successCallback: function(data) {
+                    var temp_html = '';
+                    if (data.Common.code == 200) {
+                        search_maxItems = data.Common.info.total;
+                        var temp_data = data.Common.info;
+                        temp_html = template('page-search-item', temp_data);
+                    } else {
+                        temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>'
+                    }
+                    $('#page-search-result .infinite-scroll-bottom .list-block ul').append(temp_html);
+                    search_page++;
+                    search_lastIndex = $('#page-search-result .list-block ul li').length;
+                    search_loading = false;
+                    if (search_lastIndex >= search_maxItems) {
+                        $.detachInfiniteScroll($('#page-search-result .infinite-scroll'));
+                        $('#page-search-result .infinite-scroll-preloader').remove();
+                        search_page = 0;
+                        return;
+                    }
+                    $.refreshScroller();
                 }
-                $('#page-search-result .infinite-scroll-bottom .list-block ul').append(temp_html);
-                search_page++;
-                search_lastIndex = $('#page-search-result .list-block ul li').length;
-                search_loading = false;
-                if (search_lastIndex >= search_maxItems) {
-                    $.detachInfiniteScroll($('#page-search-result .infinite-scroll'));
-                    $('#page-search-result .infinite-scroll-preloader').remove();
-                    return;
-                }
-                $.refreshScroller();
-            }
-        });
+            });
+        }
     }
     $(document).on('infinite', '#page-search-result .infinite-scroll-bottom', function() {
         if (search_loading) return;
@@ -1190,23 +1115,27 @@ $(function() {
     });
 
     $(document).on("pageInit", "#page-search-result", function(e, pageId, $page) {
-        search_option.search_content = getParameter("kw");
-        search_option.category_id = getParameter("c_id");
-        $("#page-search-result #search").val(search_option.search_content);
 
 
-        //清除html
-        $('#page-search-result .infinite-scroll-bottom .list-block ul').html("");
-        //重置参数
-        search_page = 1;
-        search_loading = false;
-        search_maxItems = 0;
-        search_itemsPerLoad = 10;
-        search_lastIndex = 0;
+        // //清除html
+        // $('#page-search-result .infinite-scroll-bottom .list-block ul').html("");
+        // //重置参数
+        // search_page = 1;
+        // search_loading = false;
+        // search_maxItems = 0;
+        // search_itemsPerLoad = 5;
+        // search_lastIndex = 0;
         //预先加载
-        search_addItems(search_itemsPerLoad, search_option);
-
-
+        var kw = "";
+        if (sessionStorage.keyword != undefined) {
+            kw = sessionStorage.keyword;
+        }
+        search_option.search_content = kw;
+        search_option.category_id = getParameter("c_id");
+        $("#page-search-result #search").val(kw);
+        if ($("#page-search-result .product-list li").length == 0) {
+            search_addItems(search_itemsPerLoad, search_option);
+        }
         var temp_discount_type_list = "";
         for (var i = 0; i < discount_type_list.length; i++) {
             temp_discount_type_list += '<li data-discount="' + discount_type_list[i].value + '">' + discount_type_list[i].name + '</li>'
@@ -1252,19 +1181,19 @@ $(function() {
     });
 
 
-    $(document).on("keydown", "#page-search #search,#page-search-result #search", function(event) {
+    $(document).on("keydown", "#page-search #search", function(event) {
         if (event.keyCode == 13) {
-            var q = "";
             var kw = $(this).val();
-            if (kw != "") {
-                q = "?kw=" + kw;
-            }
-            $.router.load("search_result.html" + q);
+            sessionStorage.keyword = kw;
+
+            $.router.load("search_result.html");
         }
     });
     $(document).on("keydown", "#page-search-result #search", function(event) {
         if (event.keyCode == 13) {
-            search_option.search_content = $(this).val();
+            var kw = $(this).val();
+            sessionStorage.keyword = kw;
+            search_option.search_content = kw;
             search_infinite_reset(search_option);
         }
     });
@@ -1302,8 +1231,7 @@ $(function() {
     }
 
     $(document).on("click", "#panel-filter .category-list li", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         $("#panel-filter .sub-title.hide").removeClass("hide");
         var is_select = $(this).hasClass("active");
         if (is_select) {
@@ -1321,8 +1249,7 @@ $(function() {
     });
 
     $(document).on("click", "#panel-filter .sub-category-list li", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
 
         var is_select = $(this).hasClass("active");
         if (is_select) {
@@ -1337,8 +1264,7 @@ $(function() {
     });
 
     $(document).on("click", "#panel-filter .discount-list li", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
 
         var is_select = $(this).hasClass("active");
         if (is_select) {
@@ -1423,7 +1349,7 @@ $(function() {
 
     /*****page-cart*****/
     $(document).on("pageInit", "#page-cart", function(e, pageId, $page) {
-        setIconSup();
+        setSupIcon();
         console.log(my_cart);
         if (my_cart != "") {
             var temp_data = {
@@ -1508,15 +1434,13 @@ $(function() {
             //更新缓存购物车物品的选择状态//反选
             my_cart[$(this).parents("li").index()].select = false;
             localStorage.cart = JSON.stringify(my_cart);
-        }
-        /****************************/
+        } /****************************/
         cartSum();
 
     });
 
     $(document).on("click", "#page-cart .cart-title .edit-btn", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         var $this = $(this);
         if ($this.hasClass("editing")) {
             //复原
@@ -1568,7 +1492,7 @@ $(function() {
                 $("#page-cart .cart-title").addClass("hide");
             }
             cartSum();
-            setIconSup();
+            setSupIcon();
             localStorage.cart = JSON.stringify(my_cart);
 
         } else {
@@ -1586,8 +1510,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-cart .delete-btn", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         var $this = $(this);
         $.confirm("确定要删除这个商品吗？", function() {
             $this.parents(".product-item").remove();
@@ -1638,6 +1561,16 @@ $(function() {
         $(".total-count").html(total_count);
     }
 
+    $(document).on("click", "#page-cart .details-link", function(event) {
+
+        var is_editing = $("#page-cart .editing").length != 0;
+        if (!is_editing) {
+            var p_id = $(this).parents(".product-item").attr("data-id");
+            $.router.load("details.html?p_id=" + p_id);
+        }
+    });
+
+
     /*****page-fallow*****/
 
     $(document).on("pageInit", "#page-fallow", function(e, pageId, $page) {
@@ -1650,7 +1583,9 @@ $(function() {
             successCallback: function(data) {
                 if (data.Common.code == 200) {
                     var temp_data = data.Common.info;
-                    var temp_html=template("page-fallow-item",{list:temp_data});
+                    var temp_html = template("page-fallow-item", {
+                        list: temp_data
+                    });
                     console.info(temp_html);
                     $("#page-fallow .list-block ul").html(temp_html);
                 }
@@ -1714,6 +1649,11 @@ $(function() {
                 cart: JSON.stringify(orderInfo.products)
             },
             successCallback: function(data) {
+                console.log("参数---open_id" + userInfo.open_id);
+                console.log("参数---cart" + JSON.stringify(orderInfo.products));
+                console.log("--------请求结果----");
+                console.log(data);
+                console.log("-----end of---请求结果----");
                 if (data.Common.code == 200) {
                     var temp_data = data.Common.info;
                     var temp_html = template('page-order-coupon-item', {
@@ -1806,8 +1746,7 @@ $(function() {
 
     });
     $(document).on("click", ".express-type-picker .close-picker", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         var value = $(".express-type").val();
         if (value == "到店自提") {
             $("#page-order .inset-map-wrapper").removeClass("hide");
@@ -1820,13 +1759,11 @@ $(function() {
         }
     });
     $(document).on("click", "#page-order .express-type-wrapper", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         $(".express-type").picker("open");
     });
     $(document).on("change", "#page-order textarea", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         orderInfo.memo = $(this).val();
         sessionStorage.orderInfo = JSON.stringify(orderInfo);
     });
@@ -1834,8 +1771,7 @@ $(function() {
 
 
     $(document).on("click", "#page-order .submit-order-btn", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         //todo
         console.log(orderInfo);
         var temp_data = {
@@ -1863,6 +1799,7 @@ $(function() {
             url: "http://www.homchang.site/index.php/Api/index/orderCommit",
             data: temp_data,
             successCallback: function(data) {
+                console.log(data);
                 if (data.Common.code == 200) {
                     var order_num = data.Common.info;
                     //todo 删除loacalStorage的购物车//保留在购物车，但未购买的物品
@@ -1919,8 +1856,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-order-detail .pay,#page-order-detail .pay", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         var order_num = $("#page-order-detail .order-num").text();
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/wxPay",
@@ -1932,11 +1868,16 @@ $(function() {
                 if (data.Common.code == 200) {
                     var c = data.Common.info;
                     wx.chooseWXPay({
-                        timestamp: c.timestamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-                        nonceStr: c.nonceStr, // 支付签名随机串，不长于 32 位
-                        package: c.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
-                        signType: c.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-                        paySign: c.paySign, // 支付签名
+                        timestamp: c.timestamp,
+                        // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+                        nonceStr: c.nonceStr,
+                        // 支付签名随机串，不长于 32 位
+                        package: c.package,
+                        // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+                        signType: c.signType,
+                        // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+                        paySign: c.paySign,
+                        // 支付签名
                         success: function(res) {
                             // 支付成功后的回调函数
                             window.location.href = "user_center.html#page-my-order";
@@ -1977,12 +1918,11 @@ $(function() {
                         list: data.Common.info
                     }));
                     var temp_list = classifyArrayByField("pay_status", data.Common.info);
-                    var container_list = [];
+
                     var combind_html = ""; //pay_status 1和2合并
                     var combind_html1 = ""; //pay_status 6和7合并
                     for (var i = 0; i < temp_list.length; i++) {
-                        var $container = $("#page-my-order [data-type='" + temp_list[i].pay_status + "']");
-                        container_list.push($container[0]);
+                        var $container = $("#page-my-order [data-type='" + temp_list[i].pay_status + "']>.list-block>ul");
                         var temp_data = {
                             list: temp_list[i].data
                         };
@@ -1992,18 +1932,18 @@ $(function() {
                         } else if (temp_list[i].pay_status == "6" || temp_list[i].pay_status == "7") {
                             combind_html1 += temp_html;
                         } else {
-                            $container.find("ul").html(temp_html);
+                            $container.html(temp_html);
                         }
                     }
-                    $("#page-my-order [data-type='1']").find("ul").html(combind_html);
-                    $("#page-my-order [data-type='4']").find("ul").html(combind_html1);
-                    console.log("-------已退款container--------");
-                    console.log($("#page-my-order [data-type='4']").find("ul"));
-                    console.log("------end of 已退款container---------");
-                    console.log("-------已退款html--------");
-                    console.log(combind_html1);
-                    console.log("------end of 已退款html---------");
-                    $("#page-my-order .tab").not("[data-type='all']").not(container_list).find("ul").html('<li class="no-order"><p><i class="icon icon-order"></i></p><p class="tips">您还没有相关的订单</p><p class="sub-tips">可以去看看有哪些想买的</p></li>');
+                    $("#page-my-order [data-type='1']>.list-block>ul").html(combind_html);
+                    $("#page-my-order [data-type='4']>.list-block>ul").html(combind_html1);
+                    //为没有内容的tab增加提示
+                    var container_list = $("#page-my-order .tab>.list-block>ul");
+                    for (var i = 0; i < container_list.length; i++) {
+                        if (container_list.eq(i).find("li").length == 0) {
+                            container_list.eq(i).html('<li class="no-order"><p><i class="icon icon-order"></i></p><p class="tips">您还没有相关的订单</p><p class="sub-tips">可以去看看有哪些想买的</p></li>');
+                        }
+                    }
                 }
             }
         });
@@ -2087,8 +2027,7 @@ $(function() {
                 }
             });
         });
-    });
-    /*****page-comment*****/
+    }); /*****page-comment*****/
     $(document).on("pageInit", "#page-comment", function(e, pageId, $page) {
 
 
@@ -2133,8 +2072,7 @@ $(function() {
                 }
             }
         });
-    });
-    /*****page-user-center*****/
+    }); /*****page-user-center*****/
     $(document).on("pageInit", "#page-user-center", function(e, pageId, $page) {
 
         $("#page-user-center .avatar-wrapper span").css("background-image", "url(" + userInfo.head_img + ")");
@@ -2148,14 +2086,13 @@ $(function() {
             gender_icon = "icon-unknow";
         }
         $("#page-user-center .user-header-wrapper .icon-gender").removeClass("icon-male icon-female icon-unknow").addClass(gender_icon);
-        setIconSup();
+        setSupIcon();
     });
 
 
 
     $(document).on("click", "#page-user-center .order-block [data-href]", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         var order_tab_id = $(this).attr("data-href");
         sessionStorage.order_tab_id = order_tab_id;
         var current_tab = $("#page-my-order " + order_tab_id);
@@ -2163,8 +2100,7 @@ $(function() {
         $("#page-my-order .active").removeClass("active");
         current_tab.addClass("active");
         current_tab_link.addClass("active");
-    });
-    /*****page-my-message*****/
+    }); /*****page-my-message*****/
 
     //无限加载
     var msg_page = 1;
@@ -2256,8 +2192,7 @@ $(function() {
             });
             $("#page-message-detail .content-block-title .unread").removeClass("unread");
         }
-    });
-    /*****page-coupon*****/
+    }); /*****page-coupon*****/
     $(document).on("pageInit", "#page-coupon", function(e, pageId, $page) {
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCardList",
@@ -2265,7 +2200,7 @@ $(function() {
                 open_id: userInfo.open_id
             },
             successCallback: function(data) {
-
+                 $.hidePreloader("正在拉取微信卡券，请稍等");
                 if (data.Common.code == 200) {
                     var temp_list = classifyArrayByField("deadline_type", data.Common.info);
                     console.log(temp_list);
@@ -2277,10 +2212,18 @@ $(function() {
                         var temp_html = template("page-coupon-item", temp_data);
                         $container.find("ul").html(temp_html);
                     }
-
+                    //为没有内容的tab增加提示
+                    var container_list = $("#page-coupon .tab>.list-block>ul");
+                    for (var i = 0; i < container_list.length; i++) {
+                        if (container_list.eq(i).find("li").length == 0) {
+                            container_list.eq(i).addClass("no-coupon-wrapper");
+                            container_list.eq(i).html('<li class="no-coupon"><p><i class="icon icon-coupon"></i></p><p class="tips">您还没有相关的优惠劵</p><p class="sub-tips">可以去看看有商家哪些活动</p></li>');
+                        }
+                    }
                 }
             }
         });
+            $.showPreloader("正在拉取微信卡券，请稍等");
     });
 
 
@@ -2331,8 +2274,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-user-info .username", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         $.prompt("修改昵称", function(value) {
             func_ajax({
                 url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
@@ -2349,8 +2291,7 @@ $(function() {
     });
 
     $(document).on("click", ".gander-picker .close-picker", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         var select_gander = $("#page-user-info .gander").val();
         for (var i = 0; i < gander_list.length; i++) {
             if (select_gander == gander_list[i]) {
@@ -2419,7 +2360,8 @@ $(function() {
             height: 200
         }).toDataURL('image/jpeg');
         $("#page-user-info .avatar-wrapper span").css("background-image", "url(" + src_data + ")");
-
+        userInfo.head_img = src_data;
+        localStorage.userInfo = JSON.stringify(userInfo);
         src_data = src_data.replace("data:image/jpeg;base64,", "");
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
@@ -2438,12 +2380,16 @@ $(function() {
      * @param {String} type 上传类型
      * @param {Number} num 允许选择数量
      */
+
     function func_uploadType_avatar(type, num) {
         $.showIndicator();
         wx.chooseImage({
-            count: num, // 默认9
-            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-            sourceType: [type], // 可以指定来源是相册还是相机，默认二者都有
+            count: num,
+            // 默认9
+            sizeType: ['original', 'compressed'],
+            // 可以指定是原图还是压缩图，默认二者都有
+            sourceType: [type],
+            // 可以指定来源是相册还是相机，默认二者都有
             success: function(res) {
                 // $.showIndicator();
                 upload_avatar(res.localIds);
@@ -2455,10 +2401,13 @@ $(function() {
      *上传图片接口
      *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)
      */
+
     function upload_avatar(url_list) {
         wx.uploadImage({
-            localId: url_list[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-            isShowProgressTips: 0, // 默认为1，显示进度提示
+            localId: url_list[0],
+            // 需要上传的图片的本地ID，由chooseImage接口获得
+            isShowProgressTips: 0,
+            // 默认为1，显示进度提示
             success: function(res) {
                 //下载图片接口
                 download_avatar(res.serverId); // 返回图片的服务器端
@@ -2469,6 +2418,7 @@ $(function() {
      *微信图片下载
      *@param {Object} server_id 要下载的server_id数组(微信返回的server_id)
      */
+
     function download_avatar(server_id) {
         //          alert(server_id);
         func_ajax({
@@ -2530,8 +2480,7 @@ $(function() {
                 }
             });
         }
-    });
-    /*****page-address*****/
+    }); /*****page-address*****/
     $(document).on("pageInit", "#page-address", function(e, pageId, $page) {
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getLocations",
@@ -2550,8 +2499,7 @@ $(function() {
         });
     });
     $(document).on("click", "#page-address label", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
 
         var update_id = $(this).parents("li").attr("data-id");
         var $radio = $(this).find("input");
@@ -2571,8 +2519,7 @@ $(function() {
 
 
     $(document).on("click", "#page-address .delete-btn", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
         var $delete_ele = $(this).parents("li");
         var delete_id = $delete_ele.attr("data-id");
 
@@ -2600,8 +2547,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-address .edit-btn,#page-address .edit-btn", function(event) {
-        event.preventDefault();
-        /* Act on the event */
+        event.preventDefault(); /* Act on the event */
 
         var $li = $(this).parents("li");
         var edit_address = {
@@ -3000,13 +2946,17 @@ $(function() {
      * @param {String} type 上传类型
      * @param {Number} num 允许选择数量
      */
+
     function fun_uploadType(type, num) {
         //拍照或从手机相册中选图接口
         var photo_index = 0;
         wx.chooseImage({
-            count: num, // 默认9
-            sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-            sourceType: [type], // 可以指定来源是相册还是相机，默认二者都有
+            count: num,
+            // 默认9
+            sizeType: ['original', 'compressed'],
+            // 可以指定是原图还是压缩图，默认二者都有
+            sourceType: [type],
+            // 可以指定来源是相册还是相机，默认二者都有
             success: function(res) {
                 //遍历res.localIds，添加待上传的图片html
                 var html = "";
@@ -3027,12 +2977,15 @@ $(function() {
      *上传图片接口
      *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)
      */
+
     function upload(url_list) {
         if (url_list.length > 0) {
             $("#uploading-index").text(Number($("#uploading-index").text()) + 1); //改变上传图片
             wx.uploadImage({
-                localId: url_list[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-                isShowProgressTips: 0, // 默认为1，显示进度提示
+                localId: url_list[0],
+                // 需要上传的图片的本地ID，由chooseImage接口获得
+                isShowProgressTips: 0,
+                // 默认为1，显示进度提示
                 success: function(res) {
                     var curr_ele = $(".uploader-wrapper").find("[data-localIds='" + url_list[0] + "']"); //查找出当前上传的DOM对象
                     download(res.serverId, curr_ele, url_list); // 返回图片的服务器端
@@ -3049,6 +3002,7 @@ $(function() {
      *@param {Object} curr_ele 当前下载图片的Jq对象
      *@param {Object} url_list 要上传的localIds数组(微信返回的localIds)；用于upload(url_list)函数的
      */
+
     function download(server_id, curr_ele, url_list) {
 
         func_ajax({
@@ -3116,6 +3070,7 @@ $(function() {
     });
 
     //妈的这个验证码，自己写完我都看不懂
+
     function createCounter(iName, sessionStorageName, count, $btn) {
         return 'var ' + iName + ' = setInterval(function() {\
                 ' + count + '--;\
@@ -3202,8 +3157,7 @@ $(function() {
         });
         repairInfo.imgs = path_list;
         sessionStorage.repairInfo = JSON.stringify(repairInfo);
-    });
-    /*****page-select-product*****/
+    }); /*****page-select-product*****/
     $(document).on("pageInit", "#page-select-product", function(e, pageId, $page) {
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getOrderList",
@@ -3248,8 +3202,7 @@ $(function() {
         //记录填写的电话号码
         setupInfo.telephone = $(this).val();
         sessionStorage.setupInfo = JSON.stringify(setupInfo);
-    });
-    /*****page-map*****/
+    }); /*****page-map*****/
 
     $(document).on("pageInit", "#page-map,#page-inset-map", function(e, pageId, $page) {
         if (pageId == "page-map") {
@@ -3377,14 +3330,18 @@ $(function() {
         var name = $this.find(".item-title").text();
         var address = $this.find(".item-text").text();
         wx.openLocation({
-            latitude: parseFloat(location[0]), // 纬度，浮点数，范围为90 ~ -90
-            longitude: parseFloat(location[1]), // 经度，浮点数，范围为180 ~ -180。
-            name: name, // 位置名
-            address: address, // 地址详情说明
-            scale: 28, // 地图缩放级别,整形值,范围从1~28。默认为最大
+            latitude: parseFloat(location[0]),
+            // 纬度，浮点数，范围为90 ~ -90
+            longitude: parseFloat(location[1]),
+            // 经度，浮点数，范围为180 ~ -180。
+            name: name,
+            // 位置名
+            address: address,
+            // 地址详情说明
+            scale: 28,
+            // 地图缩放级别,整形值,范围从1~28。默认为最大
             infoUrl: '' // 在查看位置界面底部显示的超链接,可点击跳转
         });
-    });
-    /*****init*****/
+    }); /*****init*****/
     $.init();
 });

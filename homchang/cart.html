@@ -66,15 +66,15 @@
         </div>
         <script id="page-cart-item" type="text/html">
             {{each list as $list i}}
-            <li class="item-content item-link product-item">
+            <li class="item-content item-link product-item" data-id="{{$list.p_id}}">
                 <div class="item-media">
                     <label class="label-checkbox">
                         <input type="checkbox" name="p_id" data-value="{{$list.p_id}}" {{if $list.select==true}}checked="true"{{/if}}>
                         <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                     </label>
                 </div>
-                <div class="item-media"><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
-                <div class="item-inner">
+                <div class="item-media details-link" ><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
+                <div class="item-inner details-link">
                     <div class="item-title-row">
                         <div class="item-title">{{$list.info.name}}</div>
                     </div>

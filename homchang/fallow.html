@@ -12,7 +12,7 @@
 <body>
     <div class="page-group">
         <div id="page-fallow" class="page">
-                   <header class="bar bar-nav">
+            <header class="bar bar-nav">
                 <a class="button button-link button-nav pull-left back">
                       <span class="icon icon-left"></span>返回
                     </a>
@@ -20,16 +20,16 @@
             </header>
             <div class="content native-scroll">
                 <div class="list-block media-list">
-                    <ul class="product-list"> 
-
-             </ul>
+                    <ul class="product-list">
+                        暂无收藏
+                    </ul>
                 </div>
             </div>
         </div>
-      <!--   {{if $list.sale_type!=0}}<span>{{discount_format($list.sale_type)}}</span>{{/if}} -->
-   <script id="page-fallow-item" type="text/html">
-    {{each list as $list i}}
-        <li>
+        <!--   {{if $list.sale_type!=0}}<span>{{discount_format($list.sale_type)}}</span>{{/if}} -->
+        <script id="page-fallow-item" type="text/html">
+            {{each list as $list i}}
+            <li>
                 <a href="details.html?p_id={{$list.product.id}}" class="item-content item-link">
                     <div class="item-media"><span class="product-img" style="background-image: url({{$list.product.feng_mian_image}});"></span></div>
                     <div class="item-inner">
@@ -43,7 +43,7 @@
                         <div class="item-title-row">
                             <div class="item-title price-row"><span>{{$list.product.current_price}}</span></div>
                         </div>
-           <!--              <div class="item-subtitle"> <i class="icon icon-eye"></i><span>47</span><i class="icon icon-comment"></i><span>19</span><i class="icon icon-star-empty"></i><span>2</span></div> -->
+                        <!--              <div class="item-subtitle"> <i class="icon icon-eye"></i><span>47</span><i class="icon icon-comment"></i><span>19</span><i class="icon icon-star-empty"></i><span>2</span></div> -->
                     </div>
                 </a>
             </li>
