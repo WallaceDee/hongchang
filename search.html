@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-search" class="page">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+                      <span class="icon icon-left"></span>返回
+                    </a>
+                <h1 class="title">搜索</h1>
+            </header>
+            <div class="bar bar-header-secondary">
+                <div class="searchbar">
+                    <form action="#" onsubmit="return false;">
+                        <a class="searchbar-cancel">取消</a>
+                        <div class="search-input">
+                            <label class="icon icon-search" for="search"></label>
+                            <input type="search" id="search" placeholder="输入关键字...">
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="content infinite-scroll infinite-scroll-bottom" data-distance="100">
+                <div class="content-block-title">热卖商品</div>
+                <div class="list-block media-list">
+                    <ul class="product-list">
+                    </ul>
+                </div>
+                  <!-- 加载提示符 -->
+          <div class="infinite-scroll-preloader">
+              <div class="preloader"></div>
+          </div>
+            </div>
+        </div>
+        <script id="page-search-hot" type="text/html">
+            {{each list as $list i}}
+            <li>
+                <a href="details.html?p_id={{$list.id}}" class="item-content item-link">
+                    <div class="item-media"><span class="product-img" style="background-image: url({{if $list.preview==''}}images/category_default_img.jpg{{else}}{{$list.feng_mian_image}}{{/if}});"></span></div>
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title">{{$list.name}}</div>
+                        </div>
+                        <div class="item-subtitle">{{$list.summary}}</div>
+                        <div class="item-title-row">
+                            <div class="item-title tag-row"> {{if $list.sale_type!=0}}<span>{{discount_format($list.sale_type)}}</span>{{/if}}</div>
+                        </div>
+                        <div class="item-title-row">
+                            <div class="item-title price-row"><span>{{$list.current_price}}</span></div>
+                        </div>
+                        <div class="item-subtitle"> <i class="icon icon-eye"></i><span>{{$list.browse_num}}</span><i class="icon icon-comment"></i><span>{{$list.comment_num}}</span><i class="icon icon-star-empty"></i><span>{{$list.collection_num}}</span></div>
+                    </div>
+                </a>
+            </li>
+            {{/each}}
+        </script>
+    </div>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/cropper.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="http://map.qq.com/api/js?v=2.exp&libraries=convertor" charset="utf-8"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>

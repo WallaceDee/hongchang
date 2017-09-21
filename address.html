@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-address" class="page">
+            <header class="bar bar-nav"> <a class="button button-link button-nav pull-left back"> <span class="icon icon-left"></span>返回 </a>
+                <h1 class="title">我的地址</h1>
+            </header>
+            <div class="content native-scroll">
+                <div class="list-block">
+                    <ul>
+                        <li>
+                            <a href="add_address.html" class="item-link item-content">
+                                <div class="item-inner">
+                                    <div class="item-title">新增地址</div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-block-title">我的地址</div>
+                <div class="list-block cards-list">
+                    <ul>
+                    <li class="no-data"><div><span>暂无地址</span></div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <script id="page-address-item" type="text/html">
+            {{each list as $list i }}
+              <li class="card" data-id="{{$list.id}}">
+                  <div class="card-content">
+                      <div class="card-content-inner">
+                          <div class="user-info"><span class="name">{{$list.contact}}</span><span class="phone">{{$list.tel}}</span></div>
+                          <p class="address-info">{{$list.address}}</p>
+                      </div>
+                  </div>
+                  <div class="card-footer"> <span class="pull-left">
+                            <label class="label-checkbox item-content">
+                            <input type="radio" name="address" {{if $list.is_main==1}}checked="true"{{/if}}">
+                            <div class="item-media"><i class="icon icon-form-checkbox"></i><span></span></div>
+                  </label>
+                  </span> <span class="pull-right opeartion-btn"><a class="edit-btn"><i class="icon icon-edit"></i>编辑</a> <a class="delete-btn"><i class="icon icon-remove"></i>删除</a></span> </div>
+              </li>
+    {{/each}}
+    </script>
+    </div>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/cropper.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="http://map.qq.com/api/js?v=2.exp&libraries=convertor" charset="utf-8"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-order-detail" class="page">
+        </div>
+        <script id="page-order-detail-info" type="text/html">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+               <span class="icon icon-left"></span>
+                  返回
+            </a>
+            </header>
+            {{if list.pay_status==0||list.pay_status==1||list.pay_status==2||list.pay_status==3||list.pay_status==5}}
+            <nav class="bar bar-tab">
+                {{if list.pay_status==0}}<a class="tab-item big-tab-item cancel-btn">取消订单</a> <a class="tab-item big-tab-item pay">付款</a> {{else if list.pay_status==1}}<a class="tab-item big-tab-item refund-btn">申请退款</a> {{else if list.pay_status==2}}<a class="refund-btn">申请退款</a> <a class="receipt-btn">确认收货</a> {{else if list.pay_status==3}}<a class="refund-btn">申请退货</a> <a href="comment.html?order_num={{$list.id}}">去评价</a> {{else if list.pay_status==5}}<a class="refund-btn">申请退货</a> {{/if}} {{/if}}
+            </nav>
+            <div class="content native-scroll">
+                <div class="list-block media-list address-block">
+                    <ul>
+                        <li class="status-content">
+                            <span>{{if list.pay_status==0}}<i class="icon icon-wallet"></i>等待买家付款{{else if list.pay_status==1}}<i class="icon icon-car"></i>等待卖家发货{{else if list.pay_status==2}}<i class="icon icon-car"></i>等待收货{{else if list.pay_status==3}}<i class="icon icon-check"></i>已完成{{else if list.pay_status==4}}<i class="icon icon-close"></i>已取消{{else if list.pay_status==6}}<i class="icon icon-refund"></i>已退款{{else if list.pay_status==7}}<i class="icon icon-refund"></i>申请退款/退货中{{/if}}</span>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-media"><i class="icon icon-my-location"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title">{{list.location.contact}}</div>
+                                    <div class="item-after">{{list.location.tel}}</div>
+                                </div>
+                                <div class="item-text">{{list.location.address}}</div>
+                            </div>
+                        </li>
+                        {{if list.pick_type==2}} {{if list.pay_status!=0}}
+                        <li class="item-content item-link">
+                            <div class="item-media"><i class="icon icon-car"></i></div>
+                            <div class="item-inner">
+                                {{if list.pay_status==1}}
+                                <div class="item-title-row">
+                                    <div class="item-subtitle">等待卖家发货</div>
+                                </div>
+                                {{else if list.pay_status==2}}
+                                <div class="item-title-row">
+                                    <div class="item-title">快递单号：</div>
+                                    <div class="item-after">{{list.express_no}}</div>
+                                    <!--<div class="item-subtitle">广州市 番禺区 市桥街道 骏和广场</div>
+                                <div class="item-subtitle">2017-09-09 13:45:42</div> -->
+                                </div>
+                                {{/if}}
+                            </div>
+                        </li>
+                        {{/if}} {{else if list.pick_type==1}}
+                        <li class="item-content item-link">
+                            <div class="item-media"><i class="icon icon-map"></i></div>
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title">自提门店：</div>
+                                    <div class="item-after">{{list.branch.name}}</div>
+                                </div>
+                                <div class="item-text">
+                                    {{list.branch.address}}
+                                </div>
+                                <div class="item-title-row">
+                                    <div class="item-title">电话：</div>
+                                    <div class="item-after">{{list.tel}}</div>
+                                </div>
+                            </div>
+                        </li>
+                        {{/if}}
+                    </ul>
+                    <div class="color-line"></div>
+                </div>
+                <div class="list-block">
+                    <ul>
+                        <li class="align-top">
+                            <div class="item-content">
+                                <div class="item-inner">
+                                    <div class="item-title label">商品</div>
+                                    <div class="item-title">
+                                        {{each list.products as $product p}}
+                                        <div class="item-inner">
+                                            <div class="item-title">{{$product.name}}</div>
+                                            <div class="item-after">x{{$product.count}}</div>
+                                        </div>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title"></div>
+                                <div class="item-after">共{{sum_count(list.products)}}件</div>
+                            </div>
+                        </li>
+                        {{if list.remark!==""}}
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">卖家留言</div>
+                                <div class="item-text"> {{list.remark}}</div>
+                            </div>
+                        </li>{{/if}}
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title">配送方式</div>
+                                <div class="item-after">{{express_type_format(list.pick_type)}}</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="list-block media-list">
+                    <ul>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title">收款方</div>
+                                    <div class="item-after">广州鸿畅环保设备有限公司</div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title">商品总额</div>
+                                    <div class="item-after">￥{{acc_add(list.total_price,list.discounts).toFixed(2)}}</div>
+                                </div>
+                                {{if list.discounts!="0.00"}}
+                                <div class="item-title-row">
+                                    <div class="item-title">-优惠劵</div>
+                                    <div class="item-after">-￥{{list.discounts}}</div>
+                                </div>
+                                {{/if}}
+                            </div>
+                        </li>
+                        <li class="item-content">
+                            <div class="item-inner">
+                                <div class="item-title-row">
+                                    <div class="item-title">实付款</div>
+                                    <div class="item-after">￥{{list.total_price}}</div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="list-block-label">
+                        <p>订单编号：<span class="order-num">{{list.order_no}}</span></p>
+                        <p>创建时间：{{date_format(list.create_time).datetime}}</p>
+                    </div>
+                </div>
+            </div>
+        </script>
+    </div>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/cropper.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="http://map.qq.com/api/js?v=2.exp&libraries=convertor" charset="utf-8"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>

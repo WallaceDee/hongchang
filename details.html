@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-details" class="page">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+               <span class="icon icon-left"></span>
+                  返回
+            </a>
+                <h1 class="title">
+                    <a href="#tab1" class="tab-link active ">商品</a>
+                    <a href="#tab2" class="tab-link ">详情</a>
+                    <a href="#tab3" class="tab-link">评价</a></h1>
+            </header>
+            <nav class="bar bar-tab">
+                <a class="tab-item service-btn">
+                   <span class="icon icon-service"></span>
+                   <span class="tab-label">联系客服</span>
+                </a>
+                <a class="tab-item collect-btn">
+                  <span class="icon icon-star"></span>
+                  <span class="tab-label"></span>
+                  </a>
+                <a class="tab-item cart-item" href="cart.html">
+                  <span class="icon icon-cart"></span>
+                  <span class="tab-label">购物车</span>
+             </a>
+                <a class="tab-item big-tab-item add-to-cart">加入购物车</a>
+            </nav>
+            <div class="content native-scroll">
+                <div class="tabs">
+                    <div id="tab1" class="tab active">
+                        <div class="swiper-container" data-space-between="10">
+                            <div class="swiper-wrapper">
+                            </div>
+                            <div class="swiper-pagination"></div>
+                        </div>
+                        <div class="list-block">
+                            <ul>
+                                <li class="item-content name">
+                                    <div class="item-inner">
+                                        <div class="item-title"></div>
+                                    </div>
+                                </li>
+                                <li class="item-link item-content desc">
+                                    <div class="item-inner">
+                                    </div>
+                                </li>
+                                <li class="item-content data">
+                                    <div class="item-inner">
+                                        <div class="item-title">￥<span class="price"></span></div>
+                                        <div class="item-after"> 库存 <span class="num"></span> 评价 <span class="comment"></span></div>
+                                    </div>
+                                </li>
+                                <li class="item-content specification">
+                                    <div class="item-media">规格</div>
+                                    <div class="item-inner">
+                                        <div class="item-title">
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="item-content model">
+                                    <div class="item-media">型号</div>
+                                    <div class="item-inner">
+                                        <div class="item-title">
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="item-content discount">
+                                    <div class="item-media">促销</div>
+                                    <div class="item-inner">
+                                        <div class="item-title tag-list">
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="list-block section">
+                            <ul>
+                                <li>
+                                    <a class="item-link item-content select open-popup" data-popup=".popup-select">
+                                        <div class="item-media">已选</div>
+                                        <div class="item-inner">
+                                            <div class="item-titlet">
+                                                <span class="chose-count">1</span>件
+                                            </div>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!--                         <div class="list-block section">
+                            <ul>
+                                <li>
+                                    <a class="item-link item-content address">
+                                        <div class="item-media">送至</div>
+                                        <div class="item-inner">
+                                            <div class="item-input">
+                                                <input type="text" value="">
+                                            </div>
+                                            <span class="item-after">免运费</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div> -->
+                        <div class="list-block section">
+                            <ul>
+                                <li>
+                                    <a class="item-content">
+                                        <div class="item-media">评论</div>
+                                        <div class="item-inner"></div>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="content-block  surface-comment">
+                                <ul class="weui-comment">
+                                    <li class="no-data">
+                                        <div><span>暂无评论</span></div>
+                                    </li>
+                                </ul>
+                                <a class="button show-all-comment hide">查看全部</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tab2" class="tab">
+                        <div class="content-block">
+                        </div>
+                    </div>
+                    <div id="tab3" class="tab">
+                        <div class="content infinite-scroll-bottom infinite-scroll" data-distance="100">
+                            <!-- 下面是正文 -->
+                            <div class="content-block">
+                                <ul class="list-container">
+                                </ul>
+                            </div>
+                            <!-- 加载提示符 -->
+                            <div class="infinite-scroll-preloader">
+                                <div class="preloader"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About select -->
+        <div class="popup popup-select">
+            <div><a class="close-popup close-popup-btn"><i class="icon icon-close"></i></a></div>
+            <div class="flex">
+                <span class="avatar" style="background-image: url();"></span>
+                <div class="flex-item ">
+                    <h3></h3></div>
+            </div>
+            <div class="select-item">
+                <div class="item-title">数量</div>
+                <div class="counter"><a class="minus">-</a>
+                    <input type="number" value="1" readonly><a class="plus">+</a></div>
+            </div>
+            <a class="add-to-cart close-popup">加入购物车</a>
+        </div>
+        <script id="page-details-swiper" type="text/html">
+            {{each list as $list i }}
+            <div class="swiper-slide"><span style="background-image: url({{$list}});"></span></div>{{/each}}
+        </script>
+        <script id="page-details-comment" type="text/html">
+            {{each list as $list i }}
+            <li class="weui-comment-item">
+                <div class="weui-comment-li"><i class="icon-{{$list.score}}-stars"></i></div>
+                <div class="userinfo"><strong class="nickname">{{$list.user.user_name}}</strong><span class="avatar" style="background-image: url({{$list.user.head_img}});"> </span>
+                    <div class="weui-comment-msg">{{$list.content}}</div>
+                    <p class="time">{{date_format($list.create_time).datetime}}</p>
+                </div>
+            </li>{{/each}}
+        </script>
+    </div>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/cropper.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="http://map.qq.com/api/js?v=2.exp&libraries=convertor" charset="utf-8"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>

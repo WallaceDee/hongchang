@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-coupon" class="page">
+            <header class="bar bar-nav">
+                <a class="button button-link button-nav pull-left back">
+                      <span class="icon icon-left"></span>返回
+                    </a>
+                <h1 class="title">我的卡券</h1>
+            </header>
+            <div class="bar bar-header-secondary">
+                <div class="buttons-tab">
+                    <a href="#tab1" class="tab-link active button">未使用</a>
+                    <a href="#tab2" class="tab-link button">即将过期</a>
+                    <a href="#tab3" class="tab-link button">已使用</a>
+                    <a href="#tab4" class="tab-link button">已过期</a>
+                </div>
+            </div>
+            <div class="content native-scroll">
+                <div class="tabs">
+                    <div id="tab1" data-type="0" class="tab active">
+                        <div class="list-block media-list">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="tab2" data-type="1" class="tab">
+                        <div class="list-block media-list">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="tab3" data-type="2" class="tab">
+                        <div class="list-block media-list">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="tab4" data-type="3" class="tab">
+                        <div class="list-block media-list">
+                            <ul>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script id="page-coupon-item" type="text/html">
+            {{each list as $list i}}
+            <li class="item-content">
+                <div class="item-media">
+                    <div class="icon icon-coupon-bg"></div><span class="price">{{$list.reduce_cost/100}}</span><span class="scope">代金券</span></div>
+                <div class="item-inner">
+                    <div class="item-title-row">
+                        <div class="item-title">{{$list.title}}</div>
+                    </div>
+                    <div class="item-subtitle">{{if $list.accept_category!=null}}{{$list.accept_category}}型号商品可使{{else}}全场所有型号商品可用{{/if}}</div>
+                    <div class="item-subtitle">{{$list.brand_name}}</div>
+                  
+                    <div class="item-subtitle">  有效期:{{if $list.date_info.type=="DATE_TYPE_FIX_TIME_RANGE"}}{{date_format($list.date_info.begin_timestamp).date}}-{{date_format($list.date_info.end_timestamp).date}} 
+                    {{else if $list.date_info.type=="DATE_TYPE_FIX_TERM"}} {{$list.date_info.fixed_term}}天 {{/if}}</div>
+                </div>
+            </li>
+            {{/each}}
+        </script>
+    </div>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/cropper.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="http://map.qq.com/api/js?v=2.exp&libraries=convertor" charset="utf-8"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>
