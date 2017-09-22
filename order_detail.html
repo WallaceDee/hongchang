@@ -40,25 +40,7 @@
                                 <div class="item-text">{{list.location.address}}</div>
                             </div>
                         </li>
-                        {{if list.pick_type==2}} {{if list.pay_status!=0}}
-                        <li class="item-content item-link">
-                            <div class="item-media"><i class="icon icon-car"></i></div>
-                            <div class="item-inner">
-                                {{if list.pay_status==1}}
-                                <div class="item-title-row">
-                                    <div class="item-subtitle">等待卖家发货</div>
-                                </div>
-                                {{else if list.pay_status==2}}
-                                <div class="item-title-row">
-                                    <div class="item-title">快递单号：</div>
-                                    <div class="item-after">{{list.express_no}}</div>
-                                    <!--<div class="item-subtitle">广州市 番禺区 市桥街道 骏和广场</div>
-                                <div class="item-subtitle">2017-09-09 13:45:42</div> -->
-                                </div>
-                                {{/if}}
-                            </div>
-                        </li>
-                        {{/if}} {{else if list.pick_type==1}}
+                        {{if list.pick_type==1}}
                         <li class="item-content item-link">
                             <div class="item-media"><i class="icon icon-map"></i></div>
                             <div class="item-inner">
@@ -74,8 +56,27 @@
                                     <div class="item-after">{{list.tel}}</div>
                                 </div>
                             </div>
+                        </li>{{else}} {{if list.pay_status!=0}}
+                        <li class="item-content item-link">
+                            <div class="item-media"><i class="icon icon-car"></i></div>
+                            <div class="item-inner">
+                                {{if list.pay_status==1}}
+                                <div class="item-title-row">
+                                    <div class="item-subtitle">等待卖家发货</div>
+                                </div>
+                                {{else if list.pay_status==2}} {{if list.pick_type==3}}
+                                <div class="item-title-row">
+                                    <div class="item-title">快递单号：</div>
+                                    <div class="item-after">{{list.express_no}}</div>
+                                </div>
+                                {{else}}
+                                <div class="item-title-row">
+                                    <div class="item-subtitle">卖家已发货，等待收货</div>
+                                </div>
+                                {{/if}} {{/if}}
+                            </div>
                         </li>
-                        {{/if}}
+                        {{/if}} {{/if}}
                     </ul>
                     <div class="color-line"></div>
                 </div>

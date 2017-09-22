@@ -226,7 +226,7 @@ $(function() {
     setInterval(function() {
 
         getMsg();
-    }, 30 * 1000);
+    }, 60 * 1000);
 
 
 
@@ -1725,16 +1725,16 @@ $(function() {
                 open_id: userInfo.open_id,
             },
             successCallback: function(data) {
+                var container = $("#page-fallow .list-block>ul");
                 if (data.Common.code === 200) {
+                    container.removeClass("no-fallow-wrapper");
                     var temp_data = data.Common.info;
                     var temp_html = template("page-fallow-item", {
                         list: temp_data
                     });
                     $("#page-fallow .list-block ul").html(temp_html);
-                }
-                //为没有内容的tab增加提示
-                var container = $("#page-fallow .list-block>ul");
-                if (container.find("li").length === 0) {
+                } else {
+                    //为没有内容的tab增加提示
                     container.addClass("no-fallow-wrapper");
                     container.html('<li class="no-fallow"><p><i class="icon icon-star-empty"></i></p><p class="tips">您还没有收藏</p><p class="sub-tips">可以去看看有哪些想买的</p></li>');
                 }
@@ -2032,7 +2032,7 @@ $(function() {
                         // 支付签名
                         success: function() {
                             // 支付成功后的回调函数
-                            window.location.href = "user_center.html#page-my-order";
+                            $.router.load("user_center.html#page-my-order");
                         }
                     });
                 } else {
@@ -2356,6 +2356,7 @@ $(function() {
                 open_id: userInfo.open_id
             },
             successCallback: function(data) {
+                console.log(data);
                 $.hidePreloader("正在拉取微信卡券，请稍等");
                 if (data.Common.code === 200) {
                     var temp_list = classifyArrayByField("deadline_type", data.Common.info);
@@ -2368,11 +2369,10 @@ $(function() {
                         var temp_html = template("page-coupon-item", temp_data);
                         $container.find("ul").html(temp_html);
                     }
-
                 }
-                //为没有内容的tab增加提示
+                //   为没有内容的tab增加提示
                 var container_list = $("#page-coupon .tab>.list-block>ul");
-                for (var j = 0; j < container_list.length; i++) {
+                for (var j = 0; j < container_list.length; j++) {
                     if (container_list.eq(j).find("li").length === 0) {
                         container_list.eq(j).addClass("no-coupon-wrapper");
                         container_list.eq(j).html('<li class="no-coupon"><p><i class="icon icon-coupon"></i></p><p class="tips">您还没有相关的优惠劵</p><p class="sub-tips">可以去看看有商家哪些活动</p></li>');
