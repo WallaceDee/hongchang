@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-activity" class="page">
+            <header class="bar bar-nav">
+                <h1 class="title">鸿畅商城</h1>
+            </header>
+            <nav class="bar bar-tab">
+                <a class="tab-item" href="index.html"> <span class="icon icon-home"></span><span class="tab-label">首页</span></a>
+                <a class="tab-item cart-item" href="cart.html"> <span class="icon icon-cart"></span><span class="tab-label">购物车</span></a>
+                <a class="tab-item user-item" href="user_center.html"> <span class="icon icon-user"></span><span class="tab-label">我</span> </a></nav>
+            <div class="content  infinite-scroll infinite-scroll-bottom" data-distance="100">
+                <div class="swiper-container" data-space-between='10'>
+                    <div class="swiper-wrapper"> </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+                <!--                 <div class="content-block-title">热销产品</div> -->
+                <div class="list-block activity-block">
+                    <ul>
+                    </ul>
+                </div>
+                <!-- 加载提示符 -->
+                <div class="infinite-scroll-preloader">
+                    <div class="preloader"></div>
+                </div>
+                <div class="footer">
+                    <p class="footer-text">Copyright © 2017 鸿畅环保设备有限公司 <a class="external" href="http://www.miitbeian.gov.cn/">粤ICP备17111952号</a></p>
+                </div>
+            </div>
+        </div>
+        <script id="page-activity-swiper" type="text/html">
+            {{each list as $list i }}
+            <div class="swiper-slide"><a href="{{$list.url}}"><span style="background-image: url({{$list.img}});"></span></a></div>{{/each}}
+        </script>
+        <script id="page-activity-product" type="text/html">
+            {{each list as $list i }}
+            <li>
+                <a href="details.html?p_id={{$list.id}}">
+                            <span class="product-img" style="background-image: url({{$list.feng_mian_image}});">
+                                
+                                <div class="left-penal">
+                                    <p><i class="icon icon-eye"></i>{{$list.browse_num}}</p>
+                                    <p><i class="icon icon-comment"></i>{{$list.comment_num}}</p>
+                                    <p><i class="icon icon-star-empty"></i>{{$list.collection_num}}</p>
+                                </div>
+                            </span>
+                            <h4>
+                              {{$list.name}}
+                            </h4>
+                            <p class="price-wrapper">
+                                <span class="current">{{$list.current_price}}</span>
+                                <span class="original">{{$list.origin_price}}</span>
+                            </p>
+                            </a>
+            </li>
+            {{/each}}
+        </script>
+    </div>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/cropper.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="http://map.qq.com/api/js?v=2.exp&libraries=convertor" charset="utf-8"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>
