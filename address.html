@@ -30,27 +30,26 @@
                 <div class="content-block-title">我的地址</div>
                 <div class="list-block cards-list">
                     <ul>
-                    <li class="no-data"><div><span>暂无地址</span></div></li>
                     </ul>
                 </div>
             </div>
         </div>
         <script id="page-address-item" type="text/html">
             {{each list as $list i }}
-              <li class="card" data-id="{{$list.id}}">
-                  <div class="card-content">
-                      <div class="card-content-inner">
-                          <div class="user-info"><span class="name">{{$list.contact}}</span><span class="phone">{{$list.tel}}</span></div>
-                          <p class="address-info">{{$list.address}}</p>
-                      </div>
-                  </div>
-                  <div class="card-footer"> <span class="pull-left">
+            <li class="card" data-id="{{$list.id}}">
+                <div class="card-content">
+                    <div class="card-content-inner">
+                        <div class="user-info"><span class="name">{{$list.contact}}</span><span class="phone">{{$list.tel}}</span></div>
+                        <p class="address-info">{{$list.address}}</p>
+                    </div>
+                </div>
+                <div class="card-footer"> <span class="pull-left">
                             <label class="label-checkbox item-content">
                             <input type="radio" name="address" {{if $list.is_main==1}}checked="true"{{/if}}">
                             <div class="item-media"><i class="icon icon-form-checkbox"></i><span></span></div>
-                  </label>
-                  </span> <span class="pull-right opeartion-btn"><a class="edit-btn"><i class="icon icon-edit"></i>编辑</a> <a class="delete-btn"><i class="icon icon-remove"></i>删除</a></span> </div>
-              </li>
+                </label>
+                </span> <span class="pull-right opeartion-btn"><a class="edit-btn"><i class="icon icon-edit"></i>编辑</a> <a class="delete-btn"><i class="icon icon-remove"></i>删除</a></span> </div>
+    </li>
     {{/each}}
     </script>
     </div>

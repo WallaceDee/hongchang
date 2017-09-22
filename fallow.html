@@ -20,13 +20,11 @@
             </header>
             <div class="content native-scroll">
                 <div class="list-block media-list">
-                    <ul class="product-list no-fallow-wrapper">
-                      <li class="no-fallow"><p><i class="icon icon-star-empty"></i></p><p class="tips">您还没有收藏</p><p class="sub-tips">可以去看看有哪些想买的</p></li>
+                    <ul class="product-list">
                     </ul>
                 </div>
             </div>
         </div>
-        <!--   {{if $list.sale_type!=0}}<span>{{discount_format($list.sale_type)}}</span>{{/if}} -->
         <script id="page-fallow-item" type="text/html">
             {{each list as $list i}}
             <li>
@@ -43,7 +41,6 @@
                         <div class="item-title-row">
                             <div class="item-title price-row"><span>{{$list.product.current_price}}</span></div>
                         </div>
-                        <!--              <div class="item-subtitle"> <i class="icon icon-eye"></i><span>47</span><i class="icon icon-comment"></i><span>19</span><i class="icon icon-star-empty"></i><span>2</span></div> -->
                     </div>
                 </a>
             </li>

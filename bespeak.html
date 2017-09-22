@@ -196,7 +196,7 @@
   </div>
   <div id="page-select-product" class="page">
     <header class="bar bar-nav"> <a class="button button-link button-nav pull-left back"> <span class="icon icon-left"></span>返回 </a>
-      <h1 class="title">选择预约安装订单</h1>
+      <h1 class="title">选择预约安装产品</h1>
     </header>
     <div class="content native-scroll">
       <div class="list-block media-list">
@@ -266,9 +266,7 @@
                     <input type="radio" name="product-radio" value="{{$list.id}}">
                     <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                     <div class="item-inner">
-                        {{each $list.products as $product p}}
-                        <div class="item-subtitle">{{ $product.name}}</div>
-                        {{/each}}
+                        <div class="item-subtitle">{{$list.name}}</div>
                 </label>
             </li>
             {{/each}}
