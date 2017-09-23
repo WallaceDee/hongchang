@@ -55,7 +55,15 @@ $(function() {
     if (sessionStorage.setupInfo !== undefined) {
         setupInfo = JSON.parse(sessionStorage.setupInfo);
     }
-
+    var edit_address = {
+        id: "",
+        name: "",
+        phone: "",
+        address: ""
+    };
+    if (sessionStorage.edit_address !== undefined) {
+        edit_address = JSON.parse(sessionStorage.edit_address);
+    }
     //    sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
     var discount_type_list = [{
         name: "每月优惠",
@@ -177,6 +185,8 @@ $(function() {
             if (data.Common.code === 200) {
                 userInfo = data.Common.info;
                 localStorage.userInfo = JSON.stringify(data.Common.info);
+            } else {
+                localStorage.clear("userInfo");
             }
         }
     });
@@ -563,7 +573,6 @@ $(function() {
 
 
 
-
     $(document).on("click", ".counter .minus", function() {
         var $counter = $(this).next("input");
         if (parseInt($counter.val()) !== 1) {
@@ -786,7 +795,7 @@ $(function() {
             activity_addItems(comment_itemsPerLoad, activity_type);
         }
         var activity_title = getNameByValue(activity_type, discount_type_list);
-        $("#page-activity header .title").html(activity_title);
+        $("title").html(activity_title);
         //0=>'首页大图广告位',1=>'每月优惠广告位',2=>'老用户优惠广告位',3=>'周未Party广告位'
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCarousels",
@@ -809,7 +818,6 @@ $(function() {
             }
         });
     });
-
 
 
 
@@ -911,7 +919,9 @@ $(function() {
         comment_addItems(comment_itemsPerLoad);
     });
     $(document).on("pageInit", "#page-details", function() {
-        setTimeout(function() { $.showIndicator(); }, 0);
+        setTimeout(function() {
+            $.showIndicator();
+        }, 0);
         setSupIcon();
         //清除html
         $('#page-details .infinite-scroll-bottom .list-container').html("");
@@ -1935,15 +1945,13 @@ $(function() {
             buyer_message: orderInfo.memo,
             coupon: orderInfo.coupon.info
         };
-        if (orderInfo.express_type === "2" && (orderInfo.address_id === "" || orderInfo.address_id === undefined)) {
+        if (orderInfo.express_type !== "1" && (orderInfo.address_id === "" || orderInfo.address_id === undefined)) {
             $.toast("请添加收货地址");
             return false;
-        }
-        if (orderInfo.express_type === "1" && (orderInfo.store === "" || orderInfo.store === undefined)) {
+        } else if (orderInfo.express_type === "1" && (orderInfo.store === "" || orderInfo.store === undefined)) {
             $.toast("请选择自提门店");
             return false;
-        }
-        if (orderInfo.express_type === "1") {
+        } else {
             temp_data.branch_id = orderInfo.store.id;
         }
         //提交订单
@@ -2055,7 +2063,9 @@ $(function() {
         }
         current_tab.addClass("active");
         current_tab_link.addClass("active");
-        setTimeout(function() { $.showIndicator(); }, 0);
+        setTimeout(function() {
+            $.showIndicator();
+        }, 0);
         getOrderList();
     });
 
@@ -2343,6 +2353,10 @@ $(function() {
                 successCallback: function(data) {
                     if (data.Common.code === 200) {
                         sessionStorage.new_msg_count = Number(sessionStorage.new_msg_count) - 1;
+                        $(".msg-count").html(sessionStorage.new_msg_count);
+                        if (sessionStorage.new_msg_count === "0") {
+                            $(".msg-count,.msg-point").remove();
+                        }
                     }
                 }
             });
@@ -2724,7 +2738,7 @@ $(function() {
         event.preventDefault(); /* Act on the event */
 
         var $li = $(this).parents("li");
-        var edit_address = {
+        edit_address = {
             id: $li.attr("data-id"),
             name: $li.find(".name").text(),
             phone: $li.find(".phone").text(),
@@ -2789,7 +2803,7 @@ $(function() {
                 url: "http://www.homchang.site/index.php/Api/index/addLocation",
                 data: {
                     open_id: userInfo.open_id,
-                    address: $("#page-add-address [name='first-address']").val() + $("#page-add-address [name='last-address']").val(),
+                    address: $("#page-add-address [name='first-address']").val() + " " + $("#page-add-address [name='last-address']").val(),
                     contact: $("#page-add-address [name='name']").val(),
                     tel: $("#page-add-address [name='phone']").val()
                 },
@@ -2882,7 +2896,7 @@ $(function() {
                                     open_id: userInfo.open_id
                                 },
                                 successCallback: function(data) {
-
+                                    console.log(data);
                                     //重置errorpicker
                                     var displayValues = [];
                                     $("#page-bespeak .error-picker").val("");
@@ -2954,17 +2968,15 @@ $(function() {
             }
             $("#page-bespeak #tab1 .uploader-wrapper ul li").before(temp_html);
         }
+        $(".picker-modal-inline").remove();
+        $("#date").calendar({
+            minDate: [today],
+            onChange: function(p, values, displayValues) {
+                $(".popup-datetime  [name='date']").val(displayValues[0]);
+                $(".popup-datetime  [name='time']").prop("checked", false);
+            }
+        });
 
-
-        if ($(".picker-modal-inline").length === 0) {
-            $("#date").calendar({
-                minDate: [today],
-                onChange: function(p, values, displayValues) {
-                    $(".popup-datetime  [name='date']").val(displayValues[0]);
-                    $(".popup-datetime  [name='time']").prop("checked", false);
-                }
-            });
-        }
 
         //订单默认地址
         func_ajax({
@@ -3340,18 +3352,16 @@ $(function() {
                         $.modal({
                             text: "没有可预约的产品，如您已购买商品，请先绑定手机。",
                             buttons: [{
-                                    text: "不再提示",
-                                    onClick: function() {
-                                        localStorage.no_prompt = "true";
-                                    }
-                                },
-                                {
-                                    text: "去绑定",
-                                    onClick: function() {
-                                        $.router.load("bind.html");
-                                    }
+                                text: "不再提示",
+                                onClick: function() {
+                                    localStorage.no_prompt = "true";
                                 }
-                            ]
+                            }, {
+                                text: "去绑定",
+                                onClick: function() {
+                                    $.router.load("bind.html");
+                                }
+                            }]
                         });
                     }
                 }

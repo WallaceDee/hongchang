@@ -12,9 +12,6 @@
 <body>
     <div class="page-group">
         <div id="page-activity" class="page">
-            <header class="bar bar-nav">
-                <h1 class="title">鸿畅商城</h1>
-            </header>
             <nav class="bar bar-tab">
                 <a class="tab-item" href="index.html"> <span class="icon icon-home"></span><span class="tab-label">首页</span></a>
                 <a class="tab-item cart-item" href="cart.html"> <span class="icon icon-cart"></span><span class="tab-label">购物车</span></a>
@@ -40,7 +37,7 @@
         </div>
         <script id="page-activity-swiper" type="text/html">
             {{each list as $list i }}
-            <div class="swiper-slide"><a href="{{$list.url}}"><span style="background-image: url({{$list.img}});"></span></a></div>{{/each}}
+            <div class="swiper-slide"><a href="{{$list.url}}"><img src="{{$list.img}}"></a></div>{{/each}}
         </script>
         <script id="page-activity-product" type="text/html">
             {{each list as $list i }}
