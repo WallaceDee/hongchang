@@ -23,9 +23,10 @@
             {{if list.pay_status==0||list.pay_status==1||list.pay_status==2||list.pay_status==3||list.pay_status==5}}
             <nav class="bar bar-tab">
                 {{if list.pay_status==0}}<a class="tab-item big-tab-item cancel-btn">取消订单</a><a class="tab-item big-tab-item pay">付款</a>
-                 {{else if list.pay_status==1}}<a class="tab-item big-tab-item refund-btn">申请退款</a>{{if list.pick_type==1}}<a class="tab-item big-tab-item receipt-btn">确认自提</a> {{/if}}
-                  {{else if list.pay_status==2}}<a class="tab-item big-tab-item refund-btn">申请退款</a><a class="tab-item big-tab-item receipt-btn">确认收货</a> {{else if list.pay_status==3}}<a class="tab-item big-tab-item refund-btn">申请退货</a><a class="tab-item big-tab-item comment-btn" href="comment.html?order_num={{list.id}}">去评价</a>
-                 {{else if list.pay_status==5}}<a class="tab-item big-tab-item refund-btn">申请退货</a>{{/if}}
+                {{else if list.pay_status==1}}<a class="tab-item big-tab-item refund-btn">申请退款</a><a class="tab-item big-tab-item receipt-btn">确认收货</a>
+                {{else if list.pay_status==2}}<a class="tab-item big-tab-item refund-btn">申请退款</a><a class="tab-item big-tab-item receipt-btn">确认收货</a>
+                {{else if list.pay_status==3}}<a class="tab-item big-tab-item refund-btn">申请退货</a><a class="tab-item big-tab-item comment-btn" href="comment.html?order_num={{list.id}}">去评价</a>
+                {{else if list.pay_status==5}}<a class="tab-item big-tab-item refund-btn">申请退货</a>{{/if}}
             </nav>
             {{/if}}
             <div class="content native-scroll">
@@ -68,9 +69,7 @@
                                     <div class="item-after">{{list.branch.tel}}</div>
                                 </div>
                             </div>
-                        </li>{{else}}
-                         {{if !(list.pay_status==0||list.pay_status==4||list.pay_status==6||list.pay_status==7)}}
-
+                        </li>{{else}} {{if !(list.pay_status==0||list.pay_status==4||list.pay_status==6||list.pay_status==7)}}
                         <li class="item-content item-link">
                             <div class="item-media"><i class="icon icon-car"></i></div>
                             <div class="item-inner">
@@ -78,28 +77,20 @@
                                 <div class="item-title-row">
                                     <div class="item-subtitle">等待卖家发货</div>
                                 </div>
-                                {{else if list.pay_status!=0}} 
-                                {{if list.pick_type==3}}
+                                {{else if list.pay_status!=0}} {{if list.pick_type==3}}
                                 <div class="item-title-row">
                                     <div class="item-title">快递单号：</div>
                                     <div class="item-after">{{list.express_company}}:{{list.express_no}}</div>
                                 </div>
-                                {{else}}
-                                {{if list.pay_status==2}}
-                                   <div class="item-title-row">
+                                {{else}} {{if list.pay_status==2}}
+                                <div class="item-title-row">
                                     <div class="item-subtitle">卖家已发货，等待收货</div>
-
                                 </div>
-                                    {{else if list.pay_status==3||list.pay_status==5}}
-                                      <div class="item-title-row">
+                                {{else if list.pay_status==3||list.pay_status==5}}
+                                <div class="item-title-row">
                                     <div class="item-subtitle">已收货</div>
-                                          
                                 </div>
-                                {{/if}}
-                          
-                                {{/if}}
-
-                                 {{/if}}
+                                {{/if}} {{/if}} {{/if}}
                             </div>
                         </li>
                         {{/if}} {{/if}}
@@ -180,7 +171,8 @@
                     <div class="list-block-label">
                         <p>订单编号：<span class="order-num">{{list.order_no}}</span></p>
                         <p>创建时间：{{date_format(list.create_time).datetime}}</p>
-                     {{if list.pay_time!="0"}}   <p>支付时间：{{date_format(list.pay_time).datetime}}</p>{{/if}}
+                        {{if list.pay_time!="0"}}
+                        <p>支付时间：{{date_format(list.pay_time).datetime}}</p>{{/if}}
                     </div>
                 </div>
             </div>

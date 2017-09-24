@@ -83,7 +83,7 @@
                                 </div>
                             </a>
                         </li>
-                             <li>
+                        <li>
                             <a href="fallow.html" class="item-link item-content">
                                 <div class="item-media"><i class="icon icon-star-empty"></i></div>
                                 <div class="item-inner">
@@ -116,7 +116,7 @@
                             </a>
                         </li>
                         <li>
-                            <a  class="item-link item-content service-btn">
+                            <a class="item-link item-content service-btn">
                                 <div class="item-media"><i class="icon icon-service"></i></div>
                                 <div class="item-inner">
                                     <div class="item-title">人工客服</div>
@@ -234,7 +234,7 @@
             <li class="card" data-order-num="{{$list.order_no}}">
                 <div class="card-header">
                     <span>{{date_format($list.create_time).datetime}}</span>
-                    <span>{{order_status_format($list.pay_status)}}</span>
+                    <span>{{order_status_format($list.pay_status,$list.pick_type)}}</span>
                 </div>
                 <div class="card-content">
                     <div class="card-content-inner">
@@ -262,19 +262,22 @@
                 <div class="card-footer">
                     <span class="total pull-left">共{{sum_count($list.products)}}件商品<span>合计：￥{{$list.total_price}}</span></span>
                     <span class="pull-right">
-                        {{if $list.pay_status==0 }}<a class="cancel-btn" >取消订单</a><a href="order_detail.html?order_num={{$list.order_no}}" class="go-to-pay">去支付</a>
-                         {{else if $list.pay_status==1}}<a class="refund-btn" >申请退款</a>
-                        {{else if $list.pay_status==2}}<a class="refund-btn">申请退款</a> <a class="receipt-btn">确认收货</a>
-                        {{else if $list.pay_status==3}}<a class="refund-btn">申请退货</a> <a href="comment.html?order_num={{$list.id}}">去评价</a> 
-                          {{else if $list.pay_status==5}}<a class="refund-btn">申请退货</a>
-                    {{/if}}
+                        {{if $list.pay_status==0 }}<a href="order_detail.html?order_num={{$list.order_no}}" class="go-to-pay">去支付</a>
+                             {{else if $list.pay_status==1}}<a class="receipt-btn">确认收货</a>
+                        {{else if $list.pay_status==2}}<a class="receipt-btn">确认收货</a>
+                        {{else if $list.pay_status==3}}<a href="comment.html?order_num={{$list.id}}">去评价</a> 
+                         {{/if}}
                 </span>
                 </div>
             </li>
             {{/each}}
         </script>
     </div>
-     
+   <!--        {{if $list.pay_status==0 }}<a class="cancel-btn" >取消订单</a><a href="order_detail.html?order_num={{$list.order_no}}" class="go-to-pay">去支付</a>
+                        {{else if $list.pay_status==1}}<a class="refund-btn" >申请退款</a><a class="receipt-btn">确认收货</a>
+                        {{else if $list.pay_status==2}}<a class="refund-btn">申请退款</a> <a class="receipt-btn">确认收货</a>
+                        {{else if $list.pay_status==3}}<a class="refund-btn">申请退货</a> <a href="comment.html?order_num={{$list.id}}">去评价</a> 
+                        {{else if $list.pay_status==5}}<a class="refund-btn">申请退货</a> {{/if}} -->
     <script src="js/zepto.min.js"></script>
     <script src="js/sm.js"></script>
     <script src="js/sm-extend.js"></script>

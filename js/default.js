@@ -1,3 +1,8 @@
+/*!
+ * author:chenguohua;
+ * date:2017-9-24 17:33:45;
+ * qq:447363121;
+ */
 function clean() {
     localStorage.clear();
     sessionStorage.clear();
@@ -141,9 +146,15 @@ $(function() {
 
         return getNameByValue(status, discount_type_list);
     });
-    template.helper("order_status_format", function(status) {
-
-        return getNameByValue(status, order_status_list);
+    template.helper("order_status_format", function(status, flag) {
+        //  type=1自提
+        var r = "";
+        if (flag === "1" && (status === "1" || status === "2")) {
+            r = "待自提";
+        } else {
+            r = getNameByValue(status, order_status_list);
+        }
+        return r;
     });
     template.helper("express_type_format", function(type) {
 
@@ -234,7 +245,6 @@ $(function() {
     }
     getMsg();
     setInterval(function() {
-
         getMsg();
     }, 60 * 1000);
 
@@ -2026,20 +2036,21 @@ $(function() {
             },
             successCallback: function(data) {
                 if (data.Common.code === 200) {
-                    var c = data.Common.info;
+                    var config = data.Common.info;
                     wx.chooseWXPay({
-                        timestamp: c.timestamp,
+                        timestamp: config.timestamp,
                         // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
-                        nonceStr: c.nonceStr,
+                        nonceStr: config.nonceStr,
                         // 支付签名随机串，不长于 32 位
-                        package: c.package,
+                        package: config.package,
                         // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
-                        signType: c.signType,
+                        signType: config.signType,
                         // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
-                        paySign: c.paySign,
+                        paySign: config.paySign,
                         // 支付签名
                         success: function() {
                             // 支付成功后的回调函数
+                            sessionStorage.order_tab_id="#tab0";
                             $.router.load("user_center.html#page-my-order");
                         }
                     });
@@ -2077,6 +2088,8 @@ $(function() {
             },
             successCallback: function(data) {
                 if (data.Common.code === 200) {
+                    //清空html
+                     $("#page-my-order .tab>.list-block>ul").html("");
                     $("#page-my-order .tab[data-type='all'] ul").html(template("page-my-order-item", {
                         list: data.Common.info
                     }));
@@ -2121,11 +2134,6 @@ $(function() {
         var order_num = $(this).parent("li.card").attr("data-order-num");
         $.router.load("order_detail.html?order_num=" + order_num);
     });
-    // $(document).on("click", "#page-my-order .go-to-pay", function(event) {
-    //     event.preventDefault();
-    //     var order_num = $(this).parents("li.card").attr("data-order-num");
-    //     window.location.href = "order_detail.html?order_num=" + order_num;
-    // });
 
     $(document).on("click", "#page-my-order .refund-btn,#page-order-detail .refund-btn", function(event) {
         event.preventDefault();
@@ -2165,7 +2173,6 @@ $(function() {
                     if (data.Common.code === 200) {
                         $.toast("订单已取消");
                         getOrderList();
-
                     }
                 }
             });
@@ -2192,11 +2199,7 @@ $(function() {
             });
         });
     }); /*****page-comment*****/
-    $(document).on("pageInit", "#page-comment", function() {
 
-
-
-    });
     $(document).on("click", "#page-comment .rater a", function() {
         var num = -1;
         var index = $(this).index();
@@ -2219,7 +2222,6 @@ $(function() {
             data: {
                 open_id: userInfo.open_id,
                 order_id: getParameter("order_num"),
-                product_id: ["s", "sad"],
                 describe_score: score_list[0],
                 server_score: score_list[1],
                 logistics_score: score_list[2],
@@ -2617,8 +2619,6 @@ $(function() {
         });
     }
 
-
-
     /*****page-bind*****/
 
     $(document).on("click", "#page-bind .button-success", function() {
@@ -2702,7 +2702,6 @@ $(function() {
                 }
             }
         });
-
     });
 
 
@@ -3005,9 +3004,6 @@ $(function() {
             $("#page-bespeak #tab2 [name='product-name']").val(setupInfo.product.name);
             $("#page-bespeak #tab2 [name='product-id']").val(setupInfo.product.id);
         }
-
-
-
     });
 
     $(document).on("change", "#page-bespeak .error-picker", function() {
