@@ -1054,6 +1054,7 @@ $(function() {
 
     function setSupIcon() {
         //console.log("更新购物车数量");
+        var temp={};
         if (my_cart != "") {
             var sum = 0;
             for (var i = 0; i < my_cart.length; i++) {
@@ -1065,6 +1066,9 @@ $(function() {
             } else {
                 $(".cart-count.badge").html(sum);
             }
+            temp.cart_count=sum;
+        }else{
+             $(".cart-count.badge").remove();
         }
         //更新我的消息红点
         if (sessionStorage.new_msg_count !== "0" && sessionStorage.new_msg_count !== undefined) {
@@ -1079,7 +1083,11 @@ $(function() {
             } else {
                 $(".msg-count.badge").html(sessionStorage.new_msg_count);
             }
+            temp.new_msg_count=sessionStorage.new_msg_count;
+        }else{
+             $(".msg-point.badge").remove();
         }
+        console.log(temp);
     }
     $(document).on("click", "#page-details .add-to-cart,.popup-select .add-to-cart", function(event) {
         event.preventDefault();
@@ -1723,6 +1731,7 @@ $(function() {
         console.log("price--" + total_price);
         $(".total-price").html(total_price);
         $(".total-count").html(total_count);
+        console.log( {total_count:total_count,total_price:total_price});
     }
 
     $(document).on("click", "#page-cart .details-link", function() {
