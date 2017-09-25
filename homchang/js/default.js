@@ -114,7 +114,7 @@ template.helper('combind_pid', function(products) {
     return str.join(",");
 });
 template.helper('date_format', function(date) {
-    return func_format_date(date);
+    return func_timestamp2datetime(date);
 });
 template.helper("discount_format", function(status) {
     return getNameByValue(status, discount_type_list);
@@ -442,7 +442,7 @@ Date.prototype.format = function(fmt) {
 }
 //时间戳格式化
 
-function func_format_date(timestamp) {
+function func_timestamp2datetime(timestamp) {
     if (timestamp == "" || timestamp == null || timestamp == undefined) {
         return "未知时间";
     }
@@ -700,7 +700,7 @@ $(function() {
 
     });
     $(document).on("click", "#page-index .product-nav-list a", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         var category_tab_id = $(this).attr("data-href");
         sessionStorage.category_tab_id = category_tab_id;
         var current_tab = $("#page-category " + category_tab_id);
@@ -1231,7 +1231,7 @@ $(function() {
     }
 
     $(document).on("click", "#panel-filter .category-list li", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         $("#panel-filter .sub-title.hide").removeClass("hide");
         var is_select = $(this).hasClass("active");
         if (is_select) {
@@ -1249,7 +1249,7 @@ $(function() {
     });
 
     $(document).on("click", "#panel-filter .sub-category-list li", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
 
         var is_select = $(this).hasClass("active");
         if (is_select) {
@@ -1264,7 +1264,7 @@ $(function() {
     });
 
     $(document).on("click", "#panel-filter .discount-list li", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
 
         var is_select = $(this).hasClass("active");
         if (is_select) {
@@ -1440,7 +1440,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-cart .cart-title .edit-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         var $this = $(this);
         if ($this.hasClass("editing")) {
             //复原
@@ -1510,7 +1510,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-cart .delete-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         var $this = $(this);
         $.confirm("确定要删除这个商品吗？", function() {
             $this.parents(".product-item").remove();
@@ -1746,7 +1746,7 @@ $(function() {
 
     });
     $(document).on("click", ".express-type-picker .close-picker", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         var value = $(".express-type").val();
         if (value == "到店自提") {
             $("#page-order .inset-map-wrapper").removeClass("hide");
@@ -1759,11 +1759,11 @@ $(function() {
         }
     });
     $(document).on("click", "#page-order .express-type-wrapper", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         $(".express-type").picker("open");
     });
     $(document).on("change", "#page-order textarea", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         orderInfo.memo = $(this).val();
         sessionStorage.orderInfo = JSON.stringify(orderInfo);
     });
@@ -1771,7 +1771,7 @@ $(function() {
 
 
     $(document).on("click", "#page-order .submit-order-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         //todo
         console.log(orderInfo);
         var temp_data = {
@@ -1856,7 +1856,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-order-detail .pay,#page-order-detail .pay", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         var order_num = $("#page-order-detail .order-num").text();
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/wxPay",
@@ -2092,7 +2092,7 @@ $(function() {
 
 
     $(document).on("click", "#page-user-center .order-block [data-href]", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         var order_tab_id = $(this).attr("data-href");
         sessionStorage.order_tab_id = order_tab_id;
         var current_tab = $("#page-my-order " + order_tab_id);
@@ -2246,8 +2246,8 @@ $(function() {
             }],
 
         });
-        var maxDate = func_format_date(new Date()).date;
-        $("#page-user-info .birthday-picker").val(func_format_date(userInfo.birthday).date);
+        var maxDate = func_timestamp2datetime(new Date()).date;
+        $("#page-user-info .birthday-picker").val(func_timestamp2datetime(userInfo.birthday).date);
         $("#page-user-info .birthday-picker").calendar({
             maxDate: [maxDate],
             onChange: function(p, values, displayValues) {
@@ -2274,7 +2274,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-user-info .username", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         $.prompt("修改昵称", function(value) {
             func_ajax({
                 url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
@@ -2291,7 +2291,7 @@ $(function() {
     });
 
     $(document).on("click", ".gander-picker .close-picker", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         var select_gander = $("#page-user-info .gander").val();
         for (var i = 0; i < gander_list.length; i++) {
             if (select_gander == gander_list[i]) {
@@ -2499,7 +2499,7 @@ $(function() {
         });
     });
     $(document).on("click", "#page-address label", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
 
         var update_id = $(this).parents("li").attr("data-id");
         var $radio = $(this).find("input");
@@ -2519,7 +2519,7 @@ $(function() {
 
 
     $(document).on("click", "#page-address .delete-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
         var $delete_ele = $(this).parents("li");
         var delete_id = $delete_ele.attr("data-id");
 
@@ -2547,7 +2547,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-address .edit-btn,#page-address .edit-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
+       
 
         var $li = $(this).parents("li");
         var edit_address = {

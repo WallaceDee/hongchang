@@ -4,8 +4,9 @@
 <head>
     <title></title>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="Wallace Chan">
     <link rel="stylesheet" href="css/default.css">
 </head>
 
@@ -69,11 +70,11 @@
             <li class="item-content item-link product-item" data-id="{{$list.p_id}}">
                 <div class="item-media">
                     <label class="label-checkbox">
-                        <input type="checkbox" name="p_id" data-value="{{$list.p_id}}" {{if $list.select==true}}checked="true"{{/if}}>
+                        <input type="checkbox" name="p_id" data-value="{{$list.p_id}}" {{if $list.select==true}}checked="true" {{/if}}>
                         <div class="item-media"><i class="icon icon-form-checkbox"></i></div>
                     </label>
                 </div>
-                <div class="item-media details-link" ><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
+                <div class="item-media details-link"><span class="product-img" style="background-image: url({{$list.info.feng_mian_image}});"></span></div>
                 <div class="item-inner details-link">
                     <div class="item-title-row">
                         <div class="item-title">{{$list.info.name}}</div>

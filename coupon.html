@@ -4,8 +4,9 @@
 <head>
     <title></title>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="Wallace Chan">
     <link rel="stylesheet" href="css/default.css">
 </head>
 
@@ -66,9 +67,7 @@
                     </div>
                     <div class="item-subtitle">{{if $list.accept_category!=null}}{{$list.accept_category}}型号商品可使{{else}}全场所有型号商品可用{{/if}}</div>
                     <div class="item-subtitle">{{$list.brand_name}}</div>
-                  
-                    <div class="item-subtitle">  有效期:{{if $list.date_info.type=="DATE_TYPE_FIX_TIME_RANGE"}}{{date_format($list.date_info.begin_timestamp).date}}-{{date_format($list.date_info.end_timestamp).date}} 
-                    {{else if $list.date_info.type=="DATE_TYPE_FIX_TERM"}} {{$list.date_info.fixed_term}}天 {{/if}}</div>
+                    <div class="item-subtitle"> 有效期:{{if $list.date_info.type=="DATE_TYPE_FIX_TIME_RANGE"}}{{date_format($list.date_info.begin_timestamp).date}}-{{date_format($list.date_info.end_timestamp).date}} {{else if $list.date_info.type=="DATE_TYPE_FIX_TERM"}} {{$list.date_info.fixed_term}}天 {{/if}}</div>
                 </div>
             </li>
             {{/each}}

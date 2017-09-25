@@ -1,18 +1,79 @@
 /*!
- * author:chenguohua;
+ * author:Wallace Chan;
  * date:2017-9-24 17:33:45;
  * qq:447363121;
  */
 function clean() {
+    "use strict";
     localStorage.clear();
     sessionStorage.clear();
 }
-$(function() {
-    var domain = document.domain;
+//root font-size
+(function(doc, win) {
+    "use strict";
+    var docEl = doc.documentElement,
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+        recalc = function() {
+            var clientWidth = docEl.clientWidth;
+            var htmlFontSize = 20;
+            var designWidth = 375;
+            if (!clientWidth) {
+                return;
+            }
+            docEl.style.fontSize = htmlFontSize * (clientWidth / designWidth) + 'px';
+            var reality = Number(docEl.style.fontSize.substr(0, docEl.style.fontSize.length - 2));
+            var theory = htmlFontSize * (clientWidth / designWidth);
+            if (reality !== theory) {
+                docEl.style.fontSize = htmlFontSize * theory / reality * (clientWidth / designWidth) + 'px';
+            }
+        };
+    if (!doc.addEventListener) {
+        return;
+    }
+    win.addEventListener(resizeEvt, recalc, false);
+    doc.addEventListener('DOMContentLoaded', recalc, false);
+})(document, window);
 
-    var entrance_url = window.location.href; //记录入口url地址，解决ios pushState 地址栏不变的bug
+
+(function($) {
+    "use strict";
+    $.extend($.fn, {
+        validate: function() {
+            var is_pass = true;
+            this.each(function() {
+                if ($(this).attr("required") !== undefined) { //html的pattern要注意转义
+                    if ($(this).val() === "") {
+                        $.toast($(this).attr("emptyTips"));
+                        is_pass = false;
+                        return false;
+                    } else {
+                        if ($(this).attr("pattern") !== undefined) { //html的pattern要注意转义
+                            var reg = new RegExp($(this).attr("pattern"));
+                            if (!reg.test($(this).val())) {
+                                $.toast($(this).attr("notMatchTips"));
+                                is_pass = false;
+                                return false;
+                            }
+                        }
+                    }
+                }
+            });
+            return is_pass;
+        }
+    });
+    //    $.getScript = function(url, callback) {
+    //    };
+})(Zepto);
+
+
+$(function() {
+    "use strict";
+    var domain = document.domain;
+    //记录入口url地址，解决ios pushState 地址栏不变的bug
+    var entrance_url = window.location.href;
     var is_ios_and_initWx = false;
 
+    //初始化用户信息，购物车，表单数据
     var userInfo = null;
     var current_product = null;
     var my_cart = [];
@@ -69,7 +130,7 @@ $(function() {
     if (sessionStorage.edit_address !== undefined) {
         edit_address = JSON.parse(sessionStorage.edit_address);
     }
-    //    sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
+    //sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
     var discount_type_list = [{
         name: "每月优惠",
         value: 1
@@ -117,11 +178,261 @@ $(function() {
         name: "物流配送",
         value: 3
     }];
+
     var express_type_picker_list = [];
     for (var j = 0; j < express_type_list.length; j++) {
         express_type_picker_list.push(express_type_list[j].name);
     }
 
+    function getNameByValue(val, arr) {
+        var v = Number(val);
+        var result = "";
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i].value === v) {
+                result = arr[i].name;
+                break;
+            }
+        }
+        return result;
+    }
+
+    function classifyArrayByField(field, array) {
+        var map = {},
+            result = [];
+        for (var i = 0; i < array.length; i++) {
+            var temp_list = array[i];
+            if (!map[eval("temp_list." + field)]) {
+                var temp = {};
+                eval("temp." + field + "=temp_list." + field + ";");
+                temp.data = [temp_list];
+                result.push(temp);
+                map[eval("temp_list." + field)] = temp_list;
+            } else {
+                for (var j = 0; j < result.length; j++) {
+                    var temp_list1 = result[j];
+                    if (eval("temp_list1." + field) === eval("temp_list." + field)) {
+                        temp_list1.data.push(temp_list);
+                        break;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+    /** 
+     * 乘法
+     * @param arg1
+     * @param arg2
+     * @returns {Number}
+     */
+
+    function accMul(arg1, arg2) {
+        var m = 0,
+            s1 = arg1.toString(),
+            s2 = arg2.toString();
+        try {
+            m += s1.split(".")[1].length;
+        } catch (e) {}
+        try {
+            m += s2.split(".")[1].length;
+        } catch (e) {}
+        return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+    }
+    /**
+     * 除法
+     * @param arg1
+     * @param arg2
+     * @returns {Number}
+     */
+    function accDiv(arg1, arg2) {
+        var t1 = 0,
+            t2 = 0,
+            r1, r2;
+        try {
+            t1 = arg1.toString().split(".")[1].length;
+        } catch (e) {}
+        try {
+            t2 = arg2.toString().split(".")[1].length;
+        } catch (e) {}
+        r1 = Number(arg1.toString().replace(".", ""));
+        r2 = Number(arg2.toString().replace(".", ""));
+        return (r1 / r2) * Math.pow(10, t2 - t1);
+    }
+    /** 
+     * 加法
+     * @param arg1
+     * @param arg2
+     * @returns {Number}
+     */
+    function accAdd(arg1, arg2) {
+        var r1, r2, m, c;
+        try {
+            r1 = arg1.toString().split(".")[1].length;
+        } catch (e) {
+            r1 = 0;
+        }
+        try {
+            r2 = arg2.toString().split(".")[1].length;
+        } catch (e) {
+            r2 = 0;
+        }
+        c = Math.abs(r1 - r2);
+        m = Math.pow(10, Math.max(r1, r2));
+        if (c > 0) {
+            var cm = Math.pow(10, c);
+            if (r1 > r2) {
+                arg1 = Number(arg1.toString().replace(".", ""));
+                arg2 = Number(arg2.toString().replace(".", "")) * cm;
+            } else {
+                arg1 = Number(arg1.toString().replace(".", "")) * cm;
+                arg2 = Number(arg2.toString().replace(".", ""));
+            }
+        } else {
+            arg1 = Number(arg1.toString().replace(".", ""));
+            arg2 = Number(arg2.toString().replace(".", ""));
+        }
+        return parseFloat((arg1 + arg2) / m);
+    }
+    /** 
+     * 减法
+     * @param arg1
+     * @param arg2
+     * @returns
+     */
+
+    function accSub(arg1, arg2) {
+        var r1, r2, m, n;
+        try {
+            r1 = arg1.toString().split(".")[1].length;
+        } catch (e) {
+            r1 = 0;
+        }
+        try {
+            r2 = arg2.toString().split(".")[1].length;
+        } catch (e) {
+            r2 = 0;
+        }
+        m = Math.pow(10, Math.max(r1, r2));
+        //last modify by deeka  
+        //动态控制精度长度  
+        n = (r1 >= r2) ? r1 : r2;
+        return parseFloat(((arg1 * m - arg2 * m) / m).toFixed(n));
+    }
+
+
+
+    Date.prototype.format = function(fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "h+": this.getHours(),
+            "m+": this.getMinutes(),
+            "s+": this.getSeconds(),
+            "q+": Math.floor((this.getMonth() + 3) / 3),
+            "S": this.getMilliseconds()
+        };
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return fmt;
+    };
+    //时间戳格式化
+    function func_timestamp2datetime(timestamp) {
+        if (timestamp === "" || timestamp === null || timestamp === undefined) {
+            return "未知时间";
+        }
+        var temp = new Date(timestamp * 1000);
+        return {
+            date: temp.format("yyyy-MM-dd"),
+            time: temp.format("hh:mm:ss"),
+            datetime: temp.format("yyyy-MM-dd hh:mm")
+        };
+    }
+
+
+    function getParameter(key) {
+        var url = window.location.search;
+        var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
+        var result = url.substr(1).match(reg);
+        return result ? decodeURIComponent(result[2]) : null;
+    }
+
+    function func_ajax(option) {
+        var default_opt = {
+            type: "post",
+            url: "",
+            data: null,
+            dataType: "json",
+            async: true,
+            successCallback: function(data) {
+                console.log(data);
+            }
+        };
+        var opt = $.extend(default_opt, option);
+        $.ajax({
+            type: opt.type,
+            url: opt.url,
+            data: opt.data,
+            dataType: opt.dataType,
+            async: opt.async,
+            beforeSend: function() {
+                $.showIndicator();
+            },
+            success: function(data) {
+                opt.successCallback(data);
+                $.hideIndicator();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.error(XMLHttpRequest.status + "-" + XMLHttpRequest.readyState + "-" + textStatus + "-" + errorThrown);
+            }
+        });
+    }
+
+    function wxApi(fun_callback) {
+        var wx_config_data = {};
+        var curr_url = location.href.split('#')[0];
+        var is_ios_wx = $.device.ios && ($.device.webView !== null);
+        if (is_ios_wx) {
+            curr_url = entrance_url;
+        }
+        // console.info("浏览器地址栏" + curr_url);
+        //ios只需配置一次config
+        if ((!is_ios_and_initWx && is_ios_wx) || !is_ios_wx) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getWxConfig",
+                data: {
+                    curr_url: curr_url,
+                    open_id: userInfo.open_id
+                },
+                successCallback: function(data) {
+
+                    wx_config_data = data.Common.info;
+                    wx.config({
+                        debug: false,
+                        appId: wx_config_data.appId,
+                        timestamp: wx_config_data.timestamp,
+                        nonceStr: wx_config_data.nonceStr,
+                        signature: wx_config_data.signature,
+                        jsApiList: ['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone', 'hideMenuItems', 'showMenuItems', 'hideAllNonBaseMenuItem', 'showAllNonBaseMenuItem', 'translateVoice', 'startRecord', 'stopRecord', 'onVoiceRecordEnd', 'playVoice', 'onVoicePlayEnd', 'pauseVoice', 'stopVoice', 'uploadVoice', 'downloadVoice', 'chooseImage', 'previewImage', 'uploadImage', 'downloadImage', 'getNetworkType', 'openLocation', 'getLocation', 'hideOptionMenu', 'showOptionMenu', 'closeWindow', 'scanQRCode', 'chooseWXPay', 'openProductSpecificView', 'addCard', 'chooseCard', 'openCard'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+                    });
+                    wx.ready(function() {
+                        if (typeof(fun_callback) === "function") {
+                            fun_callback();
+                        }
+                    });
+                }
+            });
+            //ios只需配置一次config
+            is_ios_and_initWx = true;
+        }
+    }
+
+    //template.helper
     template.helper('sum_count', function(products) {
 
         var sum = 0;
@@ -140,7 +451,7 @@ $(function() {
     });
     template.helper('date_format', function(date) {
 
-        return func_format_date(date);
+        return func_timestamp2datetime(date);
     });
     template.helper("discount_format", function(status) {
 
@@ -168,6 +479,8 @@ $(function() {
 
         return accAdd(arg1, arg2);
     });
+
+    //登录获取用户信息
     var up = {};
     if (localStorage.userInfo !== undefined) {
         userInfo = JSON.parse(localStorage.userInfo);
@@ -206,11 +519,10 @@ $(function() {
     } else {
         console.log("openid登陆");
     }
-
     console.log(userInfo);
 
+    //轮询获取信息未读个数
     function getMsg() {
-
         $.ajax({
             url: "http://www.homchang.site/index.php/Api/index/getMessages?p=1",
             type: "post",
@@ -248,341 +560,6 @@ $(function() {
         getMsg();
     }, 60 * 1000);
 
-
-
-    //root font-size
-    (function(doc, win) {
-
-        var docEl = doc.documentElement,
-            resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
-            recalc = function() {
-                var clientWidth = docEl.clientWidth;
-                var htmlFontSize = 20;
-                var designWidth = 375;
-                if (!clientWidth) {
-                    return;
-                }
-                docEl.style.fontSize = htmlFontSize * (clientWidth / designWidth) + 'px';
-                var reality = Number(docEl.style.fontSize.substr(0, docEl.style.fontSize.length - 2));
-                var theory = htmlFontSize * (clientWidth / designWidth);
-                if (reality !== theory) {
-                    docEl.style.fontSize = htmlFontSize * theory / reality * (clientWidth / designWidth) + 'px';
-                }
-            };
-        if (!doc.addEventListener) {
-            return;
-        }
-        win.addEventListener(resizeEvt, recalc, false);
-        doc.addEventListener('DOMContentLoaded', recalc, false);
-    })(document, window);
-
-
-    (function($) {
-        $.extend($.fn, {
-            validate: function() {
-                var is_pass = true;
-                this.each(function() {
-                    if ($(this).attr("required") !== undefined) { //html的pattern要注意转义
-                        if ($(this).val() === "") {
-                            $.toast($(this).attr("emptyTips"));
-                            is_pass = false;
-                            return false;
-                        } else {
-                            if ($(this).attr("pattern") !== undefined) { //html的pattern要注意转义
-                                var reg = new RegExp($(this).attr("pattern"));
-                                if (!reg.test($(this).val())) {
-                                    $.toast($(this).attr("notMatchTips"));
-                                    is_pass = false;
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                });
-                return is_pass;
-            }
-        });
-        //    $.getScript = function(url, callback) {
-        //    };
-    })(Zepto);
-
-
-    function classifyArrayByField(field, array) {
-        var map = {},
-            result = [];
-        for (var i = 0; i < array.length; i++) {
-            var temp_list = array[i];
-            if (!map[eval("temp_list." + field)]) {
-                var temp = {};
-                eval("temp." + field + "=temp_list." + field + ";");
-                temp.data = [temp_list];
-                result.push(temp);
-                map[eval("temp_list." + field)] = temp_list;
-            } else {
-                for (var j = 0; j < result.length; j++) {
-                    var temp_list1 = result[j];
-                    if (eval("temp_list1." + field) == eval("temp_list." + field)) {
-                        temp_list1.data.push(temp_list);
-                        break;
-                    }
-                }
-            }
-        }
-        return result;
-    }
-    /** 
-     * 乘法
-     * @param arg1
-     * @param arg2
-     * @returns {Number}
-     */
-
-    function accMul(arg1, arg2) {
-
-        var m = 0,
-            s1 = arg1.toString(),
-            s2 = arg2.toString();
-        try {
-            m += s1.split(".")[1].length;
-        } catch (e) {}
-        try {
-            m += s2.split(".")[1].length;
-        } catch (e) {}
-        return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
-    }
-    /**
-     * 除法
-     * @param arg1
-     * @param arg2
-     * @returns {Number}
-     */
-
-    function accDiv(arg1, arg2) {
-        var t1 = 0,
-            t2 = 0,
-            r1, r2;
-        try {
-            t1 = arg1.toString().split(".")[1].length;
-        } catch (e) {}
-        try {
-            t2 = arg2.toString().split(".")[1].length;
-        } catch (e) {}
-        with(Math) {
-            r1 = Number(arg1.toString().replace(".", ""));
-            r2 = Number(arg2.toString().replace(".", ""));
-            return (r1 / r2) * pow(10, t2 - t1);
-        }
-    }
-    /** 
-     * 加法
-     * @param arg1
-     * @param arg2
-     * @returns {Number}
-     */
-    function accAdd(arg1, arg2) {
-
-        var r1, r2, m, c;
-        try {
-            r1 = arg1.toString().split(".")[1].length;
-        } catch (e) {
-            r1 = 0;
-        }
-        try {
-            r2 = arg2.toString().split(".")[1].length;
-        } catch (e) {
-            r2 = 0;
-        }
-        c = Math.abs(r1 - r2);
-        m = Math.pow(10, Math.max(r1, r2));
-        if (c > 0) {
-            var cm = Math.pow(10, c);
-            if (r1 > r2) {
-                arg1 = Number(arg1.toString().replace(".", ""));
-                arg2 = Number(arg2.toString().replace(".", "")) * cm;
-            } else {
-                arg1 = Number(arg1.toString().replace(".", "")) * cm;
-                arg2 = Number(arg2.toString().replace(".", ""));
-            }
-        } else {
-            arg1 = Number(arg1.toString().replace(".", ""));
-            arg2 = Number(arg2.toString().replace(".", ""));
-        }
-        return (arg1 + arg2) / m;
-    }
-    /** 
-     * 减法
-     * @param arg1
-     * @param arg2
-     * @returns
-     */
-
-    function accSub(arg1, arg2) {
-
-        var r1, r2, m, n;
-        try {
-            r1 = arg1.toString().split(".")[1].length;
-        } catch (e) {
-            r1 = 0;
-        }
-        try {
-            r2 = arg2.toString().split(".")[1].length;
-        } catch (e) {
-            r2 = 0;
-        }
-        m = Math.pow(10, Math.max(r1, r2));
-        //last modify by deeka  
-        //动态控制精度长度  
-        n = (r1 >= r2) ? r1 : r2;
-        return ((arg1 * m - arg2 * m) / m).toFixed(n);
-    }
-    //getDiscountWord
-
-    function getNameByValue(val, arr) {
-
-        var v = Number(val);
-        var result = "";
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i].value === v) {
-                result = arr[i].name;
-                break;
-            }
-        }
-        return result;
-    }
-    Date.prototype.format = function(fmt) {
-
-        var o = {
-            "M+": this.getMonth() + 1,
-            "d+": this.getDate(),
-            "h+": this.getHours(),
-            "m+": this.getMinutes(),
-            "s+": this.getSeconds(),
-            "q+": Math.floor((this.getMonth() + 3) / 3),
-            "S": this.getMilliseconds()
-        };
-        if (/(y+)/.test(fmt)) {
-            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-        }
-        for (var k in o) {
-            if (new RegExp("(" + k + ")").test(fmt)) {
-                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-            }
-        }
-        return fmt;
-    };
-    //时间戳格式化
-    function func_format_date(timestamp) {
-
-        if (timestamp === "" || timestamp === null || timestamp === undefined) {
-            return "未知时间";
-        }
-        var temp = timestamp;
-        if (timestamp.toString().length === 10 || timestamp.toString().length === 9) {
-            temp = timestamp * 1000;
-        }
-
-        var date = new Date(temp * 1);
-        var year = date.getFullYear(),
-            month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1),
-            day = date.getDate() > 9 ? date.getDate() : '0' + date.getDate(),
-            hour = date.getHours() > 9 ? date.getHours() : '0' + date.getHours(),
-            minute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes();
-
-        return {
-            date: year + '-' + month + '-' + day,
-            time: hour + ':' + minute,
-            datetime: year + '-' + month + '-' + day + ' ' + hour + ':' + minute
-        };
-    }
-
-
-    function getParameter(key) {
-
-        var url = window.location.search;
-        var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)");
-        var result = url.substr(1).match(reg);
-        return result ? decodeURIComponent(result[2]) : null;
-    }
-
-    function func_ajax(option) {
-
-        var default_opt = {
-            type: "post",
-            url: "",
-            data: null,
-            dataType: "json",
-            async: true,
-            successCallback: function(data) {
-                console.log(data);
-            }
-        };
-        var opt = $.extend(default_opt, option);
-        $.ajax({
-            type: opt.type,
-            url: opt.url,
-            data: opt.data,
-            dataType: opt.dataType,
-            async: opt.async,
-            beforeSend: function() {
-                $.showIndicator();
-            },
-            success: function(data) {
-                opt.successCallback(data);
-                $.hideIndicator();
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                console.error(XMLHttpRequest.status + "-" + XMLHttpRequest.readyState + "-" + textStatus + "-" + errorThrown);
-            }
-        });
-    }
-
-    function wxApi(fun_callback) {
-
-        var wx_config_data = {};
-        var curr_url = location.href.split('#')[0];
-        var is_ios_wx = $.device.ios && ($.device.webView !== null);
-        if (is_ios_wx) {
-            curr_url = entrance_url;
-        }
-        // console.info("浏览器地址栏" + curr_url);
-
-        //ios只需配置一次config
-        if ((!is_ios_and_initWx && is_ios_wx) || !is_ios_wx) {
-            func_ajax({
-                url: "http://www.homchang.site/index.php/Api/index/getWxConfig",
-                data: {
-                    curr_url: curr_url,
-                    open_id: userInfo.open_id
-                },
-                successCallback: function(data) {
-
-                    wx_config_data = data.Common.info;
-                    wx.config({
-                        debug: false,
-                        // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-                        appId: wx_config_data.appId,
-                        // 必填，公众号的唯一标识
-                        timestamp: wx_config_data.timestamp,
-                        // 必填，生成签名的时间戳
-                        nonceStr: wx_config_data.nonceStr,
-                        // 必填，生成签名的随机串
-                        signature: wx_config_data.signature,
-                        // 必填，签名，见附录1
-                        jsApiList: ['checkJsApi', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone', 'hideMenuItems', 'showMenuItems', 'hideAllNonBaseMenuItem', 'showAllNonBaseMenuItem', 'translateVoice', 'startRecord', 'stopRecord', 'onVoiceRecordEnd', 'playVoice', 'onVoicePlayEnd', 'pauseVoice', 'stopVoice', 'uploadVoice', 'downloadVoice', 'chooseImage', 'previewImage', 'uploadImage', 'downloadImage', 'getNetworkType', 'openLocation', 'getLocation', 'hideOptionMenu', 'showOptionMenu', 'closeWindow', 'scanQRCode', 'chooseWXPay', 'openProductSpecificView', 'addCard', 'chooseCard', 'openCard'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
-                    });
-                    wx.ready(function() {
-                        if (typeof(fun_callback) === "function") {
-                            fun_callback();
-                        }
-                    });
-                }
-            });
-            is_ios_and_initWx = true;
-        }
-    }
-
-
-
     $(document).on("click", ".counter .minus", function() {
         var $counter = $(this).next("input");
         if (parseInt($counter.val()) !== 1) {
@@ -617,6 +594,15 @@ $(function() {
     $(document).on("click", ".popup-overlay", function() {
         $.closeModal();
     });
+
+
+    $(document).on("pageInit", function(e, pageId, $page) {
+        document.title = $page.find("h1.title").text();
+        if (pageId === "page-details") {
+            document.title = "商品详情";
+        }
+    });
+
     /*****page-index*****/
     //无限加载
     var index_hot_page = 1;
@@ -627,7 +613,6 @@ $(function() {
     // 每次加载添加多少条目
     var index_hot_itemsPerLoad = 5;
     var index_hot_lastIndex = 0;
-
 
     function index_hot_addItems(number) {
         if (index_hot_page !== 0) {
@@ -646,7 +631,6 @@ $(function() {
                     } else {
                         temp_html = '<li class="no-data"><div><span>暂无数据</span></div></li>';
                     }
-
                     $('#page-index .infinite-scroll-bottom .list-block.product-list>ul').append(temp_html);
                     index_hot_page++;
                     index_hot_lastIndex = $('#page-index .list-block.product-list>ul>li').length;
@@ -669,8 +653,6 @@ $(function() {
         index_hot_loading = true;
         index_hot_addItems(index_hot_itemsPerLoad);
     });
-
-
     $(document).on("pageInit", "#page-index", function() {
         setSupIcon();
         // //清除html
@@ -731,8 +713,8 @@ $(function() {
         });
 
     });
-    $(document).on("click", "#page-index .product-nav-list a", function(event) {
-        event.preventDefault(); /* Act on the event */
+    $(document).on("click", "#page-index .product-nav-list a", function() {
+
         var category_tab_id = $(this).attr("data-href");
         sessionStorage.category_tab_id = category_tab_id;
         var current_tab = $("#page-category " + category_tab_id);
@@ -801,11 +783,16 @@ $(function() {
     $(document).on("pageInit", "#page-activity", function() {
         setSupIcon();
         activity_type = getParameter("a_id");
+        if(getNameByValue(activity_type,discount_type_list)===""){
+           window.location.href="index.html";
+            return false;
+        }
         if ($("#page-activity .product-list li").length === 0) { //加载过的标志，不再请求，不知道有没有bug，试下
             activity_addItems(comment_itemsPerLoad, activity_type);
         }
         var activity_title = getNameByValue(activity_type, discount_type_list);
         $("title").html(activity_title);
+        $("#page-activity .content").addClass("type-" + activity_type);
         //0=>'首页大图广告位',1=>'每月优惠广告位',2=>'老用户优惠广告位',3=>'周未Party广告位'
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCarousels",
@@ -819,11 +806,14 @@ $(function() {
                     };
                     var temp_html = template("page-activity-swiper", temp_data);
                     $("#page-activity .swiper-wrapper").html(temp_html);
-                    $("#page-activity .swiper-container").swiper({
-                        loop: true,
+                    var config = {
                         autoplay: 5000,
                         autoplayDisableOnInteraction: false
-                    });
+                    }
+                    if (temp_data.list.length < 2) {
+                        config.pagination = "null";
+                    }
+                    $("#page-activity .swiper-container").swiper(config);
                 }
             }
         });
@@ -955,6 +945,7 @@ $(function() {
                     list: data.imgs
                 };
                 current_product = data;
+                document.title = current_product.name;
                 var temp_html = template("page-details-swiper", swiper_temp_data);
                 $("#page-details .swiper-wrapper").html(temp_html);
                 $("#page-details .swiper-container").swiper({});
@@ -1054,9 +1045,9 @@ $(function() {
 
     function setSupIcon() {
         //console.log("更新购物车数量");
-        var temp={};
-        if (my_cart != "") {
-            var sum = 0;
+        var temp = {};
+        var sum = 0;
+        if (my_cart.length !== 0) {
             for (var i = 0; i < my_cart.length; i++) {
                 sum += Number(my_cart[i].count);
             }
@@ -1066,36 +1057,40 @@ $(function() {
             } else {
                 $(".cart-count.badge").html(sum);
             }
-            temp.cart_count=sum;
-        }else{
-             $(".cart-count.badge").remove();
+        } else {
+            $(".cart-count.badge").remove();
         }
+
         //更新我的消息红点
+        var new_msg_count = 0;
+
         if (sessionStorage.new_msg_count !== "0" && sessionStorage.new_msg_count !== undefined) {
-            var h = "";
+            new_msg_count = sessionStorage.new_msg_count;
+
             if ($(".msg-point").length === 0) {
-                h = '<span class="badge msg-point"></span>';
-                $(".user-item").append(h);
+                $(".user-item").append('<span class="badge msg-point"></span>');
             }
+
             if ($("#page-user-center header .msg-count").length === 0) {
-                h = '<span class="badge msg-count">' + sessionStorage.new_msg_count + '</span>';
-                $("#page-user-center header .pull-right").append(h);
+                $("#page-user-center header .pull-right").append('<span class="badge msg-count">' + new_msg_count + '</span>');
             } else {
-                $(".msg-count.badge").html(sessionStorage.new_msg_count);
+                $(".msg-count.badge").html(snew_msg_count);
             }
-            temp.new_msg_count=sessionStorage.new_msg_count;
-        }else{
-             $(".msg-point.badge").remove();
+
+        } else {
+            $(".msg-point.badge,.msg-count.badge").remove();
         }
+
+        temp.cart_count = sum;
+        temp.new_msg_count = new_msg_count;
         console.log(temp);
     }
-    $(document).on("click", "#page-details .add-to-cart,.popup-select .add-to-cart", function(event) {
-        event.preventDefault();
+    $(document).on("click", "#page-details .add-to-cart,.popup-select .add-to-cart", function() {
         var count = Number($("#page-details .chose-count").text());
         //检测购物车里是否有该物品
         var curr_p_id = getParameter("p_id");
         if (curr_p_id !== current_product.id) {
-            $.toast("兄弟别急啊");
+            $.toast("数据加载中，请稍等");
             return false;
         }
         var t = -1;
@@ -1263,8 +1258,6 @@ $(function() {
     });
 
     $(document).on("pageInit", "#page-search-result", function() {
-
-
         // //清除html
         // $('#page-search-result .infinite-scroll-bottom .list-block ul').html("");
         // //重置参数
@@ -1279,8 +1272,6 @@ $(function() {
             kw = sessionStorage.keyword;
         }
         search_option.search_content = kw;
-
-
         search_option.category_id = getParameter("c_id");
 
         var c_id = "";
@@ -1320,11 +1311,11 @@ $(function() {
 
                 var title = $curr_category.text();
                 $("#page-search-result header .title").html(title);
-
+                //修改title
+                document.title = title;
                 var is_sub = $curr_category.parents("ul").hasClass("sub-category-list");
                 var is_main = $curr_category.parents("ul").hasClass("category-list");
                 if (is_sub) {
-
                     $("#panel-filter [data-href='#" + $curr_category.parents(".tab").attr("id") + "']").parents("li").addClass("active");
                     $("#panel-filter .sub-title").removeClass("hide");
                     $curr_category.parents(".tab").addClass("active");
@@ -1334,19 +1325,14 @@ $(function() {
                     $("#panel-filter .sub-title").removeClass("hide");
                     $("#panel-filter " + $curr_category.find("a").attr("data-href")).addClass("active");
                 }
-
             }
         });
-
     });
 
-
     $(document).on("keydown", "#page-search #search", function(event) {
-        console.log(event.keyCode);
         if (event.keyCode === 13) {
             var kw = $(this).val();
             sessionStorage.keyword = kw;
-
             $.router.load("search_result.html");
         }
     });
@@ -1358,8 +1344,6 @@ $(function() {
             search_infinite_reset(search_option);
         }
     });
-
-
 
     function search_infinite_reset(option) {
         var opt = option;
@@ -1380,6 +1364,8 @@ $(function() {
     function reset_list_by_category() {
         var curr_title = $("#panel-filter .sub-category-list").find(".active").text() || $("#panel-filter .category-list").find(".active").text() || "";
         $("#page-search-result header .title").html(curr_title);
+        //修改title
+        document.title = curr_title;
         var curr_category_id = $("#panel-filter .sub-category-list").find(".active").attr("data-category") || $("#panel-filter .category-list").find(".active").attr("data-category") || "";
         search_option.category_id = curr_category_id;
         search_infinite_reset(search_option);
@@ -1391,8 +1377,8 @@ $(function() {
         search_infinite_reset(search_option);
     }
 
-    $(document).on("click", "#panel-filter .category-list li", function(event) {
-        event.preventDefault(); /* Act on the event */
+    $(document).on("click", "#panel-filter .category-list li", function() {
+
         $("#panel-filter .sub-title.hide").removeClass("hide");
         var is_select = $(this).hasClass("active");
         if (is_select) {
@@ -1409,8 +1395,7 @@ $(function() {
         reset_list_by_category();
     });
 
-    $(document).on("click", "#panel-filter .sub-category-list li", function(event) {
-        event.preventDefault(); /* Act on the event */
+    $(document).on("click", "#panel-filter .sub-category-list li", function() {
 
         var is_select = $(this).hasClass("active");
         if (is_select) {
@@ -1424,20 +1409,16 @@ $(function() {
         reset_list_by_category();
     });
 
-    $(document).on("click", "#panel-filter .discount-list li", function(event) {
-        event.preventDefault(); /* Act on the event */
-
+    $(document).on("click", "#panel-filter .discount-list li", function() {
         var is_select = $(this).hasClass("active");
+
         if (is_select) {
             $(this).removeClass("active");
-
         } else {
             $("#panel-filter .discount-list .active").removeClass("active");
             $(this).addClass("active");
-
         }
         reset_list_by_discount();
-
     });
     $(document).on("click", "#panel-filter .discount-list li", function() {
         var is_filt = $("#panel-filter .discount-list li.active").length !== 0;
@@ -1477,15 +1458,7 @@ $(function() {
         var is_sales = $this.hasClass("item-sales");
         var is_price_asc = is_price && $this.find("i").hasClass("icon-up");
         var is_price_desc = is_price && $this.find("i").hasClass("icon-down");
-        var temp = {};
-        temp.is_default = is_default;
-        temp.is_sales = is_sales;
-        temp.is_price_asc = is_price_asc;
-        temp.is_price_desc = is_price_desc;
-        console.log(temp);
-        //  search_infinite_reset()
-        //            price_order: null,
-        //    sales_order: null
+
         if (is_sales) {
             search_option.price_order = null;
             search_option.sales_order = 1;
@@ -1498,8 +1471,13 @@ $(function() {
         } else {
             search_option.price_order = 0;
             search_option.sales_order = 1;
-
         }
+        var temp = {};
+        temp.is_default = is_default;
+        temp.is_sales = is_sales;
+        temp.is_price_asc = is_price_asc;
+        temp.is_price_desc = is_price_desc;
+        console.log(temp);
         console.info(search_option);
         search_infinite_reset(search_option);
     });
@@ -1508,9 +1486,8 @@ $(function() {
 
     /*****page-cart*****/
     $(document).on("pageInit", "#page-cart", function() {
-        setSupIcon();
-        console.log(my_cart);
-        if (my_cart != "") {
+
+        if (my_cart.length !== 0) {
             var temp_data = {
                 list: my_cart
             };
@@ -1533,7 +1510,9 @@ $(function() {
         if (is_all) {
             $("#page-cart .select-all input").prop("checked", true);
         }
+
         cartSum();
+        setSupIcon();
     });
 
     $(document).on("click", "#page-cart .select-all", function(event) {
@@ -1578,7 +1557,6 @@ $(function() {
         if (isNotAll) {
             $("#page-cart .select-all input").prop("checked", false);
         }
-
         /****************************/
         var flag = !$(this).find("input[type='checkbox']").is(':checked');
         var item_list = [];
@@ -1596,11 +1574,10 @@ $(function() {
             localStorage.cart = JSON.stringify(my_cart);
         } /****************************/
         cartSum();
-
     });
 
     $(document).on("click", "#page-cart .cart-title .edit-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
+
         var $this = $(this);
         if ($this.hasClass("editing")) {
             //复原
@@ -1612,9 +1589,6 @@ $(function() {
                 $this.remove();
             });
             $this.removeClass("editing");
-
-
-
             //完成编辑 ，更新cart
             var temp_cart = [];
             $("#page-cart .list-block ul li").each(function() {
@@ -1623,38 +1597,12 @@ $(function() {
                     count: Number($(this).find(".count").text())
                 });
             });
-
-
-            // if (my_cart.length = temp_cart.length) {
-            //     for (var i = 0; i < my_cart.length; i++) {
-            //         my_cart[i].count = temp_cart[i].count;
-            //     }
-            // } else {
-            //     console.log("有删除");
-            //     var edited_cart = []
-            //     for (var i = 0; i < my_cart.length; i++) {
-            //         for (var j = 0; j < temp_cart.length; j++) {
-            //             if (my_cart[i].p_id == temp_cart[j].p_id) {
-            //                 edited_cart.push({
-            //                     p_id: my_cart[i].p_id,
-            //                     info: my_cart[i].info,
-            //                     count: temp_cart[j].count
-            //                 });
-            //             }
-            //         }
-            //     }
-            //     my_cart = edited_cart;
-            // }
             //删除最后一个商品
             if ($("#page-cart .product-item").length === 0) {
                 $("#page-cart .list-block ul").html('<li class="no-goods">购物车空空如也<br>去挑几件好货吧</li>');
                 $("#page-cart .bar-nav-secondary").addClass("hide");
                 $("#page-cart .cart-title").addClass("hide");
             }
-            // cartSum();
-            // setSupIcon();
-            // localStorage.cart = JSON.stringify(my_cart);
-
         } else {
             //开启编辑
             $("#page-cart .product-item").append('<div class="item-media delete-btn">删除</div>');
@@ -1670,7 +1618,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-cart .delete-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
+
         var $this = $(this);
         $.confirm("确定要删除这个商品吗？", function() {
 
@@ -1726,16 +1674,15 @@ $(function() {
                 total_price = accAdd(total_price, accMul(parseFloat(my_cart[i].info.current_price), parseFloat(my_cart[i].count))).toFixed(2);
             }
         }
-
-        console.log("count--" + total_count);
-        console.log("price--" + total_price);
         $(".total-price").html(total_price);
         $(".total-count").html(total_count);
-        console.log( {total_count:total_count,total_price:total_price});
+        console.log({
+            total_count: total_count,
+            total_price: total_price
+        });
     }
 
     $(document).on("click", "#page-cart .details-link", function() {
-
         var is_editing = $("#page-cart .editing").length !== 0;
         if (!is_editing) {
             var p_id = $(this).parents(".product-item").attr("data-id");
@@ -1747,7 +1694,6 @@ $(function() {
     /*****page-fallow*****/
 
     $(document).on("pageInit", "#page-fallow", function() {
-
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getMyCollections",
             data: {
@@ -1794,7 +1740,6 @@ $(function() {
         sessionStorage.orderInfo = JSON.stringify(orderInfo);
         var temp_html = template("page-order-item", temp_data);
         $("#page-order .order-block ul").html(temp_html);
-
         cartSum();
 
         //订单默认地址
@@ -1826,11 +1771,6 @@ $(function() {
                 cart: JSON.stringify(orderInfo.products)
             },
             successCallback: function(data) {
-                console.log("参数---open_id" + userInfo.open_id);
-                console.log("参数---cart" + JSON.stringify(orderInfo.products));
-                console.log("--------请求结果----");
-                console.log(data);
-                console.log("-----end of---请求结果----");
                 if (data.Common.code === 200) {
                     var temp_data = data.Common.info;
                     var temp_html = template('page-order-coupon-item', {
@@ -1854,8 +1794,6 @@ $(function() {
                 }
             }
         });
-
-
 
         //快递 ["上门自提","送货上门","物流配送"] 
 
@@ -1897,7 +1835,6 @@ $(function() {
         }
         //留言
         $("#page-order textarea").val(orderInfo.memo);
-
     });
     $(document).on("click", ".popup-coupon li", function() {
         var name = $(this).find(".item-title").text();
@@ -1939,21 +1876,18 @@ $(function() {
         }
         sessionStorage.orderInfo = JSON.stringify(orderInfo);
     });
-    $(document).on("click", "#page-order .express-type-wrapper", function(event) {
-        event.preventDefault(); /* Act on the event */
+    $(document).on("click", "#page-order .express-type-wrapper", function() {
         $(".express-type").picker("open");
     });
-    $(document).on("change", "#page-order textarea", function(event) {
-        event.preventDefault(); /* Act on the event */
+    $(document).on("change", "#page-order textarea", function() {
+
         orderInfo.memo = $(this).val();
         sessionStorage.orderInfo = JSON.stringify(orderInfo);
     });
 
 
 
-    $(document).on("click", "#page-order .submit-order-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
-        //todo
+    $(document).on("click", "#page-order .submit-order-btn", function() {
         console.log(orderInfo);
         var temp_data = {
             open_id: userInfo.open_id,
@@ -1990,8 +1924,6 @@ $(function() {
                     }
                     my_cart = temp_cart;
                     localStorage.cart = JSON.stringify(my_cart);
-
-
                     orderInfo = {
                         address_id: "",
                         express_type: "",
@@ -2007,8 +1939,6 @@ $(function() {
                 }
             }
         });
-
-
     });
 
     /*****page-order-detail*****/
@@ -2035,7 +1965,7 @@ $(function() {
     });
 
     $(document).on("click", "#page-order-detail .pay,#page-order-detail .pay", function(event) {
-        event.preventDefault(); /* Act on the event */
+
         var order_num = $("#page-order-detail .order-num").text();
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/wxPay",
@@ -2048,18 +1978,13 @@ $(function() {
                     var config = data.Common.info;
                     wx.chooseWXPay({
                         timestamp: config.timestamp,
-                        // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
                         nonceStr: config.nonceStr,
-                        // 支付签名随机串，不长于 32 位
                         package: config.package,
-                        // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
                         signType: config.signType,
-                        // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
                         paySign: config.paySign,
-                        // 支付签名
                         success: function() {
                             // 支付成功后的回调函数
-                            sessionStorage.order_tab_id="#tab0";
+                            sessionStorage.order_tab_id = "#tab0";
                             $.router.load("user_center.html#page-my-order");
                         }
                     });
@@ -2068,7 +1993,6 @@ $(function() {
                 }
             },
         });
-
     });
 
 
@@ -2098,7 +2022,7 @@ $(function() {
             successCallback: function(data) {
                 if (data.Common.code === 200) {
                     //清空html
-                     $("#page-my-order .tab>.list-block>ul").html("");
+                    $("#page-my-order .tab>.list-block>ul").html("");
                     $("#page-my-order .tab[data-type='all'] ul").html(template("page-my-order-item", {
                         list: data.Common.info
                     }));
@@ -2134,18 +2058,14 @@ $(function() {
             }
         });
     }
-    $(document).on("click", "#page-my-order .tab-link", function(event) {
-        event.preventDefault();
+    $(document).on("click", "#page-my-order .tab-link", function() {
         sessionStorage.order_tab_id = $(this).attr("href");
     });
-    $(document).on("click", "#page-my-order .card-header,#page-my-order .card-content", function(event) {
-        event.preventDefault();
+    $(document).on("click", "#page-my-order .card-header,#page-my-order .card-content", function() {
         var order_num = $(this).parent("li.card").attr("data-order-num");
         $.router.load("order_detail.html?order_num=" + order_num);
     });
-
-    $(document).on("click", "#page-my-order .refund-btn,#page-order-detail .refund-btn", function(event) {
-        event.preventDefault();
+    $(document).on("click", "#page-my-order .refund-btn,#page-order-detail .refund-btn", function() {
         var text = $(this).text();
         var order_num = $(this).parents("li.card").attr("data-order-num") || getParameter("order_num");
 
@@ -2159,15 +2079,14 @@ $(function() {
                 successCallback: function(data) {
                     if (data.Common.code === 200) {
                         text = text[2] + text[3] + text[0] + text[1];
-                        $.alert("您的" + text + "已经收悉，我们的客服人员会在24小时内与您取得联系，请您耐心等待。如有修改订单或其他需求，请及时联系客户服务热线电话：400-110-8004或020-81401016 ，给您造成的不便，敬请谅解。");
+                        $.alert("您的" + text + "已经收悉，我们的客服人员会在24小时内与您取得联系，请您耐心等待。如有修改订单或其他需求，请及时联系客户服务热线：400-110-8004或020-81401016 ，给您造成的不便，敬请谅解。");
                         getOrderList();
                     }
                 }
             });
         });
     });
-    $(document).on("click", "#page-my-order .cancel-btn,#page-order-detail .cancel-btn", function(event) {
-        event.preventDefault();
+    $(document).on("click", "#page-my-order .cancel-btn,#page-order-detail .cancel-btn", function() {
         var $this_order_ele = $(this).parents("li.card");
         var order_num = $this_order_ele.attr("data-order-num") || getParameter("order_num");
 
@@ -2187,8 +2106,7 @@ $(function() {
             });
         });
     });
-    $(document).on("click", "#page-my-order .receipt-btn,#page-order-detail .receipt-btn", function(event) {
-        event.preventDefault();
+    $(document).on("click", "#page-my-order .receipt-btn,#page-order-detail .receipt-btn", function() {
         var $this_order_ele = $(this).parents("li.card");
         var order_num = $this_order_ele.attr("data-order-num") || getParameter("order_num");
 
@@ -2264,10 +2182,8 @@ $(function() {
         setSupIcon();
     });
 
-
-
     $(document).on("click", "#page-user-center .order-block [data-href]", function(event) {
-        event.preventDefault(); /* Act on the event */
+
         var order_tab_id = $(this).attr("data-href");
         sessionStorage.order_tab_id = order_tab_id;
         var current_tab = $("#page-my-order " + order_tab_id);
@@ -2354,27 +2270,32 @@ $(function() {
         $.router.load("#page-message-detail");
     });
     $(document).on("pageInit", "#page-message-detail", function() {
-        if ($("#page-message-detail .content-block-title").hasClass("unread")) {
-            func_ajax({
-                url: "http://www.homchang.site/index.php/Api/index/readMessage",
-                data: {
-                    msg_id: $("#page-message-detail [data-id]").attr("data-id"),
-                    open_id: userInfo.open_id
-                },
-                successCallback: function(data) {
-                    if (data.Common.code === 200) {
-                        sessionStorage.new_msg_count = Number(sessionStorage.new_msg_count) - 1;
-                        $(".msg-count").html(sessionStorage.new_msg_count);
-                        if (sessionStorage.new_msg_count === "0") {
-                            $(".msg-count,.msg-point").remove();
+        if ($("#page-message-detail p.text").text().trim() === "") {
+            $.router.back();
+        } else {
+            if ($("#page-message-detail .content-block-title").hasClass("unread")) {
+                func_ajax({
+                    url: "http://www.homchang.site/index.php/Api/index/readMessage",
+                    data: {
+                        msg_id: $("#page-message-detail [data-id]").attr("data-id"),
+                        open_id: userInfo.open_id
+                    },
+                    successCallback: function(data) {
+                        if (data.Common.code === 200) {
+                            sessionStorage.new_msg_count = Number(sessionStorage.new_msg_count) - 1;
+                            $(".msg-count").html(sessionStorage.new_msg_count);
+                            if (sessionStorage.new_msg_count === "0") {
+                                $(".msg-count,.msg-point").remove();
+                            }
                         }
                     }
-                }
-            });
-            $("#page-message-detail .content-block-title .unread").removeClass("unread");
+                });
+                $("#page-message-detail .content-block-title .unread").removeClass("unread");
+            }
         }
     }); /*****page-coupon*****/
     $(document).on("pageInit", "#page-coupon", function() {
+        $.showPreloader("正在拉取微信卡券，请稍等");
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCardList",
             data: {
@@ -2382,7 +2303,7 @@ $(function() {
             },
             successCallback: function(data) {
                 console.log(data);
-                $.hidePreloader("正在拉取微信卡券，请稍等");
+                $.hidePreloader();
                 if (data.Common.code === 200) {
                     var temp_list = classifyArrayByField("deadline_type", data.Common.info);
                     console.log(temp_list);
@@ -2405,7 +2326,7 @@ $(function() {
                 }
             }
         });
-        $.showPreloader("正在拉取微信卡券，请稍等");
+
     });
 
 
@@ -2428,9 +2349,9 @@ $(function() {
             }],
 
         });
-        var maxDate = func_format_date(new Date()).date;
+        var maxDate = func_timestamp2datetime(new Date()).date;
         if (userInfo.birthday !== "0") {
-            $("#page-user-info .birthday-picker").val(func_format_date(userInfo.birthday).date);
+            $("#page-user-info .birthday-picker").val(func_timestamp2datetime(userInfo.birthday).date);
         }
 
         $("#page-user-info .birthday-picker").calendar({
@@ -2460,8 +2381,7 @@ $(function() {
         }
     });
 
-    $(document).on("click", "#page-user-info .username", function(event) {
-        event.preventDefault(); /* Act on the event */
+    $(document).on("click", "#page-user-info .username", function() {
         $.prompt("修改昵称", function(value) {
             func_ajax({
                 url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
@@ -2479,8 +2399,7 @@ $(function() {
         });
     });
 
-    $(document).on("click", ".gander-picker .close-picker", function(event) {
-        event.preventDefault(); /* Act on the event */
+    $(document).on("click", ".gander-picker .close-picker", function() {
         var select_gander = $("#page-user-info .gander").val();
         for (var i = 0; i < gander_list.length; i++) {
             if (select_gander === gander_list[i]) {
@@ -2629,7 +2548,41 @@ $(function() {
     }
 
     /*****page-bind*****/
+    $(document).on("pageInit", "#page-bind", function() {
+        if (sessionStorage.b_count !== undefined) {
+            var b_count = sessionStorage.b_count;
+            var i_name = "b_i";
+            var s_name = "b_count";
+            eval(createCounter(i_name, s_name, "b_count", '$("#page-bind .get-verifyCode-btn")'));
+        }
+    });
 
+    $(document).on("click", "#page-bind .get-verifyCode-btn", function() {
+        var $this = $(this);
+        var flag = $("#page-bind [name='telephone']").validate();
+        if (flag) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getVerifyCode",
+                data: {
+                    open_id: userInfo.open_id,
+                    phone: $("#page-bind [name='telephone']").val()
+                },
+                successCallback: function(data) {
+                    if (data.Common.code === 200) {
+                        var count = 120;
+                        var $btn = $this;
+                        var $btn_str = '$("#page-bind .get-verifyCode-btn")';
+                        var i_name = "b_i";
+                        var s_name = "b_count";
+                        var js_str = createCounter(i_name, s_name, "count", $btn_str);
+                        eval(js_str);
+                        $btn.prop("disabled", true);
+                        $.alert("验证码已发送，请注意查收！");
+                    }
+                }
+            });
+        }
+    });
     $(document).on("click", "#page-bind .button-success", function() {
         var flag = $("#page-bind [name='telephone'],#page-bind [name='code']").validate();
         if (flag) {
@@ -2653,25 +2606,11 @@ $(function() {
         }
     });
 
-
-    $(document).on("click", "#page-bind .get-verifyCode-btn", function(event) {
-        var flag = $("#page-bind [name='telephone']").validate();
-        if (flag) {
-            func_ajax({
-                url: "http://www.homchang.site/index.php/Api/index/getVerifyCode",
-                data: {
-                    open_id: userInfo.open_id,
-                    phone: $("#page-bind [name='telephone']").val()
-                },
-                successCallback: function(data) {
-                    if (data.Common.code = 200) {
-                        $.alert("验证码已发送，请注意查收！");
-                    }
-                }
-            });
-        }
-    }); /*****page-address*****/
+    /*****page-address*****/
     $(document).on("pageInit", "#page-address", function() {
+        setTimeout(function() {
+            $.showIndicator();
+        }, 0);
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getLocations",
             data: {
@@ -2694,7 +2633,7 @@ $(function() {
         });
     });
     $(document).on("click", "#page-address label", function(event) {
-        event.preventDefault(); /* Act on the event */
+
 
         var update_id = $(this).parents("li").attr("data-id");
         var $radio = $(this).find("input");
@@ -2714,8 +2653,7 @@ $(function() {
     });
 
 
-    $(document).on("click", "#page-address .delete-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
+    $(document).on("click", "#page-address .delete-btn", function() {
         var $delete_ele = $(this).parents("li");
         var delete_id = $delete_ele.attr("data-id");
 
@@ -2742,9 +2680,7 @@ $(function() {
         });
     });
 
-    $(document).on("click", "#page-address .edit-btn,#page-address .edit-btn", function(event) {
-        event.preventDefault(); /* Act on the event */
-
+    $(document).on("click", "#page-address .edit-btn,#page-address .edit-btn", function() {
         var $li = $(this).parents("li");
         edit_address = {
             id: $li.attr("data-id"),
@@ -3253,7 +3189,6 @@ $(function() {
     });
 
     //妈的这个验证码，自己写完我都看不懂
-
     function createCounter(iName, sessionStorageName, count, $btn) {
         return 'var ' + iName + ' = setInterval(function() {' + count + '--;if (' + count + ' > 0) {' + $btn + '.html("重新获取(" + ' + count + ' + "s)");sessionStorage.' + sessionStorageName + ' = ' + count + ';} else {clearInterval(' + iName + ');' + $btn + '.html("获取验证码").removeAttr("disabled");sessionStorage.clear("' + sessionStorageName + '");}}, 1000);';
     }
@@ -3321,7 +3256,8 @@ $(function() {
         sessionStorage.repairInfo = JSON.stringify(repairInfo);
     });
     $(document).on("click", "#page-bespeak .uploader-wrapper .icon-close", function() {
-        //记录填写的故障
+        //删除图片
+        var delete_img_path = $(this).prev("span").children("img").attr("src");
         $(this).parent("li").remove();
         var path_list = [];
         $("#page-bespeak .uploader-wrapper img").each(function(index, ele) {
@@ -3329,6 +3265,16 @@ $(function() {
         });
         repairInfo.imgs = path_list;
         sessionStorage.repairInfo = JSON.stringify(repairInfo);
+        func_ajax({
+            url: "http://www.homchang.site/index.php/Api/index/delImages",
+            data: {
+                open_id: userInfo.open_id,
+                image: delete_img_path
+            },
+            successCallback: function(data) {
+                console.log(data);
+            }
+        });
     });
     /*****page-select-product*****/
     $(document).on("pageInit", "#page-select-product", function() {
@@ -3407,14 +3353,10 @@ $(function() {
             zoom: 13,
             mapTypeControl: false
         });
-
         var infoWin = new qq.maps.InfoWindow({
             map: map
         });
-
         var user_location = null;
-
-
         //判断是否支持 获取本地位置
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(showPosition);
@@ -3448,7 +3390,6 @@ $(function() {
                     map: map,
                     icon: user_icon
                 });
-
                 var label = new qq.maps.Label({
                     position: user_point,
                     map: map,
@@ -3465,9 +3406,8 @@ $(function() {
                         });
                         $this.find("ul").html(temp_html);
                         var point_list = [];
-                        for (var i = 0; i < point_data.length; i++) {
-                            point_list.push(new qq.maps.LatLng(point_data[i].ypoint, point_data[i].xpoint));
-
+                        for (var j = 0; j < point_data.length; j++) {
+                            point_list.push(new qq.maps.LatLng(point_data[j].ypoint, point_data[j].xpoint));
                         }
                         var anchor = new qq.maps.Point(12, 34),
                             size = new qq.maps.Size(24, 34),
@@ -3485,7 +3425,6 @@ $(function() {
                                     map: map,
                                     icon: icon
                                 });
-
                                 qq.maps.event.addListener(marker, 'click', function() {
                                     infoWin.open();
                                     infoWin.setContent(temp_html);
@@ -3493,9 +3432,7 @@ $(function() {
                                 });
                             })(i);
                         }
-
                         var nearest = new qq.maps.LatLng(point_data[0].ypoint, point_data[0].xpoint);
-
                         var bounds = new qq.maps.LatLngBounds();
                         bounds.extend(user_point);
                         bounds.extend(nearest);
@@ -3534,4 +3471,5 @@ $(function() {
         });
     }); /*****init*****/
     $.init();
+    console.log("%c  author:Wallace Chan  \n  tel:13202627449      \n  qq:447363121         \n  date:%s        ", "padding:0;line-height:20px; background-color:#d32c2c;color:#fff;;", "20170925");
 });

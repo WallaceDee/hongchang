@@ -4,34 +4,29 @@
 <head>
     <title></title>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="Wallace Chan">
     <link rel="stylesheet" href="css/default.css">
 </head>
 
 <body>
     <div class="page-group">
         <div id="page-activity" class="page">
-            <nav class="bar bar-tab">
-                <a class="tab-item" href="index.html"> <span class="icon icon-home"></span><span class="tab-label">首页</span></a>
-                <a class="tab-item cart-item" href="cart.html"> <span class="icon icon-cart"></span><span class="tab-label">购物车</span></a>
-                <a class="tab-item user-item" href="user_center.html"> <span class="icon icon-user"></span><span class="tab-label">我</span> </a></nav>
             <div class="content  infinite-scroll infinite-scroll-bottom" data-distance="100">
                 <div class="swiper-container" data-space-between='10'>
                     <div class="swiper-wrapper"> </div>
                     <div class="swiper-pagination"></div>
                 </div>
-                <!--                 <div class="content-block-title">热销产品</div> -->
-                <div class="list-block activity-block">
+                <div class="list-block media-list">
                     <ul>
                     </ul>
                 </div>
-                <!-- 加载提示符 -->
                 <div class="infinite-scroll-preloader">
                     <div class="preloader"></div>
                 </div>
                 <div class="footer">
-                    <p class="footer-text">Copyright © 2017 鸿畅环保设备有限公司 <a class="external" href="http://www.miitbeian.gov.cn/">粤ICP备17111952号</a></p>
+                    <p class="footer-text">版权所有© 广州市鸿畅环保设备有限公司<a class="external" href="http://www.miitbeian.gov.cn/">粤ICP备17111952号</a></p>
                 </div>
             </div>
         </div>
@@ -40,25 +35,21 @@
             <div class="swiper-slide"><a href="{{$list.url}}"><img src="{{$list.img}}"></a></div>{{/each}}
         </script>
         <script id="page-activity-product" type="text/html">
-            {{each list as $list i }}
+            {{each list as $list i}}
             <li>
-                <a href="details.html?p_id={{$list.id}}">
-                            <span class="product-img" style="background-image: url({{$list.feng_mian_image}});">
-                                
-                                <div class="left-penal">
-                                    <p><i class="icon icon-eye"></i>{{$list.browse_num}}</p>
-                                    <p><i class="icon icon-comment"></i>{{$list.comment_num}}</p>
-                                    <p><i class="icon icon-star-empty"></i>{{$list.collection_num}}</p>
-                                </div>
-                            </span>
-                            <h4>
-                              {{$list.name}}
-                            </h4>
-                            <p class="price-wrapper">
-                                <span class="current">{{$list.current_price}}</span>
-                                <span class="original">{{$list.origin_price}}</span>
-                            </p>
-                            </a>
+                <a href="details.html?p_id={{$list.id}}" class="item-content">
+                    <div class="item-media"><span class="product-img {{if $list.is_hot==1}}hot{{/if}}" style="background-image: url({{if $list.preview==''}}images/category_default_img.jpg{{else}}{{$list.feng_mian_image}}{{/if}});"></span></div>
+                    <div class="item-inner">
+                        <div class="item-title-row">
+                            <div class="item-title name">{{$list.name}}</div>
+                        </div>
+                        <div class="item-text">{{$list.summary}}</div>
+                        <div class="item-title-row">
+                            <div class="item-title">优惠价:{{$list.current_price}}</div>
+                            <div class="item-after"><i class="icon icon-eye"></i><span>{{$list.browse_num}}</span><i class="icon icon-comment"></i><span>{{$list.comment_num}}</span><i class="icon icon-star-empty"></i><span>{{$list.collection_num}}</span></div>
+                        </div>
+                    </div>
+                </a>
             </li>
             {{/each}}
         </script>
