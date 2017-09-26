@@ -666,8 +666,8 @@ header:after {
 .product-list .product-img {
     display: block;
 
-    width: 4rem;
-    height: 4rem;
+    width: 6rem;
+    height: 4.5rem;
 
     background-color: #eee;
     background-position: center;
@@ -953,7 +953,7 @@ header:after {
 #page-activity li .product-img {
     display: block;
 
-    width: 6.5rem;
+    width: 6rem;
     height: 4.5rem;
 
     background-color: #eee;
@@ -2014,8 +2014,8 @@ header:after {
 #page-cart .list-block .product-img {
     display: block;
 
-    width: 4rem;
-    height: 4rem;
+    width: 6rem;
+    height: 4.5rem;
 
     background-color: #eee;
     background-position: center;
@@ -2226,8 +2226,8 @@ header:after {
 #page-my-order .order-block .product-img {
     display: block;
 
-    width: 4rem;
-    height: 4rem;
+    width: 6rem;
+    height: 4.5rem;
 
     background-color: #eee;
     background-position: center;
