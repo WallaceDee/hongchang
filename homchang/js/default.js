@@ -54,9 +54,9 @@ if (sessionStorage.setupInfo != undefined) {
     setupInfo = JSON.parse(sessionStorage.setupInfo);
 }
 
-//    sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
+//    sale_type:优惠类型('0.未优惠','1.每月特惠','2.老客户优惠','3.周未Party')
 var discount_type_list = [{
-    name: "每月优惠",
+    name: "每月特惠",
     value: 1
 }, {
     name: "老客户优惠",

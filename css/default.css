@@ -1897,6 +1897,17 @@ header:after {
 
     background-color: #fff;
 }
+#page-details #tab2 .content-block {
+    margin: 0;
+    padding:0;
+
+    background-color: #fff;
+}
+
+#page-details #tab2 .content-block img {
+    max-width: 100%;
+    display: block;
+}
 
 .icon-5-stars:before {
     font-size: .6rem;

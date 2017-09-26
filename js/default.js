@@ -8,6 +8,28 @@ function clean() {
     localStorage.clear();
     sessionStorage.clear();
 }
+
+function getCache(name, storageType) {
+    var r = undefined;
+    if (storageType === undefined || storageType === "localStorage") {
+        if (eval("localStorage." + name) !== undefined) {
+            r = JSON.parse(eval("localStorage." + name));
+        }
+    } else {
+        if (eval("sessionStorage." + name) !== undefined) {
+            r = JSON.parse(eval("sessionStorage." + name));
+        }
+    }
+    return r;
+}
+
+function setCache(name, object, storageType) {
+    if (storageType === undefined || storageType === "localStorage") {
+        eval("localStorage." + name + "=JSON.stringify(object)");
+    } else {
+        eval("sessionStorage." + name + "=JSON.stringify(object)");
+    }
+}
 //root font-size
 (function(doc, win) {
     "use strict";
@@ -130,9 +152,9 @@ $(function() {
     if (sessionStorage.edit_address !== undefined) {
         edit_address = JSON.parse(sessionStorage.edit_address);
     }
-    //sale_type:优惠类型('0.未优惠','1.每月优惠','2.老客户优惠','3.周未Party')
+    //sale_type:优惠类型('0.未优惠','1.每月特惠','2.老客户优惠','3.周未Party')
     var discount_type_list = [{
-        name: "每月优惠",
+        name: "每月特惠",
         value: 1
     }, {
         name: "老客户优惠",
@@ -783,8 +805,8 @@ $(function() {
     $(document).on("pageInit", "#page-activity", function() {
         setSupIcon();
         activity_type = getParameter("a_id");
-        if(getNameByValue(activity_type,discount_type_list)===""){
-           window.location.href="index.html";
+        if (getNameByValue(activity_type, discount_type_list) === "") {
+            window.location.href = "index.html";
             return false;
         }
         if ($("#page-activity .product-list li").length === 0) { //加载过的标志，不再请求，不知道有没有bug，试下
@@ -968,15 +990,15 @@ $(function() {
                 }
                 $("#page-details .discount .tag-list").html(d);
 
-                wxApi(function(imgs) {
+                wxApi(function() {
                     $(document).off("click", "#page-details .swiper-slide");
 
                     $(document).on("click", "#page-details .swiper-slide", function(event) {
                         event.preventDefault();
                         var preview_list = [];
                         var index = $(this).index();
-                        for (var i = 0; i < imgs.length; i++) {
-                            preview_list.push("http://" + domain + imgs[i]);
+                        for (var i = 0; i < data.imgs.length; i++) {
+                            preview_list.push("http://" + domain + data.imgs[i]);
                         }
                         console.log(JSON.stringify(preview_list));
                         wx.previewImage({
@@ -984,7 +1006,25 @@ $(function() {
                             urls: preview_list
                         });
                     });
-                }(data.imgs));
+
+
+                    $(document).off("click", "#page-details #tab2 img");
+
+                    $(document).on("click", "#page-details #tab2 img", function() {
+
+                        var preview_list = [];
+                        $("#page-details #tab2 img").each(function() {
+                            preview_list.push("http://" + domain + $(this).attr("src"));
+                        });
+                        var index = $("#page-details #tab2 img").index(this);
+
+                        console.log(JSON.stringify(preview_list));
+                        wx.previewImage({
+                            current: preview_list[index],
+                            urls: preview_list
+                        });
+                    });
+                });
             }
         });
         $("#page-details .address input").cityPicker({});
