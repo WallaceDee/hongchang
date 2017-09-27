@@ -12,7 +12,7 @@
 
 <body>
     <div class="page-group">
-        <div id="page-order-detail" class="page">
+        <div id="page-order-detail" class="page page-current">
         </div>
         <script id="page-order-detail-info" type="text/html">
             <header class="bar bar-nav">
@@ -122,11 +122,11 @@
                                 <div class="item-after">共{{sum_count(list.products)}}件</div>
                             </div>
                         </li>
-                        {{if list.remark!==""}}
+                        {{if list.buyer_message!=null}}
                         <li class="item-content">
                             <div class="item-inner">
                                 <div class="item-title">卖家留言</div>
-                                <div class="item-text"> {{list.remark}}</div>
+                                <div class="item-text"> {{list.buyer_message}}</div>
                             </div>
                         </li>{{/if}}
                         <li class="item-content">

@@ -9,25 +9,21 @@ function clean() {
     sessionStorage.clear();
 }
 
-function getCache(name, storageType) {
-    var r = undefined;
-    if (storageType === undefined || storageType === "localStorage") {
-        if (eval("localStorage." + name) !== undefined) {
-            r = JSON.parse(eval("localStorage." + name));
-        }
+function getCache(name, isSession) {
+    var result = null;
+    if (isSession === undefined || isSession === false) {
+        result = JSON.parse(localStorage.getItem(name));
     } else {
-        if (eval("sessionStorage." + name) !== undefined) {
-            r = JSON.parse(eval("sessionStorage." + name));
-        }
+        result = JSON.parse(sessionStorage.getItem(name));
     }
-    return r;
+    return result;
 }
 
-function setCache(name, object, storageType) {
-    if (storageType === undefined || storageType === "localStorage") {
-        eval("localStorage." + name + "=JSON.stringify(object)");
+function setCache(name, object, isSession) {
+    if (isSession === undefined || isSession === false) {
+        localStorage.setItem(name, JSON.stringify(object));
     } else {
-        eval("sessionStorage." + name + "=JSON.stringify(object)");
+        sessionStorage.setItem(name, JSON.stringify(object));
     }
 }
 //root font-size
@@ -88,8 +84,23 @@ function setCache(name, object, storageType) {
 })(Zepto);
 
 
-$(function() {
-    "use strict";
+var repairInfo = {
+    category: "",
+    error_list: "",
+    error_type: "",
+    desc: "",
+    imgs: [],
+    telephone: "",
+    code: "",
+    datetime: "",
+    address_id: ""
+};
+
+if (getCache("repairInfo", true) !== null) {
+    repairInfo = getCache("repairInfo", true);
+}
+
+
     var domain = document.domain;
     //记录入口url地址，解决ios pushState 地址栏不变的bug
     var entrance_url = window.location.href;
@@ -99,8 +110,8 @@ $(function() {
     var userInfo = null;
     var current_product = null;
     var my_cart = [];
-    if (localStorage.cart !== undefined) {
-        my_cart = JSON.parse(localStorage.cart);
+    if (getCache("my_cart") !== null) {
+        my_cart = getCache("my_cart");
     }
     var orderInfo = {
         address_id: "",
@@ -111,24 +122,8 @@ $(function() {
         memo: ""
     };
 
-    if (sessionStorage.orderInfo !== undefined) {
-        orderInfo = JSON.parse(sessionStorage.orderInfo);
-    }
-
-    var repairInfo = {
-        category: "",
-        error_list: "",
-        error_type: "",
-        desc: "",
-        imgs: [],
-        telephone: "",
-        code: "",
-        datetime: "",
-        address_id: ""
-    };
-
-    if (sessionStorage.repairInfo !== undefined) {
-        repairInfo = JSON.parse(sessionStorage.repairInfo);
+    if (getCache("orderInfo", true) !== null) {
+        orderInfo = getCache("orderInfo", true);
     }
 
     var setupInfo = {
@@ -140,8 +135,8 @@ $(function() {
         address_id: ""
     };
 
-    if (sessionStorage.setupInfo !== undefined) {
-        setupInfo = JSON.parse(sessionStorage.setupInfo);
+    if (getCache("setupInfo", true) !== null) {
+        setupInfo = getCache("setupInfo", true);
     }
     var edit_address = {
         id: "",
@@ -149,8 +144,8 @@ $(function() {
         phone: "",
         address: ""
     };
-    if (sessionStorage.edit_address !== undefined) {
-        edit_address = JSON.parse(sessionStorage.edit_address);
+    if (getCache("edit_address", true) !== null) {
+        edit_address = getCache("edit_address", true);
     }
     //sale_type:优惠类型('0.未优惠','1.每月特惠','2.老客户优惠','3.周未Party')
     var discount_type_list = [{
@@ -504,8 +499,8 @@ $(function() {
 
     //登录获取用户信息
     var up = {};
-    if (localStorage.userInfo !== undefined) {
-        userInfo = JSON.parse(localStorage.userInfo);
+    if (getCache("userInfo") !== null) {
+        userInfo = getCache("userInfo");
         up = {
             type: 2,
             value: userInfo.open_id
@@ -530,7 +525,7 @@ $(function() {
 
             if (data.Common.code === 200) {
                 userInfo = data.Common.info;
-                localStorage.userInfo = JSON.stringify(data.Common.info);
+                setCache("userInfo", userInfo);
             } else {
                 localStorage.clear("userInfo");
             }
@@ -557,18 +552,19 @@ $(function() {
                 if (data.Common.code === 200) {
 
                     var temp_data = data.Common.info;
-                    sessionStorage.new_msg_count = temp_data.new_count;
+                    var c = Number(temp_data.new_count) || 0;
+                    setCache("new_msg_count", c, true);
                     var h = "";
-                    if (sessionStorage.new_msg_count !== "0") {
+                    if (c !== 0) {
                         if ($(".msg-point").length === 0) {
                             h = '<span class="badge msg-point"></span>';
                             $(".user-item").append(h);
                         }
                         if ($("#page-user-center header .msg-count").length === 0) {
-                            h = '<span class="badge msg-count">' + sessionStorage.new_msg_count + '</span>';
+                            h = '<span class="badge msg-count">' + c + '</span>';
                             $("#page-user-center header .pull-right").append(h);
                         } else {
-                            $(".msg-count.badge").html(sessionStorage.new_msg_count);
+                            $(".msg-count.badge").html(c);
                         }
                     } else {
                         $(".msg-count,.msg-point").remove();
@@ -593,7 +589,7 @@ $(function() {
                     my_cart[i].count = Number($counter.val());
                 }
             }
-            localStorage.cart = JSON.stringify(my_cart);
+            setCache("my_cart", my_cart);
             cartSum();
             setSupIcon();
         }
@@ -609,7 +605,7 @@ $(function() {
                 my_cart[i].count = Number($counter.val());
             }
         }
-        localStorage.cart = JSON.stringify(my_cart);
+        setCache("my_cart", my_cart);
         cartSum();
         setSupIcon();
     });
@@ -738,7 +734,8 @@ $(function() {
     $(document).on("click", "#page-index .product-nav-list a", function() {
 
         var category_tab_id = $(this).attr("data-href");
-        sessionStorage.category_tab_id = category_tab_id;
+        setCache("category_tab_id", category_tab_id, true);
+
         var current_tab = $("#page-category " + category_tab_id);
         var current_tab_link = $("#page-category a[href='" + category_tab_id + "']");
         $("#page-category .active").removeClass("active");
@@ -865,8 +862,8 @@ $(function() {
 
                     var current_tab = $("#tab0"); //默认
                     var current_tab_link = $("a[href='#tab0']"); //默认
-                    if (sessionStorage.category_tab_id !== undefined) {
-                        var id = sessionStorage.category_tab_id;
+                    if (getCache("category_tab_id", true) !== null) {
+                        var id = getCache("category_tab_id", true);
                         current_tab = $(id);
                         current_tab_link = $("a[href='" + id + "']");
                     }
@@ -876,9 +873,8 @@ $(function() {
             });
         }
     });
-    $(document).on("click", "#page-category .tab-link", function(event) {
-        event.preventDefault();
-        sessionStorage.category_tab_id = $(this).attr("href");
+    $(document).on("click", "#page-category .tab-link", function() {
+        setCache("category_tab_id", $(this).attr("href"), true);
     });
 
 
@@ -1104,8 +1100,8 @@ $(function() {
         //更新我的消息红点
         var new_msg_count = 0;
 
-        if (sessionStorage.new_msg_count !== "0" && sessionStorage.new_msg_count !== undefined) {
-            new_msg_count = sessionStorage.new_msg_count;
+        if (getCache("new_msg_count", true) !== 0 && getCache("new_msg_count", true) !== null) {
+            new_msg_count = getCache("new_msg_count", true);
 
             if ($(".msg-point").length === 0) {
                 $(".user-item").append('<span class="badge msg-point"></span>');
@@ -1114,7 +1110,7 @@ $(function() {
             if ($("#page-user-center header .msg-count").length === 0) {
                 $("#page-user-center header .pull-right").append('<span class="badge msg-count">' + new_msg_count + '</span>');
             } else {
-                $(".msg-count.badge").html(snew_msg_count);
+                $(".msg-count.badge").html(new_msg_count);
             }
 
         } else {
@@ -1151,7 +1147,7 @@ $(function() {
         } else {
             my_cart[t].count = Number(my_cart[t].count) + count;
         }
-        localStorage.cart = JSON.stringify(my_cart);
+        setCache("my_cart", my_cart);
         setSupIcon();
     });
 
@@ -1225,8 +1221,8 @@ $(function() {
         // hot_lastIndex = 0;
         // //预先加载
         var kw = "";
-        if (sessionStorage.keyword !== undefined) {
-            kw = sessionStorage.keyword;
+        if (getCache("keyword", true) !== null) {
+            kw = getCache("keyword", true);
         }
         $("#page-search #search").val(kw);
         if ($("#page-search .product-list li").length === 0) {
@@ -1308,19 +1304,19 @@ $(function() {
         // search_lastIndex = 0;
         //预先加载
         var kw = "";
-        if (sessionStorage.keyword !== undefined) {
-            kw = sessionStorage.keyword;
+        if (getCache("keyword", true) !== null) {
+            kw = getCache("keyword", true);
         }
         search_option.search_content = kw;
         search_option.category_id = getParameter("c_id");
 
         var c_id = "";
-        if (sessionStorage.c_id !== undefined) {
-            c_id = sessionStorage.c_id;
+        if (getCache("c_id", true) !== null) {
+            c_id = getCache("c_id", true);
         }
         if (c_id !== getParameter("c_id")) {
             search_page = 1;
-            sessionStorage.c_id = c_id;
+            setCache("c_id", c_id, true);
         }
 
         $("#page-search-result #search").val(kw);
@@ -1372,14 +1368,14 @@ $(function() {
     $(document).on("keydown", "#page-search #search", function(event) {
         if (event.keyCode === 13) {
             var kw = $(this).val();
-            sessionStorage.keyword = kw;
+            setCache("keyword", kw, true);
             $.router.load("search_result.html");
         }
     });
     $(document).on("keydown", "#page-search-result #search", function(event) {
         if (event.keyCode === 13) {
             var kw = $(this).val();
-            sessionStorage.keyword = kw;
+            setCache("keyword", kw, true);
             search_option.search_content = kw;
             search_infinite_reset(search_option);
         }
@@ -1571,7 +1567,7 @@ $(function() {
         for (var i = 0; i < my_cart.length; i++) {
             my_cart[i].select = !isAll;
         }
-        localStorage.cart = JSON.stringify(my_cart);
+        setCache("my_cart", my_cart);
         cartSum();
     });
 
@@ -1606,12 +1602,12 @@ $(function() {
             item_list = item_list.parents(".product-item");
             //更新缓存购物车物品的选择状态//选择
             my_cart[$(this).parents("li").index()].select = true;
-            localStorage.cart = JSON.stringify(my_cart);
+            setCache("my_cart", my_cart);
         } else {
             item_list = $("#page-cart .product-item label").not(this).find("input[type='checkbox']:checked").parents(".product-item");
             //更新缓存购物车物品的选择状态//反选
             my_cart[$(this).parents("li").index()].select = false;
-            localStorage.cart = JSON.stringify(my_cart);
+            setCache("my_cart", my_cart);
         } /****************************/
         cartSum();
     });
@@ -1682,7 +1678,7 @@ $(function() {
                 }
             }
             console.log(my_cart);
-            localStorage.cart = JSON.stringify(my_cart);
+            setCache("my_cart", my_cart);
             cartSum();
             setSupIcon();
             $this.parents(".product-item").remove();
@@ -1777,7 +1773,7 @@ $(function() {
             return false;
         }
         orderInfo.products = temp_data1;
-        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+        setCache("orderInfo", orderInfo, true);
         var temp_html = template("page-order-item", temp_data);
         $("#page-order .order-block ul").html(temp_html);
         cartSum();
@@ -1794,7 +1790,7 @@ $(function() {
                     var default_data = data.Common.info[0];
 
                     orderInfo.address_id = default_data.id;
-                    sessionStorage.orderInfo = JSON.stringify(orderInfo);
+                    setCache("orderInfo", orderInfo, true);
 
                     $("#page-order .address-block .item-title").html(default_data.contact);
                     $("#page-order .address-block .item-after").html(default_data.tel);
@@ -1859,7 +1855,7 @@ $(function() {
             default_express = express_type_picker_list[1];
         }
         $("#page-order .express-type").val(default_express);
-        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+        setCache("orderInfo", orderInfo, true);
 
 
         $("#page-order .express-type").picker({
@@ -1889,7 +1885,7 @@ $(function() {
             info: info
         };
         orderInfo.coupon = temp_data;
-        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+        setCache("orderInfo", orderInfo, true);
         $("#page-order .open-popup .item-after").html(name);
         if (temp_data.value !== 0) {
             $("#page-order .coupon-discount").removeClass("hide");
@@ -1914,7 +1910,7 @@ $(function() {
                 orderInfo.express_type = "3";
             }
         }
-        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+        setCache("orderInfo", orderInfo, true);
     });
     $(document).on("click", "#page-order .express-type-wrapper", function() {
         $(".express-type").picker("open");
@@ -1922,7 +1918,7 @@ $(function() {
     $(document).on("change", "#page-order textarea", function() {
 
         orderInfo.memo = $(this).val();
-        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+        setCache("orderInfo", orderInfo, true);
     });
 
 
@@ -1963,7 +1959,7 @@ $(function() {
                         }
                     }
                     my_cart = temp_cart;
-                    localStorage.cart = JSON.stringify(my_cart);
+                    setCache("my_cart", my_cart);
                     orderInfo = {
                         address_id: "",
                         express_type: "",
@@ -1972,7 +1968,7 @@ $(function() {
                         store: "",
                         memo: ""
                     };
-                    sessionStorage.orderInfo = JSON.stringify(orderInfo);
+                    setCache("orderInfo", orderInfo, true);
                     $.router.load("order_detail.html?order_num=" + order_num);
                 } else {
                     $.toast("提交订单失败，请刷新页面重试！");
@@ -2024,7 +2020,7 @@ $(function() {
                         paySign: config.paySign,
                         success: function() {
                             // 支付成功后的回调函数
-                            sessionStorage.order_tab_id = "#tab0";
+                            setCache("order_tab_id", "#tab0", true);
                             $.router.load("user_center.html#page-my-order");
                         }
                     });
@@ -2040,8 +2036,8 @@ $(function() {
     $(document).on("pageInit", "#page-my-order", function() {
         var current_tab = $("#tab0"); //默认
         var current_tab_link = $("a[href='#tab0']"); //默认
-        if (sessionStorage.order_tab_id !== undefined) {
-            var id = sessionStorage.order_tab_id;
+        if (getCache("order_tab_id", true) !== null) {
+            var id = getCache("order_tab_id", true);
             current_tab = $(id);
             current_tab_link = $("a[href='" + id + "']");
         }
@@ -2099,7 +2095,7 @@ $(function() {
         });
     }
     $(document).on("click", "#page-my-order .tab-link", function() {
-        sessionStorage.order_tab_id = $(this).attr("href");
+        setCache("order_tab_id", $(this).attr("href"), true)
     });
     $(document).on("click", "#page-my-order .card-header,#page-my-order .card-content", function() {
         var order_num = $(this).parent("li.card").attr("data-order-num");
@@ -2225,7 +2221,7 @@ $(function() {
     $(document).on("click", "#page-user-center .order-block [data-href]", function(event) {
 
         var order_tab_id = $(this).attr("data-href");
-        sessionStorage.order_tab_id = order_tab_id;
+        setCache("order_tab_id", order_tab_id, true);
         var current_tab = $("#page-my-order " + order_tab_id);
         var current_tab_link = $("#page-my-order a[href='" + order_tab_id + "']");
         $("#page-my-order .active").removeClass("active");
@@ -2322,10 +2318,12 @@ $(function() {
                     },
                     successCallback: function(data) {
                         if (data.Common.code === 200) {
-                            sessionStorage.new_msg_count = Number(sessionStorage.new_msg_count) - 1;
-                            $(".msg-count").html(sessionStorage.new_msg_count);
-                            if (sessionStorage.new_msg_count === "0") {
+
+                            if (getCache("new_msg_count", true) === 0) {
                                 $(".msg-count,.msg-point").remove();
+                            } else {
+                                setCache("new_msg_count", Number(getCache("new_msg_count", true)) - 1, true);
+                                $(".msg-count").html(getCache("new_msg_count", true));
                             }
                         }
                     }
@@ -2470,8 +2468,6 @@ $(function() {
             label: true
         }, {
             text: '照相',
-            bold: true,
-            color: 'danger',
             onClick: function() {
                 func_uploadType_avatar("camera", allow_select_num);
             }
@@ -2511,7 +2507,7 @@ $(function() {
         }).toDataURL('image/jpeg');
         $("#page-user-info .avatar-wrapper span").css("background-image", "url(" + src_data + ")");
         userInfo.head_img = src_data;
-        localStorage.userInfo = JSON.stringify(userInfo);
+        setCache("userInfo", userInfo);
         src_data = src_data.replace("data:image/jpeg;base64,", "");
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
@@ -2533,7 +2529,7 @@ $(function() {
      */
 
     function func_uploadType_avatar(type, num) {
-        $.showIndicator();
+
         wx.chooseImage({
             count: num,
             // 默认9
@@ -2554,6 +2550,7 @@ $(function() {
      */
 
     function upload_avatar(url_list) {
+        $.showIndicator();
         wx.uploadImage({
             localId: url_list[0],
             // 需要上传的图片的本地ID，由chooseImage接口获得
@@ -2589,8 +2586,8 @@ $(function() {
 
     /*****page-bind*****/
     $(document).on("pageInit", "#page-bind", function() {
-        if (sessionStorage.b_count !== undefined) {
-            var b_count = sessionStorage.b_count;
+        if (getCache("b_count", true) !== null) {
+            var b_count = getCache("b_count", true);
             var i_name = "b_i";
             var s_name = "b_count";
             eval(createCounter(i_name, s_name, "b_count", '$("#page-bind .get-verifyCode-btn")'));
@@ -2728,13 +2725,13 @@ $(function() {
             phone: $li.find(".phone").text(),
             address: $li.find(".address-info").text()
         };
-        sessionStorage.edit_address = JSON.stringify(edit_address);
+        setCache("edit_address", edit_address, true);
         $.router.load("edit_address.html");
     });
 
     $(document).on("pageInit", "#page-edit-address", function() {
-        if (sessionStorage.edit_address !== undefined) {
-            var edit_address = JSON.parse(sessionStorage.edit_address);
+        if (getCache("edit_address", true) !== null) {
+            var edit_address = getCache("edit_address", true);
             $("#page-edit-address [name='name']").val(edit_address.name);
             $("#page-edit-address [name='phone']").val(edit_address.phone);
             var address_list = edit_address.address.split(" ");
@@ -2803,7 +2800,7 @@ $(function() {
     });
 
     /*****page-bespeak*****/
-    var public_error_list = [];
+
     $(document).on("pageInit", "#page-bespeak", function() {
         wxApi();
         var today = new Date().format("yyyy-MM-dd");
@@ -2825,13 +2822,12 @@ $(function() {
         $(".error-picker").val(curr_name);
 
         $(".error-picker").picker({
-            value: curr_name,
             cols: [{
                 textAlign: 'center',
                 values: error_list
             }]
-
         });
+
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/getCategoriesByParentId",
             data: {
@@ -2863,10 +2859,14 @@ $(function() {
                                 first: category_name,
                                 second: sub_category_name
                             };
-                            sessionStorage.repairInfo = JSON.stringify(repairInfo);
+                            setCache("repairInfo", repairInfo, true);
                             var c = temp_product_list;
                             var c_id = 0;
+                            var parent_c_id = 0;
                             for (var i = 0; i < c.length; i++) {
+                                if (c[i].name === category_name) {
+                                    parent_c_id = c[i].id; //根据选取的一级分类的名取对应得id值，解决没二级故障分类
+                                }
                                 for (var j = 0; j < c[i].sub.length; j++) {
                                     if (c[i].sub[j].name === sub_category_name) {
                                         c_id = c[i].sub[j].id; //根据选取的二级分类的名取对应得id值
@@ -2883,16 +2883,17 @@ $(function() {
                                     console.log(data);
                                     //重置errorpicker
                                     var displayValues = [];
+                                    var public_error_list = [];
                                     $("#page-bespeak .error-picker").val("");
                                     repairInfo.error_type = "";
-                                    sessionStorage.repairInfo = JSON.stringify(repairInfo);
+                                    setCache("repairInfo", repairInfo, true);
                                     var back_up = $("#page-bespeak .error-picker").clone();
                                     $("#page-bespeak .error-picker").after(back_up).remove();
                                     if (data.Common.code === 200) {
                                         public_error_list = data.Common.info;
                                         console.log(public_error_list);
                                         repairInfo.error_list = public_error_list;
-                                        sessionStorage.repairInfo = JSON.stringify(repairInfo);
+                                        setCache("repairInfo", repairInfo, true);
                                         for (var i = 0; i < public_error_list.length; i++) {
                                             displayValues.push(public_error_list[i].name);
                                         }
@@ -2903,12 +2904,37 @@ $(function() {
                                             }]
                                         });
                                     } else {
-                                        $("#page-bespeak .error-picker").picker({
-                                            cols: [{
-                                                textAlign: 'center',
-                                                values: [""],
-                                                displayValues: ["该类型暂无故障类型"]
-                                            }]
+                                        func_ajax({
+                                            url: "http://www.homchang.site/index.php/Api/index/getMalfunctions",
+                                            data: {
+                                                category_id: parent_c_id,
+                                                open_id: userInfo.open_id
+                                            },
+                                            successCallback: function(data) {
+                                                if (data.Common.code == 200) {
+                                                    public_error_list = data.Common.info;
+                                                    console.log(public_error_list);
+                                                    repairInfo.error_list = public_error_list;
+                                                    setCache("repairInfo", repairInfo, true);
+                                                    for (var i = 0; i < public_error_list.length; i++) {
+                                                        displayValues.push(public_error_list[i].name);
+                                                    }
+                                                    $("#page-bespeak .error-picker").picker({
+                                                        cols: [{
+                                                            textAlign: 'center',
+                                                            values: displayValues
+                                                        }]
+                                                    });
+                                                } else {
+                                                    $("#page-bespeak .error-picker").picker({
+                                                        cols: [{
+                                                            textAlign: 'center',
+                                                            values: [""],
+                                                            displayValues: ["该类型暂无故障类型"]
+                                                        }]
+                                                    });
+                                                }
+                                            }
                                         });
                                     }
                                 }
@@ -2974,10 +3000,10 @@ $(function() {
                     var default_data = data.Common.info[0];
 
                     repairInfo.address_id = default_data.id;
-                    sessionStorage.repairInfo = JSON.stringify(repairInfo);
+                    setCache("repairInfo", repairInfo, true);
 
                     setupInfo.address_id = default_data.id;
-                    sessionStorage.setupInfo = JSON.stringify(setupInfo);
+                    setCache("setupInfo", setupInfo, true);
 
                     $("#page-bespeak [name='address']").val(default_data.id);
                     $("#page-bespeak .address-block .item-title-row .item-title").html(default_data.contact + " " + default_data.tel);
@@ -2993,14 +3019,17 @@ $(function() {
 
     $(document).on("change", "#page-bespeak .error-picker", function() {
         var error_name = $(this).val();
-        var error_id = 1;
-        for (var i = 0; i < public_error_list.length; i++) {
-            if (public_error_list[i].name === error_name) {
-                error_id = public_error_list[i].id;
+        var error_id = 0;
+        var temp_list = repairInfo.error_list || [];
+        console.log(temp_list);
+        for (var i = 0; i < temp_list.length; i++) {
+            if (temp_list[i].name === error_name) {
+                error_id = temp_list[i].id;
             }
         }
+        console.log(temp_list);
         repairInfo.error_type = error_id;
-        sessionStorage.repairInfo = JSON.stringify(repairInfo);
+        setCache("repairInfo", repairInfo, true);
     });
 
     $(document).on('click', '#page-bespeak #tab1 .button-success', function() {
@@ -3081,8 +3110,6 @@ $(function() {
             label: true
         }, {
             text: '照相',
-            bold: true,
-            color: 'danger',
             onClick: function() {
                 fun_uploadType("camera", allow_select_num);
             }
@@ -3182,7 +3209,7 @@ $(function() {
                         path_list.push($(ele).attr("src"));
                     });
                     repairInfo.imgs = path_list;
-                    sessionStorage.repairInfo = JSON.stringify(repairInfo);
+                    setCache("repairInfo", repairInfo, true);
                     //记录图片
 
                     //图片下载成功，从上传数组url_list中删除
@@ -3217,11 +3244,11 @@ $(function() {
             if ($get_datetime_ele.hasClass("repair-datetime")) {
                 //记录预约时间
                 repairInfo.datetime = datetime;
-                sessionStorage.repairInfo = JSON.stringify(repairInfo);
+                setCache("repairInfo", repairInfo, true);
             } else {
                 //记录预约时间
                 setupInfo.datetime = datetime;
-                sessionStorage.setupInfo = JSON.stringify(setupInfo);
+                setCache("setupInfo", setupInfo, true);
             }
         } else {
             $.toast("请先选择日期");
@@ -3230,17 +3257,18 @@ $(function() {
 
     //妈的这个验证码，自己写完我都看不懂
     function createCounter(iName, sessionStorageName, count, $btn) {
-        return 'var ' + iName + ' = setInterval(function() {' + count + '--;if (' + count + ' > 0) {' + $btn + '.html("重新获取(" + ' + count + ' + "s)");sessionStorage.' + sessionStorageName + ' = ' + count + ';} else {clearInterval(' + iName + ');' + $btn + '.html("获取验证码").removeAttr("disabled");sessionStorage.clear("' + sessionStorageName + '");}}, 1000);';
+        //var jj = setInterval(function() {120--;if (120 > 0) {$("a").html("重新获取(" + 120 + "s)");sessionStorage.bb = 120;} else {clearInterval(jj);$("a").html("获取验证码").removeAttr("disabled");sessionStorage.clear("bb");}}, 1000);
+        return 'var ' + iName + ' = setInterval(function() {' + count + '--;if (' + count + ' > 0) {' + $btn + '.html("重新获取(" + ' + count + ' + "s)");sessionStorage.' + sessionStorageName + ' = ' + count + ';} else {clearInterval(' + iName + ');' + $btn + '.html("获取验证码").removeAttr("disabled");sessionStorage.clear("' + sessionStorageName + '");}}, 1000);' + $btn + '.prop("disabled", true);';
     }
-    if (sessionStorage.r_count !== undefined) {
-        var r_count = sessionStorage.r_count;
+    if (getCache("r_count", true) !== null) {
+        var r_count = getCache("r_count", true);
         var i_name = "r_i";
         var s_name = "r_count";
         eval(createCounter(i_name, s_name, "r_count", '$("#page-bespeak .get-verifyCode-btn.repair-code")'));
     }
 
-    if (sessionStorage.s_count !== undefined) {
-        var s_count = sessionStorage.s_count;
+    if (getCache("s_count", true) !== null) {
+        var s_count = getCache("s_count", true);
         var i_name = "s_i";
         var s_name = "s_count";
         eval(createCounter(i_name, s_name, "s_count", '$("#page-bespeak .get-verifyCode-btn.setup-code")'));
@@ -3274,7 +3302,7 @@ $(function() {
             }
             var js_str = createCounter(i_name, s_name, "count", $btn_str);
             eval(js_str);
-            $btn.prop("disabled", true);
+          
         }
     });
 
@@ -3283,17 +3311,17 @@ $(function() {
     $(document).on("change", "#page-bespeak #tab1 [name='code']", function() {
         //记录填写的验证码
         repairInfo.code = $(this).val();
-        sessionStorage.repairInfo = JSON.stringify(repairInfo);
+        setCache("repairInfo", repairInfo, true);
     });
     $(document).on("change", "#page-bespeak #tab1 [name='telephone']", function() {
         //记录填写的电话号码
         repairInfo.telephone = $(this).val();
-        sessionStorage.repairInfo = JSON.stringify(repairInfo);
+        setCache("repairInfo", repairInfo, true);
     });
     $(document).on("change", "#page-bespeak #tab1 [name='desc']", function() {
         //记录填写的故障
         repairInfo.desc = $(this).val();
-        sessionStorage.repairInfo = JSON.stringify(repairInfo);
+        setCache("repairInfo", repairInfo, true);
     });
     $(document).on("click", "#page-bespeak .uploader-wrapper .icon-close", function() {
         //删除图片
@@ -3304,7 +3332,7 @@ $(function() {
             path_list.push($(ele).attr("src"));
         });
         repairInfo.imgs = path_list;
-        sessionStorage.repairInfo = JSON.stringify(repairInfo);
+        setCache("repairInfo", repairInfo, true);
         func_ajax({
             url: "http://www.homchang.site/index.php/Api/index/delImages",
             data: {
@@ -3339,13 +3367,13 @@ $(function() {
                 var container = $("#page-select-product .list-block>ul");
                 if (container.find("li").length === 0) {
                     container.html('<li class="no-data"><div><span>暂无可预约安装的产品</span></div></li>');
-                    if (localStorage.no_prompt === undefined) {
+                    if (getCache("no_prompt")) {
                         $.modal({
                             text: "没有可预约的产品，如您已购买商品，请先绑定手机。",
                             buttons: [{
                                 text: "不再提示",
                                 onClick: function() {
-                                    localStorage.no_prompt = "true";
+                                    setCache("no_prompt", false);
                                 }
                             }, {
                                 text: "去绑定",
@@ -3366,22 +3394,22 @@ $(function() {
             id: curr_id,
             name: curr_name
         };
-        sessionStorage.setupInfo = JSON.stringify(setupInfo);
+        setCache("setupInfo", setupInfo, true);
     });
     $(document).on("change", "#page-bespeak #tab2 [name='desc']", function() {
         //记录填写的备注信息
         setupInfo.desc = $(this).val();
-        sessionStorage.setupInfo = JSON.stringify(setupInfo);
+        setCache("setupInfo", setupInfo, true);
     });
     $(document).on("change", "#page-bespeak #tab2 [name='code']", function() {
         //记录填写的验证码
         setupInfo.code = $(this).val();
-        sessionStorage.setupInfo = JSON.stringify(setupInfo);
+        setCache("setupInfo", setupInfo, true);
     });
     $(document).on("change", "#page-bespeak #tab2 [name='telephone']", function() {
         //记录填写的电话号码
         setupInfo.telephone = $(this).val();
-        sessionStorage.setupInfo = JSON.stringify(setupInfo);
+        setCache("setupInfo", setupInfo, true);
     }); /*****page-map*****/
 
     $(document).on("pageInit", "#page-map,#page-inset-map", function(e, pageId, $page) {
@@ -3488,7 +3516,7 @@ $(function() {
             name: $(this).find(".item-title").text()
         };
         orderInfo.store = temp_data;
-        sessionStorage.orderInfo = JSON.stringify(orderInfo);
+        setCache("orderInfo", orderInfo, true);
         $.router.load("#page-order");
     });
     $(document).on("click", "#page-map #tab1 a.item-link,#page-map #tab2 a.item-link", function() {
@@ -3512,4 +3540,3 @@ $(function() {
     }); /*****init*****/
     $.init();
     console.log("%c  author:Wallace Chan  \n  tel:13202627449      \n  qq:447363121         \n  date:%s        ", "padding:0;line-height:20px; background-color:#d32c2c;color:#fff;;", "20170925");
-});
