@@ -198,6 +198,7 @@
 
 
 
+
 /*****markmark*****/
 
 .bg-green {
@@ -324,6 +325,7 @@ header:after {
     color: #999;
     background-color: #fff;
 }
+
 
 
 
@@ -678,6 +680,7 @@ header:after {
 
 
 
+
 /*****page-index*****/
 
 #page-index .swiper-container .swiper-slide span {
@@ -926,6 +929,7 @@ header:after {
 
 
 
+
 /*****page-activity*****/
 
 #page-activity .list-block {
@@ -1037,6 +1041,7 @@ header:after {
 #page-activity .type-2 .footer {
     background-color: #BE3523;
 }
+
 
 
 /*
@@ -1315,6 +1320,7 @@ header:after {
 
 
 
+
 /*****page-category*****/
 
 #page-category .content>.flex {
@@ -1532,6 +1538,7 @@ header:after {
 
 
 
+
 /*****page-details*****/
 
 #page-details #tab2 img {
@@ -1593,6 +1600,7 @@ header:after {
 #page-details .collect-btn.collected .tab-label:before {
     content: '已收藏';
 }
+
 
 
 
@@ -1897,9 +1905,10 @@ header:after {
 
     background-color: #fff;
 }
+
 #page-details #tab2 .content-block {
     margin: 0;
-    padding:0;
+    padding: 0;
 
     background-color: #fff;
 }
@@ -1977,6 +1986,7 @@ header:after {
 #page-details .list-container {
     padding-left: 0;
 }
+
 
 
 
@@ -2153,12 +2163,14 @@ header:after {
 
 
 
+
 /********page-fallow******/
 
 #page-fallow .list-block {
     margin-top: .5rem;
     margin-bottom: .5rem;
 }
+
 
 
 
@@ -2316,6 +2328,7 @@ header:after {
 
 
 
+
 /*********page-order-detail*******/
 
 #page-order-detail .item-title,
@@ -2401,6 +2414,7 @@ header:after {
 
 
 
+
 /*********page-order-detail-result*******/
 
 #page-order-detail-result h3 {
@@ -2426,6 +2440,7 @@ header:after {
     border-radius: 50%;
     background-color: #09bb07;
 }
+
 
 
 
@@ -2505,6 +2520,7 @@ header:after {
     display: inline-block;
     overflow: hidden;
 }
+
 
 
 
@@ -2652,6 +2668,7 @@ header:after {
     margin-right: .25rem;
     margin-left: .25rem;
 }
+
 
 
 
@@ -2840,6 +2857,7 @@ header:after {
 
 
 
+
 /*******page-my-message********/
 
 #page-my-message .item-after {
@@ -2867,6 +2885,7 @@ header:after {
     border-radius: 50%;
     background-color: red;
 }
+
 
 
 
@@ -3045,6 +3064,7 @@ header:after {
 
 
 
+
 /*********page-address*********/
 
 #page-address .icon.icon-form-checkbox+span,
@@ -3198,6 +3218,7 @@ header:after {
 
 
 
+
 /*****page-user-info*******/
 
 #page-user-info .list-block {
@@ -3250,6 +3271,7 @@ header:after {
 
 
 
+
 /*****page-bind*******/
 
 #page-bind .list-block {
@@ -3260,6 +3282,7 @@ header:after {
 #page-bind .list-block .item-title.label {
     width: 4rem;
 }
+
 
 
 
@@ -3556,12 +3579,14 @@ header:after {
 
 
 
+
 /*************page-select-product*************/
 
 #page-select-product .list-block {
     margin-top: .5rem;
     margin-bottom: .5rem;
 }
+
 
 
 
@@ -3651,6 +3676,65 @@ header:after {
     width: 100%;
     height: 100%;
 }
+
+
+
+/*************page-party*************/
+
+#page-party .list-block {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+}
+#page-party .list-block.cards-list li.over{-webkit-filter: grayscale(100%);}
+#page-party .list-block.cards-list a {
+    color: #3d4145;
+}
+
+#page-party .list-block.cards-list .card-content-inner>p {
+    color: #999;
+}
+#page-party .list-block.cards-list .card-content-inner>p:nth-child(2) {
+margin-bottom: 0;
+}
+#page-party .list-block.cards-list .card-content-inner>p,
+#page-party .list-block.cards-list .card-content-inner>h3 {
+    margin-top: 0;
+    margin-bottom: .25rem;
+}
+
+#page-party .list-block.cards-list .card-content-inner>span {
+    display: block;
+
+    height: 0;
+    padding-bottom: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-color: #eee;
+}
+
+
+/*************page-party-detail*************/
+
+#page-party-detail .banner {
+    display: block;
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    height: 0;
+    padding-bottom: 50%;
+}
+
+#page-party-detail .content-block {
+    margin-top: .25rem;
+    margin-bottom: .25rem;
+        background-color: #fff;
+}
+
+
+
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2) {
     /*——*/

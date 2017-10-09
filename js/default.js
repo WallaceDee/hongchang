@@ -2428,7 +2428,7 @@ if (getCache("repairInfo", true) !== null) {
                     user_name: value
                 },
                 successCallback: function(data) {
-                    if (data.Common.data.code === 200) {
+                    if (data.Common.code === 200) {
                         userInfo.user_name = value;
                         $("#page-user-info .username").val(value);
                     }
@@ -3410,7 +3410,65 @@ if (getCache("repairInfo", true) !== null) {
         //记录填写的电话号码
         setupInfo.telephone = $(this).val();
         setCache("setupInfo", setupInfo, true);
-    }); /*****page-map*****/
+    });
+    /*****page-party*****/
+  //无限加载
+    var party_page = 1;
+    // 加载flag
+    var party_loading = false;
+    // 最多可加载的条目
+    var party_maxItems = 0;
+    // 每次加载添加多少条目
+    var party_itemsPerLoad = 5;
+    var party_lastIndex = 0;
+
+    function party_addItems(number) {
+        if (party_page !== 0) {
+            func_ajax({
+                url: "http://www.homchang.site/index.php/Api/index/getProducts?p=" + party_page,
+                data: {
+                    size: number,
+                    hot: 1
+                },
+                successCallback: function(data) {
+                    var temp_html = '';
+                    if (data.Common.code === 200) {
+                        party_maxItems = data.Common.info.total;
+                        var temp_data = data.Common.info;
+                        temp_html = template('page-party-item', temp_data);
+                        console.log(temp_html);
+                    } else {
+                        temp_html = '<li class="no-data"><div><span>暂无活动</span></div></li>';
+                    }
+                    $('#page-party .infinite-scroll-bottom .list-block>ul').append(temp_html);
+                    party_page++;
+                    party_lastIndex = $('#page-party .list-block>ul>li').length;
+                    party_loading = false;
+                    if (party_lastIndex >= party_maxItems) {
+                        $.detachInfiniteScroll($('#page-party .infinite-scroll'));
+                        $('#page-party .infinite-scroll-preloader').remove();
+                        party_page = 0;
+                        return;
+                    }
+                    $.refreshScroller();
+                }
+            });
+        }
+    }
+    $(document).on('infinite', '#page-party .infinite-scroll-bottom', function() {
+        if (party_loading) {
+            return;
+        }
+        party_loading = true;
+        party_addItems(party_itemsPerLoad);
+    });
+    $(document).on("pageInit", "#page-party", function() {
+        if ($("#page-party .list-block li").length === 0) { //加载过的标志，不再请求，不知道有没有bug，试下
+            party_addItems(comment_itemsPerLoad);
+        }
+    });
+
+     /*****page-map*****/
 
     $(document).on("pageInit", "#page-map,#page-inset-map", function(e, pageId, $page) {
         if (pageId === "page-map") {

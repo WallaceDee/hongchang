@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="author" content="Wallace Chan">
+    <link rel="stylesheet" href="css/default.css">
+</head>
+
+<body>
+    <div class="page-group">
+        <div id="page-party" class="page page-current">
+            <header class="bar bar-nav">
+                <h1 class="title">周末Party</h1>
+            </header>
+               <div class="content  infinite-scroll infinite-scroll-bottom" data-distance="100">
+                <div class="list-block cards-list">
+                    <ul>
+                    </ul>
+                </div>
+                <div class="infinite-scroll-preloader">
+                    <div class="preloader"></div>
+                </div>
+            </div>
+        </div>
+        <script id="page-party-item" type="text/html">
+            {{each list as $list i}}
+            <li class="card">
+                <a href="party_detail.html?pid=1">
+
+                    <div class="card-content-inner">
+                        <h3>广告语征集活动</h3>
+                        <p>活动时间：2017-10-09到2017-10-31</p>
+                          <p>报名人数：20/200</p>
+                        <span style="background-image: url(http://www.homchang.site/Public/FeatureImage/2017-09-13/f_59b8fc7d9a10b.jpg);"></span>
+                    </div>
+                </a>
+            </li>
+            {{/each}}
+        </script>
+    </div>
+    <script src="js/zepto.min.js"></script>
+    <script src="js/sm.js"></script>
+    <script src="js/sm-extend.js"></script>
+    <script src="js/sm-city-picker.min.js"></script>
+    <script src="js/product-picker.js"></script>
+    <script src="js/template.js"></script>
+    <script src="js/cropper.min.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="http://map.qq.com/api/js?v=2.exp&libraries=convertor" charset="utf-8"></script>
+    <script src="js/default.js"></script>
+</body>
+
+</html>
