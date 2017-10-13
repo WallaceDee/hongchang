@@ -29,13 +29,12 @@
         <script id="page-party-item" type="text/html">
             {{each list as $list i}}
             <li class="card">
-                <a href="party_detail.html?pid=1">
-
+                <a href="party_detail.html?p_id={{$list.id}}">
                     <div class="card-content-inner">
-                        <h3>广告语征集活动</h3>
-                        <p>活动时间：2017-10-09到2017-10-31</p>
-                          <p>报名人数：20/200</p>
-                        <span style="background-image: url(http://www.homchang.site/Public/FeatureImage/2017-09-13/f_59b8fc7d9a10b.jpg);"></span>
+                        <h3>{{$list.title}}</h3>
+                        <p>活动时间：{{date_format($list.start_time).date}} - {{date_format($list.end_time).date}}</p>
+                          <p>报名人数：{{$list.apply_num}}/{{$list.limit}}</p>
+                        <span style="background-image: url({{$list.image}});"></span>
                     </div>
                 </a>
             </li>

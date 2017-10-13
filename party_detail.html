@@ -17,41 +17,23 @@
                 <a class="button button-link button-nav pull-left back">
                       <span class="icon icon-left"></span>返回
                     </a>
-                <h1 class="title">广告语征集活动</h1>
+                <h1 class="title"></h1>
             </header>
+        </div>
+        <script id="page-party-info" type="text/html">
             <nav class="bar bar-tab">
-                <a class="tab-item big-tab-item button-warning button-fill sign-btn ">报名</a>
+                <a class="tab-item big-tab-item button-warning button-fill sign-btn">报名</a>
             </nav>
             <div class="content native-scroll">
-                <span class="banner" style="background-image: url(http://www.homchang.site/Public/FeatureImage/2017-09-13/f_59b8fc7d9a10b.jpg);"></span>
+                <span class="banner" style="background-image: url({{list.image}});"></span>
+                <div class="content-block-title">
+                    <p>活动时间：{{date_format(list.start_time).date}} - {{date_format(list.end_time).date}}</p>
+                    <p>报名人数：{{list.apply_num}}/{{list.limit}}</p>
+                </div>
                 <div class="content-block">
-                    <p><strong><span style="color: rgb(229, 51, 51); font-size: 24px;"><em><u>活动内容：</u></em></span></strong></p>
-                    <p>&#8203;送出优惠券1000元一张
-                        <br>
-                    </p>
-                    <p><strong><span style="color: rgb(229, 51, 51); font-size: 24px;"><em><u>报名要求：</u></em></span></strong></p>
-                    <p>
-                        <ol>
-                            <li><span style="font-size: 18px; background-color: rgb(255, 229, 0);">&nbsp;&#8203;女</span></li>
-                            <li><span style="font-size: 18px; background-color: rgb(255, 229, 0);">18岁</span></li>
-                            <li><span style="font-size: 18px; background-color: rgb(255, 229, 0);">在本商场过往消费满200元</span></li>
-                        </ol>
-                    </p>
-                    <p><strong><span style="color: rgb(229, 51, 51); font-size: 24px;"><em><u>活动内容：</u></em></span></strong></p>
-                    <p>&#8203;送出优惠券1000元一张
-                        <br>
-                    </p>
-                    <p><strong><span style="color: rgb(229, 51, 51); font-size: 24px;"><em><u>报名要求：</u></em></span></strong></p>
-                    <p>
-                        <ol>
-                            <li><span style="font-size: 18px; background-color: rgb(255, 229, 0);">&nbsp;&#8203;女</span></li>
-                            <li><span style="font-size: 18px; background-color: rgb(255, 229, 0);">18岁</span></li>
-                            <li><span style="font-size: 18px; background-color: rgb(255, 229, 0);">在本商场过往消费满200元</span></li>
-                        </ol>
-                    </p>
                 </div>
             </div>
-        </div>
+        </script>
     </div>
     <script src="js/zepto.min.js"></script>
     <script src="js/sm.js"></script>

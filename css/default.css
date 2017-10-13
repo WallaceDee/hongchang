@@ -3731,8 +3731,12 @@ margin-bottom: 0;
     margin-top: .25rem;
     margin-bottom: .25rem;
         background-color: #fff;
+        padding-top: .25rem;
+        padding-bottom: .25rem;
 }
-
+#page-party-detail .content-block-title{
+    margin-top: .25rem;
+}
 
 
 
