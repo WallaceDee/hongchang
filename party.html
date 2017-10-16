@@ -16,7 +16,7 @@
             <header class="bar bar-nav">
                 <h1 class="title">周末Party</h1>
             </header>
-               <div class="content  infinite-scroll infinite-scroll-bottom" data-distance="100">
+            <div class="content  infinite-scroll infinite-scroll-bottom" data-distance="100">
                 <div class="list-block cards-list">
                     <ul>
                     </ul>
@@ -28,12 +28,12 @@
         </div>
         <script id="page-party-item" type="text/html">
             {{each list as $list i}}
-            <li class="card">
+            <li class="card {{if check_deadline($list.end_time*1000)}}over{{/if}}">
                 <a href="party_detail.html?p_id={{$list.id}}">
                     <div class="card-content-inner">
                         <h3>{{$list.title}}</h3>
                         <p>活动时间：{{date_format($list.start_time).date}} ~ {{date_format($list.end_time).date}}</p>
-                          <p>报名人数：{{$list.apply_num}}/{{$list.limit}}</p>
+                        <p>报名人数：{{$list.apply_num}}/{{$list.limit}}</p>
                         <span style="background-image: url({{$list.image}});"></span>
                     </div>
                 </a>

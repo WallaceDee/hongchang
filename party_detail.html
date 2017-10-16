@@ -22,7 +22,9 @@
         </div>
         <script id="page-party-info" type="text/html">
             <nav class="bar bar-tab">
-                <a class="tab-item big-tab-item button-warning button-fill sign-btn">报名</a>
+                {{if check_deadline(list.end_time*1000)}}
+                <a class="tab-item big-tab-item button-fill">活动已过期</a>{{else}}
+                <a class="tab-item big-tab-item button-fill  {{if list.is_apply==0}}sign-btn button-warning{{else}}button-success{{/if}}"> {{if list.is_apply==1}}已{{/if}}报名</a> {{/if}}
             </nav>
             <div class="content native-scroll">
                 <span class="banner" style="background-image: url({{list.image}});"></span>

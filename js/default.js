@@ -496,6 +496,16 @@ template.helper('acc_add', function(arg1, arg2) {
 
     return accAdd(arg1, arg2);
 });
+template.helper('check_deadline', function(timestamp) {
+    timestamp = timestamp * 1;
+    var now_timestamp = new Date().getTime();
+    if (timestamp - now_timestamp > 0) {
+        return false;
+    } else {
+        return true;
+    }
+});
+
 
 //登录获取用户信息
 var up = {};
@@ -3472,13 +3482,14 @@ $(document).on("pageInit", "#page-party-detail", function() {
     func_ajax({
         url: "http://www.homchang.site/index.php/Api/index/getPartyInfo",
         data: {
-            party_id: getParameter("p_id")
+            party_id: getParameter("p_id"),
+            open_id: userInfo.open_id
         },
         successCallback: function(data) {
             if (data.Common.code === 200) {
                 var temp_data = data.Common.info;
                 $("#page-party-detail .title").html(temp_data.title);
-                document.title =temp_data.title;
+                document.title = temp_data.title;
                 var temp_html = template('page-party-info', { list: temp_data });
                 $("#page-party-detail").children().not("header").remove();
                 $("#page-party-detail").append(temp_html);
@@ -3515,6 +3526,7 @@ $(document).on("click", "#page-party-detail .sign-btn", function() {
         successCallback: function(data) {
             if (data.Common.code === 200) {
                 $.alert("我们客服会在24小时内与您取得联系请留意我们客服电话并及时进行确认。", "恭喜您，报名成功！");
+                $("#page-party-detail .sign-btn").removeClass("sign-btn button-warning").addClass("button-success").html("已报名");
             } else if (data.Common.code === 618) {
                 $.alert("已报名");
             } else {
@@ -3525,6 +3537,7 @@ $(document).on("click", "#page-party-detail .sign-btn", function() {
     });
 
 });
+
 
 /*****page-map*****/
 

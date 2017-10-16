@@ -199,6 +199,7 @@
 
 
 
+
 /*****markmark*****/
 
 .bg-green {
@@ -325,6 +326,7 @@ header:after {
     color: #999;
     background-color: #fff;
 }
+
 
 
 
@@ -681,6 +683,7 @@ header:after {
 
 
 
+
 /*****page-index*****/
 
 #page-index .swiper-container .swiper-slide span {
@@ -930,6 +933,7 @@ header:after {
 
 
 
+
 /*****page-activity*****/
 
 #page-activity .list-block {
@@ -1041,6 +1045,7 @@ header:after {
 #page-activity .type-2 .footer {
     background-color: #BE3523;
 }
+
 
 
 
@@ -1321,6 +1326,7 @@ header:after {
 
 
 
+
 /*****page-category*****/
 
 #page-category .content>.flex {
@@ -1539,6 +1545,7 @@ header:after {
 
 
 
+
 /*****page-details*****/
 
 #page-details #tab2 img {
@@ -1600,6 +1607,7 @@ header:after {
 #page-details .collect-btn.collected .tab-label:before {
     content: '已收藏';
 }
+
 
 
 
@@ -1998,6 +2006,7 @@ header:after {
 
 
 
+
 /********page-cart******/
 
 #page-cart .list-block.media-list .cart-title {
@@ -2164,12 +2173,14 @@ header:after {
 
 
 
+
 /********page-fallow******/
 
 #page-fallow .list-block {
     margin-top: .5rem;
     margin-bottom: .5rem;
 }
+
 
 
 
@@ -2329,6 +2340,7 @@ header:after {
 
 
 
+
 /*********page-order-detail*******/
 
 #page-order-detail .item-title,
@@ -2415,6 +2427,7 @@ header:after {
 
 
 
+
 /*********page-order-detail-result*******/
 
 #page-order-detail-result h3 {
@@ -2440,6 +2453,7 @@ header:after {
     border-radius: 50%;
     background-color: #09bb07;
 }
+
 
 
 
@@ -2520,6 +2534,7 @@ header:after {
     display: inline-block;
     overflow: hidden;
 }
+
 
 
 
@@ -2668,6 +2683,7 @@ header:after {
     margin-right: .25rem;
     margin-left: .25rem;
 }
+
 
 
 
@@ -2858,6 +2874,7 @@ header:after {
 
 
 
+
 /*******page-my-message********/
 
 #page-my-message .item-after {
@@ -2885,6 +2902,7 @@ header:after {
     border-radius: 50%;
     background-color: red;
 }
+
 
 
 
@@ -3065,6 +3083,7 @@ header:after {
 
 
 
+
 /*********page-address*********/
 
 #page-address .icon.icon-form-checkbox+span,
@@ -3219,6 +3238,7 @@ header:after {
 
 
 
+
 /*****page-user-info*******/
 
 #page-user-info .list-block {
@@ -3272,6 +3292,7 @@ header:after {
 
 
 
+
 /*****page-bind*******/
 
 #page-bind .list-block {
@@ -3282,6 +3303,7 @@ header:after {
 #page-bind .list-block .item-title.label {
     width: 4rem;
 }
+
 
 
 
@@ -3580,12 +3602,14 @@ header:after {
 
 
 
+
 /*************page-select-product*************/
 
 #page-select-product .list-block {
     margin-top: .5rem;
     margin-bottom: .5rem;
 }
+
 
 
 
@@ -3679,13 +3703,18 @@ header:after {
 
 
 
+
 /*************page-party*************/
 
 #page-party .list-block {
     margin-top: .5rem;
     margin-bottom: .5rem;
 }
-#page-party .list-block.cards-list li.over{-webkit-filter: grayscale(100%);}
+
+#page-party .list-block.cards-list li.over {
+    -webkit-filter: grayscale(100%);
+}
+
 #page-party .list-block.cards-list a {
     color: #3d4145;
 }
@@ -3693,9 +3722,11 @@ header:after {
 #page-party .list-block.cards-list .card-content-inner>p {
     color: #999;
 }
+
 #page-party .list-block.cards-list .card-content-inner>p:nth-child(2) {
-margin-bottom: 0;
+    margin-bottom: 0;
 }
+
 #page-party .list-block.cards-list .card-content-inner>p,
 #page-party .list-block.cards-list .card-content-inner>h3 {
     margin-top: 0;
@@ -3714,6 +3745,7 @@ margin-bottom: 0;
 }
 
 
+
 /*************page-party-detail*************/
 
 #page-party-detail .banner {
@@ -3730,11 +3762,12 @@ margin-bottom: 0;
 #page-party-detail .content-block {
     margin-top: .25rem;
     margin-bottom: .25rem;
-        background-color: #fff;
-        padding-top: .25rem;
-        padding-bottom: .25rem;
+    background-color: #fff;
+    padding-top: .25rem;
+    padding-bottom: .25rem;
 }
-#page-party-detail .content-block-title{
+
+#page-party-detail .content-block-title {
     margin-top: .25rem;
 }
 
