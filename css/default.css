@@ -200,6 +200,9 @@
 
 
 
+
+
+
 /*****markmark*****/
 
 .bg-green {
@@ -326,6 +329,9 @@ header:after {
     color: #999;
     background-color: #fff;
 }
+
+
+
 
 
 
@@ -684,6 +690,9 @@ header:after {
 
 
 
+
+
+
 /*****page-index*****/
 
 #page-index .swiper-container .swiper-slide span {
@@ -921,19 +930,6 @@ header:after {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*****page-activity*****/
 
 #page-activity .list-block {
@@ -959,7 +955,10 @@ header:after {
 }
 
 #page-activity li .product-img {
+    position: relative;
+
     display: block;
+    overflow: hidden;
 
     width: 6rem;
     height: 4.5rem;
@@ -967,36 +966,40 @@ header:after {
     background-color: #eee;
     background-position: center;
     background-size: cover;
-    position: relative;
-    overflow: hidden;
 }
 
 #page-activity li .product-img.hot:before {
-    content: "Hot";
-    display: block;
-    background-color: #d32c2c;
     font-size: .6rem;
-    display: block;
-    height: 2rem;
-    width: 4rem;
-    text-align: center;
-    transform: rotate(-45deg);
-    position: absolute;
-    top: -0.8rem;
-    left: -1.8rem;
     line-height: 3rem;
+
+    position: absolute;
+    top: -.8rem;
+    left: -1.8rem;
+
+    display: block;
+    display: block;
+
+    width: 4rem;
+    height: 2rem;
+
+    content: 'Hot';
+    transform: rotate(-45deg);
+    text-align: center;
+
+    background-color: #d32c2c;
 }
 
 #page-activity li .item-title.name {
     font-size: .8rem;
 }
 
-#page-activity li .item-title {}
+
 
 #page-activity li .item-text {
+    font-size: .6rem;
+
     opacity: .5;
     color: #fff;
-    font-size: .6rem;
 }
 
 #page-activity li .item-title-row {
@@ -1004,48 +1007,49 @@ header:after {
 }
 
 #page-activity li .item-title-row .item-after {
-    line-height: .6rem;
-    height: .8rem;
     font-size: .6rem;
+    line-height: .6rem;
+
+    height: .8rem;
     margin-top: .2rem;
 }
 
 #page-activity li .item-after i {
-    margin-left: .1rem;
     margin-right: .2rem;
+    margin-left: .1rem;
 }
 
 #page-activity .footer {
     margin: 0;
-    color: #fff
+
+    color: #fff;
 }
 
 #page-activity .footer a {
-    color: #fff
+    color: #fff;
 }
 
 #page-activity .footer p {
+    margin: 0;
     padding-top: .5rem;
     padding-bottom: .5rem;
-    margin: 0;
 }
 
 #page-activity .type-1 ul {
-    background-color: #A1D0F4;
+    background-color: #a1d0f4;
 }
 
 #page-activity .type-1 .footer {
-    background-color: #6E8FE9;
+    background-color: #6e8fe9;
 }
 
 #page-activity .type-2 ul {
-    background-color: #970F4C;
+    background-color: #970f4c;
 }
 
 #page-activity .type-2 .footer {
-    background-color: #BE3523;
+    background-color: #be3523;
 }
-
 
 
 
@@ -1290,7 +1294,7 @@ header:after {
 #panel-filter .sub-category-list li.active,
 #panel-filter .discount-list li.active {
     color: #fff;
-    background-color: #D32C2C;
+    background-color: #d32c2c;
 }
 
 #panel-filter .category-list li.active a {
@@ -1305,26 +1309,6 @@ header:after {
     padding-right: .75rem;
     padding-left: .75rem;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*****page-category*****/
@@ -1525,27 +1509,6 @@ header:after {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*****page-details*****/
 
 #page-details #tab2 img {
@@ -1607,10 +1570,6 @@ header:after {
 #page-details .collect-btn.collected .tab-label:before {
     content: '已收藏';
 }
-
-
-
-
 
 
 
@@ -1703,8 +1662,14 @@ header:after {
 #page-details .select .item-inner,
 #page-details .address input,
 #page-details .specification .item-title,
-#page-details .model .item-title {
+#page-details .model .item-title,
+#page-details .attr .item-title {
     font-size: .6rem;
+}
+
+#page-details .attr .item-title>p {
+    margin-top: 0.2rem;
+    margin-bottom: 0.2rem;
 }
 
 #page-details .address .item-inner {
@@ -1922,8 +1887,9 @@ header:after {
 }
 
 #page-details #tab2 .content-block img {
-    max-width: 100%;
     display: block;
+
+    max-width: 100%;
 }
 
 .icon-5-stars:before {
@@ -1994,6 +1960,9 @@ header:after {
 #page-details .list-container {
     padding-left: 0;
 }
+
+
+
 
 
 
@@ -2164,33 +2133,12 @@ header:after {
 
 
 
-
-
-
-
-
-
-
-
-
-
 /********page-fallow******/
 
 #page-fallow .list-block {
     margin-top: .5rem;
     margin-bottom: .5rem;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 /********page-order******/
@@ -2330,17 +2278,6 @@ header:after {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
 /*********page-order-detail*******/
 
 #page-order-detail .item-title,
@@ -2419,15 +2356,6 @@ header:after {
 }
 
 
-
-
-
-
-
-
-
-
-
 /*********page-order-detail-result*******/
 
 #page-order-detail-result h3 {
@@ -2453,18 +2381,6 @@ header:after {
     border-radius: 50%;
     background-color: #09bb07;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*********page-comment*******/
@@ -2536,28 +2452,11 @@ header:after {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*********page-my-order*******/
 
 #page-my-order .order-block ul {
     padding-left: 0;
 }
-
-
 
 #page-my-order .list-block {
     margin-top: .5rem;
@@ -2683,22 +2582,6 @@ header:after {
     margin-right: .25rem;
     margin-left: .25rem;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /********page-user-center******/
@@ -2870,11 +2753,6 @@ header:after {
 }
 
 
-
-
-
-
-
 /*******page-my-message********/
 
 #page-my-message .item-after {
@@ -2902,12 +2780,6 @@ header:after {
     border-radius: 50%;
     background-color: red;
 }
-
-
-
-
-
-
 
 
 /*******page-coupon********/
@@ -3079,11 +2951,6 @@ header:after {
 }
 
 
-
-
-
-
-
 /*********page-address*********/
 
 #page-address .icon.icon-form-checkbox+span,
@@ -3239,6 +3106,9 @@ header:after {
 
 
 
+
+
+
 /*****page-user-info*******/
 
 #page-user-info .list-block {
@@ -3293,6 +3163,9 @@ header:after {
 
 
 
+
+
+
 /*****page-bind*******/
 
 #page-bind .list-block {
@@ -3303,6 +3176,9 @@ header:after {
 #page-bind .list-block .item-title.label {
     width: 4rem;
 }
+
+
+
 
 
 
@@ -3603,12 +3479,18 @@ header:after {
 
 
 
+
+
+
 /*************page-select-product*************/
 
 #page-select-product .list-block {
     margin-top: .5rem;
     margin-bottom: .5rem;
 }
+
+
+
 
 
 
@@ -3704,6 +3586,9 @@ header:after {
 
 
 
+
+
+
 /*************page-party*************/
 
 #page-party .list-block {
@@ -3738,11 +3623,15 @@ header:after {
 
     height: 0;
     padding-bottom: 50%;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+
     background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
+
+
+
 
 
 
@@ -3750,21 +3639,24 @@ header:after {
 
 #page-party-detail .banner {
     display: block;
+
+    width: 100%;
+    height: 0;
+    padding-bottom: 50%;
+
     background-color: #eee;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    width: 100%;
-    height: 0;
-    padding-bottom: 50%;
 }
 
 #page-party-detail .content-block {
     margin-top: .25rem;
     margin-bottom: .25rem;
-    background-color: #fff;
     padding-top: .25rem;
     padding-bottom: .25rem;
+
+    background-color: #fff;
 }
 
 #page-party-detail .content-block-title {

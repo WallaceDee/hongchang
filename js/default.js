@@ -985,6 +985,19 @@ $(document).on("pageInit", "#page-details", function() {
             $("#page-details .specification .item-title").html(data.specification);
             $("#page-details .model .item-title").html(data.model);
             $("#page-details #tab2 .content-block").html(data.description);
+            if (data.attribute != "") {
+                var attr_item = "";
+                for (var i = 0; i < data.attribute.length; i++) {
+                    attr_item += '<p>' + data.attribute[i].key + '：' + data.attribute[i].value + '</p>';
+                }
+                var attr_html = '<li class="item-content attr">\
+                                    <div class="item-media">参数</div>\
+                                    <div class="item-inner">\
+                                        <div class="item-title">' + attr_item + '</div>\
+                                    </div>\
+                                </li>';
+                $("#page-details .model").after(attr_html);
+            }
             $(".popup-select .avatar").css("background-image", "url(" + data.feng_mian_image + ")");
             $(".popup-select h3").html(data.current_price);
             if (data.collection_status) {
@@ -2217,9 +2230,9 @@ $(document).on("pageInit", "#page-user-center", function() {
     $("#page-user-center .avatar-wrapper span").css("background-image", "url(" + userInfo.head_img + ")");
     $("#page-user-center .user-header-wrapper .username").html(userInfo.user_name);
     var gender_icon = "";
-    if (userInfo.sex === "1") {
+    if (userInfo.sex == "1") {
         gender_icon = "icon-male";
-    } else if (userInfo.sex === "2") {
+    } else if (userInfo.sex == "2") {
         gender_icon = "icon-female";
     } else {
         gender_icon = "icon-unknow";
@@ -2380,20 +2393,20 @@ $(document).on("pageInit", "#page-coupon", function() {
 
 
 /*****page-user-info*****/
-var gander_list = ["保密", "男", "女"];
+var gender_list = ["保密", "男", "女"];
 $(document).on("pageInit", "#page-user-info", function() {
     wxApi();
     $("#page-user-info .avatar-wrapper span").css("background-image", "url(" + userInfo.head_img + ")");
     $("#page-user-info .username").val(userInfo.user_name);
 
-    var curr_gander = gander_list[Number(userInfo.sex)];
+    var curr_gender = gender_list[Number(userInfo.sex)];
 
-    $("#page-user-info .gander").val(curr_gander);
-    $("#page-user-info .gander").picker({
-        cssClass: "gander-picker",
+    $("#page-user-info .gender").val(curr_gender);
+    $("#page-user-info .gender").picker({
+        cssClass: "gender-picker",
         cols: [{
             textAlign: "center",
-            values: gander_list
+            values: gender_list
         }],
 
     });
@@ -2447,24 +2460,24 @@ $(document).on("click", "#page-user-info .username", function() {
     });
 });
 
-$(document).on("click", ".gander-picker .close-picker", function() {
-    var select_gander = $("#page-user-info .gander").val();
-    for (var i = 0; i < gander_list.length; i++) {
-        if (select_gander === gander_list[i]) {
-            select_gander = i;
+$(document).on("click", ".gender-picker .close-picker", function() {
+    var select_gender = $("#page-user-info .gender").val();
+    for (var i = 0; i < gender_list.length; i++) {
+        if (select_gender === gender_list[i]) {
+            select_gender = i;
             break;
         }
     }
-    console.log(select_gander);
+    console.log(select_gender);
     func_ajax({
         url: "http://www.homchang.site/index.php/Api/index/updateUserInfo",
         data: {
             open_id: userInfo.open_id,
-            sex: select_gander
+            sex: select_gender
         },
         successCallback: function(data) {
             if (data.Common.code === 200) {
-                userInfo.sex = select_gander;
+                userInfo.sex = select_gender.toString();
             }
         }
     });
@@ -2961,12 +2974,14 @@ $(document).on("pageInit", "#page-bespeak", function() {
         $("#page-bespeak #tab1 [name='telephone']").val(repairInfo.telephone);
     } else if (!(userInfo.mobile_phone === null || userInfo.mobile_phone === "" || userInfo.mobile_phone === undefined)) {
         $("#page-bespeak #tab1 [name='telephone']").val(userInfo.mobile_phone);
+        repairInfo.telephone = userInfo.mobile_phone;
     }
 
     if (!(setupInfo.telephone === "" || setupInfo.telephone === undefined)) {
         $("#page-bespeak #tab2 [name='telephone']").val(setupInfo.telephone);
     } else if (!(userInfo.mobile_phone === null || userInfo.mobile_phone === "" || userInfo.mobile_phone === undefined)) {
         $("#page-bespeak #tab2 [name='telephone']").val(userInfo.mobile_phone);
+        setupInfo.telephone = userInfo.mobile_phone;
     }
 
     $("#page-bespeak #tab1 [name='desc']").html(repairInfo.desc);
@@ -3582,6 +3597,8 @@ $(document).on("pageInit", "#page-map,#page-inset-map", function(e, pageId, $pag
                 xpoint: latlng.lng,
                 ypoint: latlng.lat
             };
+
+            console.log(user_location);
             var user_maker = new qq.maps.Marker({
                 position: user_point,
                 map: map,
@@ -3597,6 +3614,7 @@ $(document).on("pageInit", "#page-map,#page-inset-map", function(e, pageId, $pag
                 url: "http://www.homchang.site/index.php/Api/index/getBranches",
                 data: user_location,
                 successCallback: function(data) {
+                    console.log(data);
                     var point_data = data.Common.info;
                     var temp_html = template("page-map-list-link", {
                         list: point_data
@@ -3668,4 +3686,3 @@ $(document).on("click", "#page-map #tab1 a.item-link,#page-map #tab2 a.item-link
     });
 }); /*****init*****/
 $.init();
-console.log("%c  author:Wallace Chan  \n  tel:13202627449      \n  qq:447363121         \n  date:%s        ", "padding:0;line-height:20px; background-color:#d32c2c;color:#fff;;", "20170925");
